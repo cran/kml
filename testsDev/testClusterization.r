@@ -15,63 +15,53 @@ cat("####################################################################
 ######################## Test  Clusterization ######################
 ############################ Constructeur ##########################
 ####################################################################\n")
-ld2["id"]<-1:3
-c2a <- clusterization(xLongData=ld2,yPartition=p2a)
-c2b <- clusterization(xLongData=ld2,yPartition=p2b)
-c2c <- clusterization(xLongData=ld2,yPartition=p2c)
-p1a["id"] <- 1:3
-c2d <- clusterization(xLongData=ld2,yPartition=p1a)
-p1b["id"] <- 1:3
-c2e <- clusterization(xLongData=ld2,yPartition=p1b)
-c2f <- clusterization(xLongData=ld2,yPartition=p1c)
+c2a <- clusterization(yLongData=ld2,xPartition=p2a)
+c2b <- clusterization(yLongData=ld2,xPartition=p2b)
+c2c <- clusterization(yLongData=ld2,xPartition=p2c)
+c2d <- clusterization(yLongData=ld2,xPartition=p1a)
+c2e <- clusterization(yLongData=ld2,xPartition=p1b)
+c2f <- clusterization(yLongData=ld2,xPartition=p1c)
 
-ld2n["id"]<-1:3
-c2an <- clusterization(xLongData=ld2n,yPartition=p2a)#,trajSizeMin=3)
-c2bn <- clusterization(xLongData=ld2n,yPartition=p2b)#,trajSizeMin=3)
-c2cn <- clusterization(xLongData=ld2n,yPartition=p2c)#,trajSizeMin=3)
-c2dn <- clusterization(xLongData=ld2n,yPartition=p1a)#,trajSizeMin=3)
-c2en <- clusterization(xLongData=ld2n,yPartition=p1b)#,trajSizeMin=3)
-c2fn <- clusterization(xLongData=ld2n,yPartition=p1c)#,trajSizeMin=3)
+c2an <- clusterization(yLongData=ld2n,xPartition=p2a,imputationMethod="LOCF")#,trajSizeMin=3)
+c2bn <- clusterization(yLongData=ld2n,xPartition=p2b,imputationMethod="LOCB")#,trajSizeMin=3)
+c2cn <- clusterization(yLongData=ld2n,xPartition=p2c,imputationMethod="linearInterpolation")#,trajSizeMin=3)
+c2dn <- clusterization(yLongData=ld2n,xPartition=p1a,imputationMethod="linearInterpolation2")#,trajSizeMin=3)
+c2en <- clusterization(yLongData=ld2n,xPartition=p1b,imputationMethod="linearInterpolation3")#,trajSizeMin=3)
+c2fn <- clusterization(yLongData=ld2n,xPartition=p1c,imputationMethod="copyMean")#,trajSizeMin=3)
 
-ld3["id"] <- p3a["id"]
-c3a <- clusterization(xLongData=ld3,yPartition=p3a)
-c3b <- clusterization(xLongData=ld3,yPartition=p3b)
-c3c <- clusterization(xLongData=ld3,yPartition=p3c)
-c3d <- clusterization(xLongData=ld3,yPartition=p3d)
-c3e <- clusterization(xLongData=ld3,yPartition=p3e)
-c3f <- clusterization(xLongData=ld3,yPartition=p3f)
+c3a <- clusterization(yLongData=ld3,xPartition=p3a)
+c3b <- clusterization(yLongData=ld3,xPartition=p3b)
+c3c <- clusterization(yLongData=ld3,xPartition=p3c)
+c3d <- clusterization(yLongData=ld3,xPartition=p3d)
+c3e <- clusterization(yLongData=ld3,xPartition=p3e)
+c3f <- clusterization(yLongData=ld3,xPartition=p3f)
 
-ld3n["id"] <- p3a["id"]
-c3an <- clusterization(xLongData=ld3n,yPartition=p3a)
-c3bn <- clusterization(xLongData=ld3n,yPartition=p3b)
-c3cn <- clusterization(xLongData=ld3n,yPartition=p3c)
-c3dn <- clusterization(xLongData=ld3n,yPartition=p3d)
-c3en <- clusterization(xLongData=ld3n,yPartition=p3e)
-c3fn <- clusterization(xLongData=ld3n,yPartition=p3f)
+c3an <- clusterization(yLongData=ld3n,xPartition=p3a,imputationMethod="copyMean")
+c3bn <- clusterization(yLongData=ld3n,xPartition=p3b,imputationMethod="copyMean")
+c3cn <- clusterization(yLongData=ld3n,xPartition=p3c,imputationMethod="copyMean")
+c3dn <- clusterization(yLongData=ld3n,xPartition=p3d,imputationMethod="copyMean")
+c3en <- clusterization(yLongData=ld3n,xPartition=p3e,imputationMethod="copyMean")
+c3fn <- clusterization(yLongData=ld3n,xPartition=p3f,imputationMethod="copyMean")
 
-ld4["id"] <- p4a["id"]
-c4a <- clusterization(xLongData=ld4,yPartition=p4a)
-c4b <- clusterization(xLongData=ld4,yPartition=p4b)
-c4c <- clusterization(xLongData=ld4,yPartition=p4c)
-c4d <- clusterization(xLongData=ld4,yPartition=p4d)
-c4e <- clusterization(xLongData=ld4,yPartition=p4e)
+c4a <- clusterization(yLongData=ld4,xPartition=p4a)
+c4b <- clusterization(yLongData=ld4,xPartition=p4b)
+c4c <- clusterization(yLongData=ld4,xPartition=p4c)
+c4d <- clusterization(yLongData=ld4,xPartition=p4d)
+c4e <- clusterization(yLongData=ld4,xPartition=p4e)
 
-ld4n["id"] <- p4a["id"]
-c4an <- clusterization(xLongData=ld4n,yPartition=p4an)
-c4bn <- clusterization(xLongData=ld4n,yPartition=p4bn)
-c4cn <- clusterization(xLongData=ld4n,yPartition=p4cn)
-c4dn <- clusterization(xLongData=ld4n,yPartition=p4dn)
-c4en <- clusterization(xLongData=ld4n,yPartition=p4en)
+c4an <- clusterization(yLongData=ld4n,xPartition=p4an,imputationMethod="copyMean")
+c4bn <- clusterization(yLongData=ld4n,xPartition=p4bn,imputationMethod="copyMean")
+c4cn <- clusterization(yLongData=ld4n,xPartition=p4cn,imputationMethod="copyMean")
+c4dn <- clusterization(yLongData=ld4n,xPartition=p4dn,imputationMethod="copyMean")
+c4en <- clusterization(yLongData=ld4n,xPartition=p4en,imputationMethod="copyMean")
 
-ld5["id"] <- p5a["id"]
-c5a <- clusterization(xLongData=ld5,yPartition=p5a)
-c5b <- clusterization(xLongData=ld5,yPartition=p5b)
-c5c <- clusterization(xLongData=ld5,yPartition=p5c)
+c5a <- clusterization(yLongData=ld5,xPartition=p5a)
+c5b <- clusterization(yLongData=ld5,xPartition=p5b)
+c5c <- clusterization(yLongData=ld5,xPartition=p5c)
 
-ld5n["id"] <- p5a["id"]
-c5an <- clusterization(xLongData=ld5n,yPartition=p5a)
-c5bn <- clusterization(xLongData=ld5n,yPartition=p5b)
-c5cn <- clusterization(xLongData=ld5n,yPartition=p5c)
+c5an <- clusterization(yLongData=ld5n,xPartition=p5a,imputationMethod="copyMean")
+c5bn <- clusterization(yLongData=ld5n,xPartition=p5b,imputationMethod="copyMean")
+c5cn <- clusterization(yLongData=ld5n,xPartition=p5c,imputationMethod="copyMean")
 
 
 
@@ -81,21 +71,28 @@ cat("\n####################################################################
 ####################################################################\n")
 
 # Héritage
-c2a["id"]
 c2an["nbClusters"]
 c2a["clusters"]
-c3an["id"]
 c3d["nbClusters"]
 c3en["clusters"]
 
 # Autres
-#getTrajSizeMin(c2a)
 c2an["calinski"]
 c2a["percentEachCluster"]
 c2an["convergenceTime"]
-c3a["calinski"]
-c3dn["percentEachCluster"]
-c3en["convergenceTime"]
+c2an["criterionName"]
+c2an["criterionValue"]
+c2a["startingCondition"]
+c2an["algorithmUsed"]
+try(c2an["calinksi"])
+c3an["calinski"]
+c3a["percentEachCluster"]
+c3an["convergenceTime"]
+c3an["criterionName"]
+c3an["criterionValue"]
+c3a["startingCondition"]
+c3an["algorithmUsed"]
+
 
 
 cat("####################################################################

@@ -1,0 +1,1 @@
+Dans ClusterizLongData, fonction plotCriterion : il faut virer les NA des dernières colonnes, histoire d'avoir sur l'axe des x uniquement les critéres pertinant et non plus tous entre 0 et 52

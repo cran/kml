@@ -1,5 +1,3 @@
-source("../R/function.r")
-
 ### .meanNA
 cleanProg(meanNA(c(2,3,4)),3,TRUE,0)
 cleanProg(meanNA(c(2,3,NA)),2.5,TRUE,0)

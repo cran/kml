@@ -1,25 +1,23 @@
 useDynLib(kml)
 
 export(
+    "clusterization","updateClusterization",
     "cld","clusterizLongData",
     "as.cld","as.clusterizLongData",
-    "gald","generateArtificialLongData",    "plotCalinski"
+    "updateClusterizLongData","partitionInitialise",
+    "calculCenterGeneralized","affectIndivGeneralized",
+    "calculMean","affectIndiv","imputation",
+    "exportClusterization","plotCriterion"
 )
 exportMethods(
-    "as.clusterizLongData",
     "choice",
-    "kml",
     "plot",
-    "plotTraj",
     "plotAll",
-    "plotSubGroups",
-    "expandPartition",
-    "selectSupTrajSizeMin"
+    "kml"
 )
 exportClasses(
-    "ArtificialLongData",
-    "ClusterizLongData",
-    "Clusterization"
+    "Clusterization",
+    "ClusterizLongData"
 )
 
-import(methods,graphics,clv)
+import(methods,graphics,clv,longitudinalData)

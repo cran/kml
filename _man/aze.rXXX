@@ -1,0 +1,439 @@
+setwd("../../kml/src")
+setwd("../../kml/R")
+library(longitudinalData)
+dyn.load("kml")
+source("global.r")
+source("clusterization.r")
+source("clusterizLongData.r")
+source("kml.r")
+
+
+cat("\n###################################################################
+##################### Class ClusterizLongData #####################
+############################# Autres ##############################
+###################################################################\n")
+
+
+part <- partitionInitialise(3,180,method="randomK")
+traj <- ld4n["traj"]
+plot(ld4n,part)
+nbId <- nrow(part)
+
+mea <- calculMean(traj,part)
+part <- affectIndiv(traj,mea)
+plot(ld4n,part)
+
+mea -> clustersCenter
+
+affectIndiv <- function(traj,clustersCenter,distance="euclidean",power=2){
+    nbId <- nrow(traj)
+    part <- rep(0,nrow(traj))
+    distInt <- pmatch(distance,METHODS)
+    result <- .C("affecteIndiv",mTraj=as.double(t(traj)),iNbInd=as.integer(nbId),iNbTime=as.integer(ncol(traj)),
+        mTrajMean=as.numeric(t(clustersCenter)),iNbCluster=as.integer(nrow(clustersCenter)),distance=as.integer(distInt),power=as.numeric(power),
+        vClusterAffectation=as.integer(part),NAOK=TRUE
+    )
+    print(result)
+    return(partition(result$vClusterAffectation,nrow(clustersCenter)))
+}
+
+
+kml1 <- function(traj,xPart,centerMethod=meanNA,distance="euclidean",power=2){
+    nbId <- nrow(traj)
+    METHODS <- c("manhattan", "euclidean", "minkowski", "maximum", "canberra", "binary")
+    distInt <- pmatch(distance,METHODS)
+    result <- .C("kml1",mTraj=as.double(t(traj)),iNbInd=as.integer(nrow(traj)),iNbTime=as.integer(ncol(traj)),
+        iNbCluster=as.integer(xPart["nbClusters"]),convergenceTime=as.integer(200),
+        distance=as.integer(distInt),power=as.integer(power),
+        NAOK=TRUE
+    )
+    print(result)
+    return(partition(result$vClusterAffectation,nrow(clustersCenter)))
+}
+kml1(traj,part)
+.C("kml1",double *mTraj, int *iNbInd, int *iNbTime, int *iNbClusters, int *convergenceTime,int *distance, double *power, int *vClusterAffectation1){
+
+
+    .C("kml1",mTraj=as.double(t(traj)),iNbInd=as.integer(nbId),iNbTime=as.integer(ncol(traj)),
+       mTrajMean=as.numeric(t(clustersCenter)),iNbCluster=as.integer(nrow(clustersCenter)),distance=as.integer(distInt),power=as.integer(power),
+       vClusterAffectation=as.integer(part),NAOK=TRUE
+       )
+affectIndiv2(ld3n["traj"],mea)
+dyn.load("kml")
+
+part <- partitionInitialise(3,180,method="randomAll")
+mea <- calculMean(ld3["traj"],part)
+ld3["traj"]->traj;mea->clustersCenter;distance <- distEuclideGower
+
+affectIndiv2 <- function(traj,clustersCenter,distance=distEuclideGower,power=2){
+    nbId <- nrow(traj)
+    clusterAffectation <- rep(1,nbId)
+    distActuel <- apply(traj,1,function(x){distance(x,clustersCenter[1,])})
+print(distActuel)
+    for(iNbClusters in 2:nrow(clustersCenter)){
+        distToMean <- apply(traj,1,function(x){distance(x,clustersCenter[iNbClusters,])})
+        print(distToMean)
+        clusterAffectation <- ifelse(distToMean<distActuel,rep(iNbClusters,nbId),clusterAffectation)
+        distActuel <- ifelse(distToMean<distActuel,distToMean,distActuel)
+    }
+    return(partition(clusterAffectation,nrow(clustersCenter)))
+}
+affectIndiv(ld5["traj"],aze)
+
+
+
+
+
+
+clusterAffectation=partitionInitialise(3,180)
+nbId=nrow(traj)
+nbTime=ncol(traj)
+maxIt=200
+screenPlot=1
+distance=distEuclideGower
+centerMethod=meanNA
+
+
+
+
+.clusterizLongData.kmlSlow1 <- function(trajNoNA,nbId,nbTime,clustersCenter,nbClusters,maxIt=200,screenPlot=NA,distance=distEuclideGower){
+    exClusterAffectation <- rep(0,nbId)
+    for(iterations in 1:maxIt){
+        clusterAffectation <- rep(1,nbId)
+        distActuel <- rep(Inf,nbId)
+
+        for(iNbClusters in 1:nbClusters){
+            distToMean <- apply(trajNoNA,1,function(x){distance(x,clustersCenter[iNbClusters,])})
+            clusterAffectation <- ifelse(distToMean<distActuel,rep(iNbClusters,nbId),clusterAffectation)
+            distActuel <- ifelse(distToMean<distActuel,distToMean,distActuel)
+        }
+        if(identical(clusterAffectation,exClusterAffectation)){
+            return(list(clusterAffectation=clusterAffectation,convergenceTime=iterations))
+        }else{
+            exClusterAffectation <- clusterAffectation
+        }
+        clustersCenter <- as.matrix(aggregate(trajNoNA,by=list(clusterAffectation),FUN=meanNA)[,-1])
+        clustersCenter <- rbind(clustersCenter,rep(NA,nbTime*(nbClusters-nrow(clustersCenter))))
+        if(!is.na(screenPlot)){
+            ld <- longData(traj=trajNoNA,id=1:nrow(trajNoNA),time=1:ncol(trajNoNA),trajSizeMin=2)
+            part <- partition(id=1:nbId,clusters=LETTERS[clusterAffectation],nbClusters=nbClusters)
+            screen(screenPlot)
+            plot(ld,part,colorTraj="color",colorMean="both",main=paste("Iteration =",iterations))
+        }else{}
+    }
+    return(list=c(clusterAffectation=clusterAffectation,convergenceTime=Inf))
+}
+cleanProg(.clusterizLongData.kmlSlow1,,,3)  # meanNA which.minNA LETTERS
+
+
+.clusterizLongData.kml <- function(Object,nbClusters=2:6,nbRedrawing=20,saveFreq=100,maxIt=200,print.cal=FALSE,print.traj=FALSE,distance){
+    noNA<-selectSupTrajSizeMin(Object)
+    trajNoNA <- Object@traj[noNA,]
+    nbTime <- length(Object@time)
+    nbId <- nrow(trajNoNA)
+    saveCld <-0
+    scr <- plotAll(Object,print.cal=print.cal,print.traj=print.traj,print.sub=FALSE,colorTraj="black",colorMean="no")
+    if(!print.traj && missing(distance)){
+        cat(" ~ Fast KmL ~\n")
+        fast <- TRUE
+    }else{
+        cat(" ~ Slow KmL ~\n")
+        fast <- FALSE
+        if(print.traj){screenPlot <- scr[2]}else{screenPlot <- NA}
+    }
+
+    nameObject<-deparse(substitute(Object))
+    uniqueTraj <- unique(trajNoNA)
+    for(iRedraw in 1:nbRedrawing){
+        for(iNbClusters in nbClusters){
+            saveCld <- saveCld+1
+            clustersCenter <- uniqueTraj[sample(1:nrow(uniqueTraj),iNbClusters),]
+            if(fast){
+                resultKml <- .C("kml1",as.double(trajNoNA),as.integer(nbId),as.integer(nbTime),
+                                as.double(clustersCenter),as.integer(iNbClusters),convergenceTime=as.integer(maxIt),
+                                clusterAffectation=integer(nbId),NAOK=TRUE,PACKAGE="kml")[c(7,6)]
+            }else{
+                resultKml <- .clusterizLongData.kmlSlow1(trajNoNA=trajNoNA,nbId=nbId,nbTime=nbTime,
+                                clustersCenter=clustersCenter,nbClusters=iNbClusters,maxIt=maxIt,
+                                screenPlot=scr[2],distance=distance)
+            }
+            yPartition <- partition(id=Object@id[noNA],nbClusters=iNbClusters,clusters=LETTERS[resultKml[[1]]])
+            yPartition <- expandPartition(object=yPartition,listId=Object@id)
+            Object["clusters"] <- clusterization(xLongData=as(Object,"LongData"),yPartition=yPartition,convergenceTime=resultKml[[2]])
+
+            assign(nameObject,Object,envir=parent.frame())
+            cat("*")
+            if(saveCld>=saveFreq){
+                save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
+                saveCld <- 0
+                cat("\n")
+            }else{}
+            if(print.cal){
+                screen(scr[1])
+                plot(Object["calinski"])
+            }else{}
+        }
+    }
+    save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
+    return(invisible())
+}
+cleanProg(.clusterizLongData.kml,,,1) # LETTERS
+setMethod("kml","ClusterizLongData",.clusterizLongData.kml)
+rm(.clusterizLongData.kml)
+#kml(cld3,3,1)
+
+
+object <- cld3
+.Clusterization.export <- ExportClusterization <- function(object,y,typeGraph="bmp",
+    col="clusters",type="l",
+    col.mean="clusters",type.mean="b",main="",cex=1,
+    pch.mean="letters",pch.time=NA,...#,legends=TRUE,...
+#    xlab="percent",ylab="",ylim=NA,cex.mean=1,sizeMin=2,...
+){
+    part <- object["clusters"][[y]]
+    nameObject <- paste(deparse(substitute(object)),"-C",y[1],"-",y[2],sep="")
+    write.csv2(data.frame(id=object["id"],clusters=part["clusters"]),
+               file=paste(nameObject,"-Clusters.csv",sep=""),
+               row.names=FALSE)
+    detail <- c(part["algorithmUsed"],part["nbClusters"],part["convergenceTime"],part["percentEachCluster"],part["criterionName"],part["criterionValue"],
+       part["imputationMethod"],part["startingCondition"])
+    names(detail) <- c("algorithmUsed","nbClusters","convergenceTime",paste("percent",LETTERSletters[1:part["nbClusters"]]),"criterionName",
+       "criterionValue","imputationMethod","startingCondition")
+    write.csv2(detail,
+               file=paste(nameObject,"-Details.csv",sep=""),
+               row.names=TRUE)
+    plot(object,y,col=col,type=type,col.mean=col.mean,type.mean=type.mean,cex=cex,pch.mean=pch.mean,pch.time=pch.time,...)
+        #lty=lty,lty.mean=lty.mean,pch=pch,pch.mean=pch.mean,pch.time=pch.time,
+        #xlab=xlab,ylab=ylab,ylim=ylim,cex.mean=cex.mean,legends=legends,sizeMin=sizeMin,...)
+    savePlot(filename=paste(nameObject,"-Traj",sep=""),type=typeGraph)
+    plotSubGroups(object,y,col=col,type=type,col.mean=col.mean,type.mean=type.mean,cex=cex,pch.mean=pch.mean,pch.time=pch.time,...)
+#    plotSubGroups(object,y,...)#subGroups=subGroups,type=type,type.mean=type.mean,col=col,col.mean=col.mean,
+       # lty=lty,lty.mean=lty.mean,pch=pch,pch.mean=pch.mean,pch.time=pch.time,
+       # xlab=xlab,ylab=ylab,ylim=ylim,cex.mean=cex.mean,legends=legends,sizeMin=sizeMin,...)
+    savePlot(filename=paste(nameObject,"-SubGroup",sep=""),type=typeGraph)
+}
+cleanProg(.Clusterization.export,,,2) # LETTERS, .GlobalEnv
+setMethod("exportClusterization","ClusterizLongData",.Clusterization.export)
+rm(.Clusterization.export)
+exportClusterization(cld3,c(3,1))
+
+
+
+
+#cld3 -> Object
+cat("### Method: 'choice' pour clusterizLongData ###\n")
+.clusterizLongData.choice <- function(Object,typeGraph="bmp",...){
+    par("bg"="white")
+    print.cal <- TRUE
+    print.traj <- TRUE
+    print.sub <- FALSE
+
+    colTrajPossible <- c("clusters","black","black")
+    typeTrajPossible <- c("l","l","n")#,levels=c("l","l","n"))
+    styleTraj <- 1
+
+    colMeanPossible <- c("clusters","black","clusters","black","clusters","black","black")
+    typeMeanPossible <- c("b","b","b","b","l","l","n")
+    pchMeanPossible <- c("letters","letters","symbols","symbols","letters","letters","letters")
+    styleMeanTraj <- 1
+
+    pch.time <- Object["time"]
+    pchFreq <- length(pch.time)
+
+    size <- 1
+    nbTime <- length(Object["time"])
+    pointCal <- function(z){points(z[2],Object["criterionValue"][z[1],z[2]],lwd=3,cex=3)}
+    calMatrix <- Object["criterionValue"]
+    calSelected <- list()
+    y <- c(which.max(calMatrix[,1]),1)
+    plotAll(Object,y,print.cal=print.cal,print.traj=print.traj,print.sub=print.sub,...)
+    points(y[2],Object["criterionValue"][y[1],y[2]],pch=19,lwd=5)
+    while(TRUE){
+
+        texte <- paste("     ~ Choice : menu ~
+ - 'Arrow' : change partition
+ - 'Space' : select/unselect a partition
+ -    e    : switch trajectoire on/off (",print.traj,")
+ -    d    : switch sub groups on/off (",print.sub,")
+ -    c    : switch calinski on/off (",print.cal,")
+ -    r    : change the trajectories's style (type=",typeTrajPossible[styleTraj],"; col=",colTrajPossible[styleTraj],")
+ -    f    : change the mean's style (type=",typeMeanPossible[styleMeanTraj],"; col=",colMeanPossible[styleMeanTraj],"; pch=",pchMeanPossible[styleMeanTraj],")
+# -   t/g   : change the mean trajectories' color (",colorMean,";Sub=",colorMeanSub,")
+# -   y/h   : change the mean trajectories' symbols (Traj=",point,";Sub=",pointSub,")
+ -   t/g   : increase the symbol size (Traj=",size,")
+ -   y/h   : decrease the number of symbols (",pchFreq,")
+     ~ 'Return' when its done ~\n",sep="")
+
+        choix <- getGraphicsEvent(texte,onKeybd=function(key){return(key)})
+        switch(EXP=choix,
+               "Up"    = {
+                   if(y[1]>1){
+                       y[2]<-1
+                       y[1]<-y[1]-1
+                       if(is.na(calMatrix[y[1],1])){
+                           y[1] <- y[1]+1-which.min(is.na(calMatrix[,1][y[1]:1]))
+                           if(is.na(calMatrix[y[1],1])){
+                               y[1] <- y[1]-1+which.min(is.na(calMatrix[,1][y[1]:52]))
+                           }else{}
+                       }else{}
+                   }else{}
+               },
+               "Down"  = {
+                   if(y[1]<52){
+                       y[2]<-1
+                       y[1]<-y[1]+1
+                       if(is.na(calMatrix[y[1],1])){
+                           y[1] <- y[1]-1+which.min(is.na(calMatrix[,1][y[1]:52]))
+                           if(is.na(calMatrix[y[1],1])){
+                               y[1] <- y[1]+1-which.min(is.na(calMatrix[,1][y[1]:1]))
+                           }else{}
+                       }else{}
+                   }else{}
+               },
+               "Right" = {if(y[2]<ncol(calMatrix) && !is.na(calMatrix[y[1],y[2]+1])){y[2]<-y[2]+1}else{}},
+               "Left"  = {if(y[2]>1){y[2]<-y[2]-1}else{}},
+
+               "ctrl-J" = {break()},
+               " "      = {
+                   if(list(y) %in% calSelected){
+                       calSelected <- calSelected[!(calSelected %in% list(y))]
+                   }else{
+                       calSelected <- c(calSelected,list(y))
+                   }
+               },
+
+               "e" = {print.traj <- !print.traj},
+               "d" = {print.sub <- !print.sub},
+               "c" = {print.cal <- !print.cal},
+
+               "r" = {styleTraj <- styleTraj%%3+1},
+               "f" = {styleMeanTraj <- styleMeanTraj%%7+1},
+
+               "t" = {size <- size+0.1},
+               "g" = {size <- size-0.1},
+
+               "y" = {
+                   pchFreq <- ceiling(pchFreq*1.05)
+                   if(pchFreq>nbTime){pchFreq <- nbTime}else{}
+                   pch.time <- Object["time"][seq(1,nbTime,length.out=pchFreq)]
+               },
+               "h" = {
+                   pchFreq <- floor(pchFreq/1.05)
+                   if(pchFreq<2){pchFreq <- 2}else{}
+                   pch.time <- Object["time"][seq(1,nbTime,length.out=pchFreq)]
+               },
+
+               default={}
+               )
+                                        #        erase.screen()
+        printScreen <- plotAll(Object,y,print.cal=print.cal,print.traj=print.traj,print.sub=print.sub,
+                               all=TRUE,
+                               col=colTrajPossible[styleTraj],type=typeTrajPossible[styleTraj],
+                               col.mean=colMeanPossible[styleMeanTraj],type.mean=typeMeanPossible[styleMeanTraj],main="",cex=size,
+                               pch.mean=pchMeanPossible[styleMeanTraj],pch.time=pch.time,
+                               col.sub=colTrajPossible[styleTraj],type.sub=typeTrajPossible[styleTraj],
+                               col.mean.sub=colMeanPossible[styleMeanTraj],type.mean.sub=typeMeanPossible[styleMeanTraj],main.sub="",...)
+
+        if(print.cal){
+            points(y[2],Object["criterionValue"][y[1],y[2]],pch=19,lwd=5)
+            lapply(calSelected,pointCal)
+        }else{}
+    }
+
+    close.screen(all=TRUE)
+    pchTimeChar <- paste(pch.time,collapse=",")
+    for (iY in calSelected){
+        nameObject<-deparse(substitute(Object))
+        textToCall <- paste('exportClusterization(',nameObject,
+            ',c(',iY[1],',',iY[2],
+            '),col="',colTrajPossible[styleTraj],'",type="',typeTrajPossible[styleTraj],
+            '",col.mean="',colMeanPossible[styleMeanTraj],'",type.mean="',typeMeanPossible[styleMeanTraj],
+            '",main="",cex=',size,
+            ',pch.mean="',pchMeanPossible[styleMeanTraj],'",pch.time=c(',pchTimeChar,
+            '),...,typeGraph="',typeGraph,'")',sep="")
+        eval(parse(text=textToCall))
+    }
+    plotCriterion(Object,all=FALSE)
+    savePlot(filename=paste(nameObject,"-Criterion",sep=""),type=typeGraph)
+    plotCriterion(Object,all=TRUE)
+    savePlot(filename=paste(nameObject,"-CriterionAll",sep=""),type=typeGraph)
+    bringToTop(-1)
+    return(invisible())
+}
+cleanProg(.clusterizLongData.choice,,,0)
+setMethod("choice",signature=c("ClusterizLongData"),.clusterizLongData.choice)
+#rm(.clusterizLongData.choice)
+choice(cld3)
+
+#15H30
+#16H21
+#
+#16H37
+#19H00
+
+#trajNoNA <- cld3@traj
+#clusters <- p3a@clusters
+#nbTime <- 3
+#nbId <- 5
+#nbClusters <- 2
+
+
+
+#cat("\n###################################################################
+##################### Class ClusterizLongData #####################
+############################# Autres ##############################
+###################################################################\n")
+
+
+#setGenericVerif("importClusterization",function(xLongData,fileName)standardGeneric("importClusterization"))
+#fileName <- "essaiExport2";xLongData <- ld4
+#.Clusterization.import <- function(xLongData,fileName){
+#    fullFileNameR<-paste(fileName,"-CLUSTERS.csv",sep="")
+#    data <- read.table(file=fullFileNameR,header=TRUE,sep=";")
+#    nbClusters <- as.numeric(substr(names(data)[2],2,3))
+#    data[,2] <- factor(LETTERS[data[,2]],levels=LETTERS[1:nbClusters])
+#    return(clusterization(xLongData=xLongData,yPartition=partition(nbClusters=nbClusters,id=data[,1],clusters=data[,2])))
+#}
+#cleanProg(.Clusterization.import,,,1) #LETTERS
+#setMethod("importClusterization","LongData",.Clusterization.import)
+#rm(.Clusterization.import)
+
+
+
+                                        #exportClusterization(object,"->toto")
+
+### Distance qui prend en compte les manquantes :
+###   Il faut modifier l'algo : la moyenne les groupes doit 'comptabiliser' le nombre de manquante, puis le combiner avec la distance autre.
+###   function(x,y)
+#distEuclideGower <- function(x,y){
+#   z <- ifelse(is.na(x)&is.na(y),NA,x-y)
+#    return(sqrt(sum(z^2,na.rm=TRUE)*length(z)/sum(!is.na(z))))
+#}
+#distManathanGower <- function(x,y){
+#    z <- ifelse(is.na(x)&is.na(y),NA,x-y)
+#    return(sum(abs(z),na.rm=TRUE)*length(z)/sum(!is.na(z)))
+#}
+#
+# distBoolean <- function(x,y)return( (sum(is.na(x)!=is.na(y))) + dist(rbind(x,y))  )
+#
+
+#trajNoNA <- cld3@traj
+#nbId=243
+#nbTime=27
+#nbClusters=8
+#clustersCenter=cld3@traj[c(1,3,5,15,18,25,28,21),]
+#maxIt=200
+#screenPlot=NA
+#distance=distEuclideGower
+
+
+
+#Trois choses :
+#    - La beauté
+#    - l'export
+#    - la lisibilité
+
+#pour la beauté, il faut avoir Cal a gauche, traj + 2/3/4 ou 5 a droite c'est a dire en limitant les subGroups a ABCDE !!! Gagné !!!!!
+#
+#Idéalement, il faut pouvoir switcher on / off graphique.
+#Pour l'export et le choix, il faut proposer toutes les options : cal / traj ; cal /traj / sub...

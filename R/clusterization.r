@@ -8,36 +8,35 @@ cat("####################################################################
 ####################################################################\n")
 
 cat("### Definition ###\n")
+
 .Clusterization.validity <- function(object){
-#    cat("**** validity Clusterization ****\n")
     validObject(as(object,"Partition"))
     return(TRUE)
 }
-cleanProg(.Clusterization.validity)
+cleanProg(.Clusterization.validity,,,)
+
 # nbCluster : cluster number
 # clusterIndex :
 setClass(
    Class="Clusterization",
    representation=representation(
       percentEachCluster="numeric",
-#      varBetween="matrix",
-#      traceBetween="numeric",
-#      varWithin="matrix",
-#      traceWithin="numeric",
-#      detWithin="numeric",
-      calinski="numeric",
-      convergenceTime="numeric"
+      convergenceTime="numeric",
+      criterionName="character",
+      criterionValue="numeric",
+      imputationMethod="character",
+      startingCondition="character",
+      algorithmUsed="character"
    ),
    contain="Partition",
    prototype=prototype(
       percentEachCluster=numeric(),
-#      varBetween=matrix(),
-#      traceBetween=numeric(),
-#      varWithin=matrix(),
-#      traceWithin=numeric(),
-#      detWithin=numeric(),
-      calinski=numeric(),
-      convergenceTime=numeric()
+      convergenceTime=numeric(),
+      criterionName=character(),
+      criterionValue=numeric(),
+      imputationMethod=character(),
+      startingCondition=character(),
+      algorithmUsed=character()
    ),
    validity=.Clusterization.validity
 )
@@ -48,46 +47,23 @@ cat("####################################################################
 ############################ Constructeur ##########################
 ####################################################################\n")
 
-clusterization <- function(xLongData,yPartition,convergenceTime=0){
+clusterization <- function(xPartition,yLongData,convergenceTime=0,
+    criterionName="calinski",criterionValue=numeric(),
+    imputationMethod="linearInterpolation",startingCondition="",algorithmUsed=""
+){
 #    cat("*** initialize Clusterization ***\n")
-    if(missing(xLongData) && missing(yPartition)){
+    if(missing(yLongData) && missing(xPartition)){
         new("Clusterization")
     }else{
-        if(missing(xLongData) | missing(yPartition)){stop("[Clusterization:initialize] : Trajectories or Partition is missing !")}else{}
-        if(length(xLongData["id"])!=length(yPartition["id"])){
+        if(missing(yLongData) | missing(xPartition)){stop("[Clusterization:initialize] : Trajectories or Partition is missing !")}else{}
+        if(length(yLongData["id"])!=length(xPartition["clusters"])){
             stop("Clusterization(initialize) : the partition has not the same length that the number of trajectoire")}else{}
-        if(!identical(xLongData["id"],yPartition["id"])){
-            warning("Clusterization(initialize) : the Partition has not the same id that the LongData")}else{}
-
-        clusters <- yPartition["clusters"]
-        traj <- xLongData["traj"]
-        toKeep <- apply(traj,1,function(x)sum(!is.na(x))>=xLongData@trajSizeMin) & !is.na(clusters)
-        clusters <- clusters[toKeep]
-        traj <- traj[toKeep,,drop=FALSE]
-#        show(traj)
-#        print(dim(traj))
-#        show(clusters)
-#        print(length(clusters))
-        values <- imputeLongData(traj,"copyMean",clusters)
-        values <- matrix(as.numeric(values),nrow=nrow(values))       # Il arrive que values soit une matrice d'entier, et ca coincerait...
-        cls.attr <- cls.attrib(values,match(clusters,LETTERS[1:25]))
-        varBetween <- bcls.matrix(cls.attr$cluster.center,cls.attr$cluster.size,cls.attr$mean)
-        varWithin <- wcls.matrix(values,match(clusters,LETTERS[1:25]),cls.attr$cluster.center)
-        traceBetween <- sum(diag(varBetween))
-        traceWithin <- sum(diag(varWithin))
-        calinski <- traceBetween/traceWithin*(length(clusters)-yPartition@nbClusters)/(yPartition@nbClusters-1)
-        if(is.na(calinski)){calinski<-NaN}
-
-        new("Clusterization",
-            id = xLongData@id,
-#?#         clusters = factor(yPartition@clusters,levels=names(sort(table(yPartition@clusters),decreasing=TRUE)),labels=LETTERS[1:yPartition@nbClusters]),
-            clusters = yPartition@clusters,
-            #clusters = factor(clusters,levels=LETTERS[order(table(clusters),decreasing=TRUE)],labels=LETTERS[1:nbClusters])
-            nbClusters=yPartition@nbClusters,
-            percentEachCluster = as.numeric(table(yPartition@clusters)/length(yPartition@clusters)),
-            calinski = calinski,
-            convergenceTime = convergenceTime
-        )
+        clusters <- xPartition["clusters"]
+        traj <- yLongData["traj"]
+        tab <- as.numeric(table(clusters))
+        new("Clusterization",clusters=clusters,nbClusters=xPartition["nbClusters"],percentEachCluster=tab/sum(tab),convergenceTime=convergenceTime,
+             criterionName=criterionName,criterionValue=criterion(yLongData,xPartition,imputationMethod)[[criterionName]],
+             imputationMethod=imputationMethod,startingCondition=startingCondition,algorithmUsed=algorithmUsed)
     }
 }
 
@@ -102,13 +78,20 @@ cat("### Getteur ###\n")
 setMethod("[","Clusterization",
     function(x,i,j,drop){
         switch(EXPR=i,
-            "id"={return(x@id)},
             "clusters"={return(x@clusters)},
             "nbClusters"={return(x@nbClusters)},
             "percentEachCluster"={return(x@percentEachCluster)},
-            "calinski"={return(x@calinski)},
             "convergenceTime"={return(x@convergenceTime)},
-            stop("[Clusterization:getteur]: there is not such a slot in Clusterization")
+            "criterionName"={return(x@criterionName)},
+            "criterionValue"={return(x@criterionValue)},
+            "imputationMethod"={return(x@imputationMethod)},
+            "startingCondition"={return(x@startingCondition)},
+            "algorithmUsed"={return(x@algorithmUsed)},
+            if(any(x@criterionName %in% i)){
+                return(x@criterionValue[x@criterionName %in% i])
+            }else{
+                stop("[Clusterization:getteur]: there is not such a slot in Clusterization")
+            }
         )
     }
 )
@@ -125,22 +108,26 @@ cat("####################################################################
 cat("### Method : 'show' for yPartition ###\n") # Si on ajouter un titre a traj, on pourra afficher 'associate traj ='
 .Clusterization.show <- function(object){
     cat("   ~~~ Class :",class(object),"~~~ ")
-    cat("\n ~ nbClusters = ",object@nbClusters)
+    cat("\n ~ nbClusters         = ",object@nbClusters)
+    cat("\n ~ convergenceTime    = ",object@convergenceTime)
     cat("\n ~ percentEachCluster = ",formatC(object@percentEachCluster,digits=2))
-    cat("\n ~ calinski  = ",formatC(object@calinski,digits=2))
-    cat("\n ~ convergenceTime    = ",formatC(object@convergenceTime,digits=2))
-    cat("\n ~ clusters   :")
+    cat("\n ~ criterionName      = ",object@criterionName)
+    cat("\n ~ criterionValue     = ",formatC(object@criterionValue,digits=2))
+    cat("\n ~ imputationMethod   = ",object@imputationMethod)
+    cat("\n ~ startingCondition  = ",object@startingCondition)
+    cat("\n ~ algorithmUsed      = ",object@algorithmUsed)
+    cat("\n ~ clusters   : [",length(object@clusters),"]",sep="")
     if(length(object@nbClusters)!=0){
-        for (iCluster in LETTERS[1:object@nbClusters]){
+        for (iCluster in LETTERSletters[1:object@nbClusters]){
             toKeep <- iCluster==object@clusters
             cat("\n    ",iCluster," : [",sum(toKeep,na.rm=TRUE),"] ",sep="")
-            catShort(object@id[toKeep & !is.na(toKeep)])
+            catShort((1:length(object@clusters))[toKeep & !is.na(toKeep)])
         }
         cat("\n   <NA> : [",sum(is.na(object@clusters)),"] ",sep="")
-        catShort(object@id[is.na(object@clusters)])
+        catShort((1:length(object@clusters))[is.na(object@clusters)])
         cat("\n")
     }else{
-        cat("\n     <empty Clusterization>\n")
+        cat("\n     <empty Partition>\n")
     }
     return(invisible(object))
 }

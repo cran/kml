@@ -1,0 +1,17 @@
+kml(cld3,3,2,print.traj=TRUE)
+kml(cld3n,3,1,print.traj=TRUE,print.cal=TRUE)
+kml(cld3n,2:4,3,print.traj=TRUE,print.cal=TRUE,saveFreq=3)
+kml(cld3,5,2,print.traj=TRUE,print.cal=TRUE,distanceStartingCond="maximum")
+dis <- function(x,y)min(x,y)
+kml(cld3,3,1,print.traj=TRUE,print.cal=TRUE,distance=dis)
+kml(cld3,3,1,print.traj=TRUE,print.cal=TRUE,startingCond="randomAll")
+
+kml(cld3n)
+kml(cld3n,3,2,print.cal=TRUE)
+kml(cld4n,2:4,3,print.cal=TRUE,saveFreq=3)
+kml(cld4n,2:4,3,print.cal=TRUE,trajMinSize=10)
+kml(cld3,5,2,print.cal=TRUE,distanceStartingCond="maximum")
+dis <- function(x,y)min(x,y)
+kml(cld3,3,1,print.cal=TRUE,distance=dis)
+kml(cld3,2:3,1,print.traj=TRUE,print.cal=TRUE)
+
