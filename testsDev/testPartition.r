@@ -8,15 +8,15 @@ cat("####################################################################
 new("Partition") # Doit marcher meme apres recompilation
 new("Partition",clusters=as.factor(c("A","B","A")),id=as.character(c(101,108,2)),nbClusters=2)
 new("Partition",clusters=as.factor(c("A","B","A")),id=as.character(c(101,108,2)),nbClusters=4)
-new("Partition",clusters=as.factor(c("A","B","C")),id=as.character(c(101,108,3)),nbClusters=4)
+new("Partition",clusters=as.factor(c("A","M","C")),id=as.character(c(101,108,3)),nbClusters=20)
 new("Partition",clusters=as.factor(c("A","B",NA,"A")),id=as.character(c(101,108,4,3)),nbClusters=3)
 new("Partition",clusters=as.factor(c(NA,NA)),id=as.character(c(101,108)),nbClusters=3)
+new("Partition",clusters=as.factor(c("A","B","A")),id=as.character(c(101,108,2)),nbClusters=25)
 
 #try(new("Partition",clusters=as.factor(c("A","B")),id=as.character(c(101,108))))
 try(new("Partition",clusters=factor(c("A","C","A"),levels=LETTERS[1:3]),id=as.character(c(101,108,2)),nbClusters=3))
 try(new("Partition",clusters=factor(c("A","C","A"),levels=LETTERS[1:3]),id=as.character(c(101,108,2)),nbClusters=2))
-try(new("Partition",clusters=as.factor(c("A","B","A")),id=as.character(c(101,108,2)),nbClusters=25))
-try(new("Partition",clusters=as.factor(c("A","B","D")),id=as.character(c(101,3)),nbClusters=4))
+try(new("Partition",clusters=as.factor(c("A","n","D")),id=as.character(c(101,3)),nbClusters=4))
 try(new("Partition",clusters=as.factor(c("A","C",NA,"A")),id=as.character(c(NA,108,4,3)),nbClusters=3))
 try(new("Partition",clusters=as.factor(c("A","C",NA,"A")),id=as.character(c(3,108,4,3)),nbClusters=20))
 try(new("Partition",clusters=as.factor(c("A","C",NA,"M")),id=as.character(c(1,108,4,3)),nbClusters=3))
@@ -52,6 +52,10 @@ p3b <- partition(nbClusters=3,clusters=rep(LETTERS[1:3],81),id=1:243)
 p3b@clusters[1:6]<-"A"
 p3b@clusters[7:9]<-"B"
 p3c <- partition(nbClusters=5,clusters=rep(LETTERS[1:3],81),id=1:243)
+p3d <- partition(nbClusters=25,clusters=rep(LETTERS[1:3],81),id=1:243)
+p3d <- partition(nbClusters=25,clusters=rep(LETTERS[1:3],81),id=1:243)
+p3e <- partition(nbClusters=21,clusters=rep(LETTERS[c(1:20,1:4,1:2,1)],9),id=1:243)
+p3f <- partition(nbClusters=18,clusters=rep(LETTERS[c(1:18,1:9)],9),id=1:243)
 
 p4a <- partition(nbClusters=2,clusters=rep(LETTERS[1:2],c(80,100)),id=1:180)
 p4b <- partition(nbClusters=3,clusters=rep(LETTERS[1:3],c(50,30,100)),id=1:180)
@@ -61,15 +65,28 @@ p4e <- partition(nbClusters=3,clusters=rep(LETTERS[1:3],c(60,60,60)),id=1:180)
 
 p4an <- p4a
 for(i in 1:20){p4an@clusters[round(runif(1,1,180))] <- NA}
+p4an <- partition(id=p4an["id"],nbClusters=p4an["nbClusters"],clusters=p4an["clusters"])
+validObject(p4an)
+
 p4bn <- p4b
 for(i in 1:30){p4bn@clusters[round(runif(1,1,180))] <- NA}
+p4bn <- partition(id=p4bn["id"],nbClusters=p4bn["nbClusters"],clusters=p4bn["clusters"])
+validObject(p4bn)
+
 p4cn <- p4c
 for(i in 1:60){p4cn@clusters[round(runif(1,1,180))] <- NA}
+p4cn <- partition(id=p4cn["id"],nbClusters=p4cn["nbClusters"],clusters=p4cn["clusters"])
+validObject(p4cn)
+
 p4dn <- p4d
 for(i in 1:90){p4dn@clusters[round(runif(1,1,180))] <- NA}
+p4dn <- partition(id=p4dn["id"],nbClusters=p4dn["nbClusters"],clusters=p4dn["clusters"])
+validObject(p4dn)
+
 p4en <- p4e
 for(i in 1:160){p4en@clusters[round(runif(1,1,180))] <- NA}
-
+p4en <- partition(id=p4en["id"],nbClusters=p4en["nbClusters"],clusters=p4en["clusters"])
+validObject(p4en)
 
 p5a <- partition(nbClusters=2,clusters=LETTERS[c(1,2,1,2,1,2,1,2)],id=101:108)
 p5b <- partition(nbClusters=3,clusters=LETTERS[c(1,2,3,1,2,3,1,2)],id=101:108)
@@ -82,81 +99,77 @@ cat("\n####################################################################
 ############################# Accesseurs ###########################
 ####################################################################\n")
 
-getNbClusters(p0a)
-getNbClusters(p1a)
-getNbClusters(p1b)
-getNbClusters(p1c)
-getNbClusters(p2a)
-getNbClusters(p2b)
-getNbClusters(p2c)
-getNbClusters(p3a)
-getNbClusters(p3b)
-getNbClusters(p3c)
-getNbClusters(p4a)
-getNbClusters(p4b)
-getNbClusters(p4c)
-getNbClusters(p4d)
-getNbClusters(p4e)
-getNbClusters(p5a)
-getNbClusters(p5b)
-getNbClusters(p5c)
+p0a["nbClusters"]
+p1a["nbClusters"]
+p1b["nbClusters"]
+p1c["nbClusters"]
+p2a["nbClusters"]
+p2bn["nbClusters"]
+p2c["nbClusters"]
+p3a["nbClusters"]
+p3b["nbClusters"]
+p3c["nbClusters"]
+p4a["nbClusters"]
+p4bn["nbClusters"]
+p4c["nbClusters"]
+p4dn["nbClusters"]
+p4e["nbClusters"]
+p5a["nbClusters"]
+p5b["nbClusters"]
+p5cn["nbClusters"]
 
-getClusters(p0a)
-getClusters(p1a)
-getClusters(p1b)
-getClusters(p1c)
-getClusters(p2a)
-getClusters(p2b)
-getClusters(p2c)
-getClusters(p3a)
-getClusters(p3b)
-getClusters(p3c)
-getClusters(p4a)
-getClusters(p4b)
-getClusters(p4c)
-getClusters(p4d)
-getClusters(p4e)
-getClusters(p5a)
-getClusters(p5b)
-getClusters(p5c)
+p0a["clusters"]
+p1a["clusters"]
+p1b["clusters"]
+p1c["clusters"]
+p2an["clusters"]
+p2bn["clusters"]
+p2c["clusters"]
+p3a["clusters"]
+p3b["clusters"]
+p3c["clusters"]
+p4an["clusters"]
+p4b["clusters"]
+p4cn["clusters"]
+p4dn["clusters"]
+p4e["clusters"]
+p5a["clusters"]
+p5b["clusters"]
+p5cn["clusters"]
 
-getId(p0a)
-getId(p1a)
-getId(p1b)
-getId(p1c)
-getId(p2a)
-getId(p2b)
-getId(p2c)
-getId(p3a)
-getId(p3b)
-getId(p3c)
-getId(p4a)
-getId(p4b)
-getId(p4c)
-getId(p4d)
-getId(p4e)
-getId(p5a)
-getId(p5b)
-getId(p5c)
+p0a["id"]
+p1a["id"]
+p1b["id"]
+p1c["id"]
+p2an["id"]
+p2bn["id"]
+p2c["id"]
+p3a["id"]
+p3b["id"]
+p3c["id"]
+p4an["id"]
+p4b["id"]
+p4cn["id"]
+p4dn["id"]
+p4e["id"]
+p5a["id"]
+p5b["id"]
+p5c["id"]
 
+p1a["nbClusters"]<-4
+try(p1a["nbClusters"]<-0)
+p1b["nbClusters"]<-2
+try(p0a["nbClusters"]<-4)
+p1a["id"]<-4:6
+try(p1a["id"]<-4:7)
+try(p1a["id"]<-c(4,5,NA))
+try(p1a["nbClusters"]<-1)
 
-setNbClusters(p1a)<-4
-try(setNbClusters(p1a)<-0)
-setNbClusters(p1b)<-2
-try(setNbClusters(p0a)<-4)
-try(setNbClusters(p0a)<-0)
-setNbClusters(p1a)<-4
-setId(p1a)<-4:6
-try(setId(p1a)<-4:7)
-try(setId(p1a)<-c(4,5,NA))
-try(setNbClusters(p1a)<-1)
-
-setClusters(p1a)<-c("A","B","A")
-setNbClusters(p1a)<-2
-try(setClusters(p1a)<-c("A","B","C"))
-setNbClusters(p1a)<-3
-setClusters(p1a)<-c("A","B","C")
-try(setClusters(p0a)<-c("A","B","C"))
+p1a["clusters"]<-c("A","B","A")
+p1a["nbClusters"]<-2
+try(p1a["clusters"]<-c("A","B","C"))
+p1a["nbClusters"]<-3
+p1a["clusters"]<-c("A","B","C")
 p1a <- partition(clusters=c("A","A","B"),id=c("A2","A3","B1"))
 
 
@@ -168,20 +181,7 @@ cat("\n####################################################################
 
 p0a
 p1a
-p4d
-
-
-print(p0a)
-print(p1a)
-print(p1b)
-print(p1c)
-print(p2a)
-print(p2b)
-print(p2c)
-print(p3a)
-print(p3b)
-print(p3c)
-print(p4a)
+p4dn
 
 
 cat("\n####################################################################
@@ -190,3 +190,8 @@ cat("\n####################################################################
 ####################################################################\n")
 
 expandPartition(p1b,listId=1:6)
+
+
+cat("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++ Fin Test Partition ++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")

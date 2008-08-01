@@ -5,106 +5,92 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ ~ function: choice ~}
 \description{
-\code{choice} lets the user choose the \code{Clusterization} he wants
-to export.
+  \code{choice} lets the user choose some \code{Clusterization} he wants to export.
 }
 \usage{
-choice(x)
+choice(Object, typeGraph = "bmp")
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
-\item{x}{[ClusterizLongData]: Contains all the clusterization found by \code{KmL}.}
+  \item{Object}{\code{[ClusterizLongData]}: Object containnig the trajectories and all the clusterizations found by \code{kml}
+    from whom the user want to export some \code{\linkS4class{Clusterization}}.}
+  \item{typeGraph}{\code{[character]} for every selected \code{clusterization}, \code{choice} export some graphes. \code{type} set
+    the format that will be used. Possible formats are the one available
+  for \code{\link{savePlot}}}
 }
 
 
 \details{
-\code{choice} run in three steps:
-\enumerate{
-\item Choice of the \code{Clusterization}
-\item Exporting the \code{Clusterization}
-\item Selection of a graphic representation.
-}
-}
+  \code{choice} is a function that let the user see the \code{\link{Clusterization}} found by \code{\link{kml}}.
+  At first, \code{choice} open a graphics window. On the left side are the calinski criterion of all the \code{Clusterization} contain in Object.
+  One \code{Clusterization} is 'active', it is the one marked by a black dot.
+  On the right side, the trajectories of Object are drawn, according to the active \code{Clusterization}.
 
+  From there, \code{choice} offert numerous option :
+  \describe{
+    \item{Arrow}{Change the active \code{Clusterization}.}
+    \item{Space}{Select/unselect a \code{Clusterization} (the selected
+  \code{Clusterization} are surrounded by a circle).}
+    \item{Return}{Export all the selected \code{Clusterization}, then
+      quit the function \code{choice}.}
+    \item{'c'}{Switch the graphical representation of the Calinski
+      criterions on/off.}
+    \item{'e'}{Switch the graphical representation of the trajectories
+      on/off (see \code{\link{plot,ClusterizLongData}} for details). }
+    \item{'d'}{Switch the graphical representation of the trajectories' subgroups
+      on/off (see \code{\link{plotSubGroups,ClusterizLongData}} for details). }
+    \item{'r'}{Change the trajectories color.}
+    \item{'f'}{Change the trajectories' subgroups color.}
+    \item{'t'}{Change the mean trajectories color.}
+    \item{'g'}{Change the mean trajectories' subgroups color.}
+    \item{'y'}{Change the mean trajectories symbols.}
+    \item{'h'}{Change the mean trajectories' subgroups symbols.}
+    \item{'u'}{Increase the size off the mean trajectories symbols.}
+    \item{'j'}{Increase the size off the mean trajectories subgroups symbols.}
+    \item{'i'}{Decrease the size off the mean trajectories symbols.}
+    \item{'k'}{Decrease the size off the mean trajectories subgroups symbols.}
+  }
+  Note that the letter on the upper line (e,r,t,y,u,i) does concern the
+  main graph, the letter on the lower line (d,f,g,h,j,k) does concern
+  the subgroups.  ; the letter on the first column (e,d,c) switch the
+  graphical representation on/off, the second and third columns
+  (r,f,t,g) change
+  the color and the other column (y,h,u,j,i,k) deal with the symbols.
 
-\section{1. Choice of the \code{Clusterization}}{
-\code{choice} opens two graphic windows. In the left one, the Calinski
-criteria of all \code{Clusterization} found by \code{kml} are represented.
-They are filed according to the number of clusters, from the biggest to
-the smallest. This windows let the user to select a
-\code{Clusterization}.
-The selected \code{Clusterization} is pointed with a dark spot.
-
-
-In the right window, the \code{Clusterization} selected by the user is represented.
-
-When \code{choice} is called, the \code{Clusterization} having the larger Calinski criterion is selected.
-It is possible to visualize the other \code{Clusterization} by using the
-arrows on the keyboard.
-
-When the choice of a \code{Clusterization} has been made and needs to be
-exported, the use can go on to the next step by pressing "Return".
-}
-
-
-\section{2. Exporting the \code{Clusterization}}{
-When a \code{Clusterization} is being chosen, there are three possibilities :
-\enumerate{
-\item "Return" enables the visualization
-\code{Clusterization} on screen (but nothing else).
-\item Entering the name of a file \code{nomDeFichier} enables the user to export the \code{Clusterization}.
-Clusters are exported in the file
-\code{nomDeFichier-cluster.csv}. Criteria are exported in \code{nomDeFichier-criteres.csv}. Distances and posterior probabilities are in \code{nomDeFichier-distance.csv} (not implemented yet).
-\item Entering a name preceded by the symbol \code{->} (like
-\code{->variablesNames}) enables the user to save the
-\code{Clusterization}. Clusters are stored in the variable
-\code{nomVariable_cluster.csv} as a \code{data.frame}. Criteria are
-saved in \code{nomDeVariable_criters.csv} as lists. Distances and
-posterior probabilities are saved \code{nomDeVariable_distance.csv}
-(not implemented yet).
-}
-}
-
-\section{3. Selection of a graphic representation}{
-Finally, it is possible to export a graphic representation of the
-\code{Clusterization}. With the keyboard, the user can modify the aspect of the graph.
-\itemize{
-\item Keys \code{e}, \code{r} and \code{t} deal with individual trajectories.
-\item Keys \code{d}, \code{f} and \code{g} deal with the average trajectories of clusters.
-\item Keys \code{c}, \code{v} and \code{b} deal with subgroups.
-\item Keys \code{h}, \code{j}, \code{k}, \code{l} and \code{o} deal with symbols on the graph.
-}
-
-More precisely:
-
-\itemize{
-\item{e}{Suppresses the display of individual trajectories.}
-\item{r}{Displays individual trajectories in black and white.}
-\item{t}{Displays individual trajectories in color.}
-\item{d}{Suppresses the display of average trajectories of clusters.}
-\item{f}{Displays the average trajectories of clusters in black and white.}
-\item{g}{Displays the average trajectories of clusters in color.}
-\item{c}{Suppresses the display of subgroups.}
-\item{v}{Displays the subgroups in black and white.}
-\item{b}{Displays subgroups in color.}
-\item{h}{Suppresses the display of points of average trajectories}
-\item{j}{Displays the points of average trajectories as letters}
-\item{k}{Displays the points of average trajectories as symbols}
-\item{o}{Enlarges fonts}
-\item{l}{Makes fonts smaller}
+  When 'return' is pressed, the selected \code{Clusterization} are
+  export. Export is done in in specific folder named
+  \code{objectName-CnumberOfCluster-OrderInTheSublist}. Four files are created
+  :
+  \describe{
+    \item{name-Clusters.csv}{Table with two column. The first is the
+      identifier off each trajectory ; the second hold the cluster
+      affectation of the trajectory.}
+    \item{name-Detail.csv}{Table containig information about the
+      clusterization (the calinski criterion and the percent of individual
+      in each clusters)}
+    \item{name-Traj.ext}{Graph (of type 'ext') representing the
+      trajectories. All the parameters set during the visualization (color
+      of the trajectories, symbols used, mean color) are used
+      for the export.}
+    \item{name-SubGroups.ext}{Graph (of type 'ext') representing the
+      trajectories subgroups. All the parameters set during the visualization (color
+      of the trajectories, symbols used, mean color) are used
+      for the export.}
+  }
 }
 
-When the final graph is choisen by pressing "Return". It can then be exported as usual with a right click on the figure.
-}
+\value{For each selected \code{Clusterization}, a folder containing four files.}
 
-\value{Non applicable}
+\references{Article submited\cr
+  Web site: \code{\link[http://christophe.genolini.free.fr/kml]{http://christophe.genolini.free.fr/kml}}
+}
 
 \section{Author(s)}{
   Christophe Genolini\cr
   PSIGIAM: Paris Sud Innovation Group in Adolescent Mental Health\cr
   INSERM U669 / Maison de Solenn / Paris\cr\cr
 
-  Responsable : <genolini@u-paris10.fr>
+  Contact author: <genolini@u-paris10.fr>
 }
 
 \section{English translation}{
@@ -113,12 +99,27 @@ When the final graph is choisen by pressing "Return". It can then be exported as
   University of Paris 10 / Nanterre
 }
 
-\seealso{\link{kml-package}}
+\seealso{
+  Overview: \code{\link{kml-package}} \cr
+  Classes : \code{\linkS4class{ClusterizLongData}}, \code{\linkS4class{Clusterization}}, \code{\linkS4class{ArtificialLongData}} \cr
+  Methods : \code{\link{kml}}\cr
+  Plot : \code{\link[kml:plot]{plot: overview}}, \code{\link[=plotTraj]{plot(ClusterizLongData)}},
+  \code{\link[=plotCalinski]{plot(Calinski)}},
+  \code{\link[=plotSubGroups]{plotSubGroups(ClusterizLongData)}}, \code{\link[=plotAll]{plotAll(ClusterizLongData)}}
+}
+
 
 \examples{
+### Creation of articficial data
 cld1 <- as.cld(gald())
-kml(cld1,2:3,3)
-#choice(cld1)
+
+### Clusterisation
+kml(cld1,nbRedrawing=3,printCal=TRUE,printTraj=TRUE)
+
+### Selection of the clusterization we want
+#     (note that "try" is for compatibility with CRAN only,
+#     you probably can use "choice(cld1)")
+try(choice(cld1))
 }
 
 \keyword{iplot}    % Interacting with Plots

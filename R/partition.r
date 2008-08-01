@@ -16,16 +16,16 @@ cat("####################################################################
 cat("### Definition ###\n")
 
 .Partition.validity <- function(object){
-    cat("**** validity Partition ****\n")
+#    cat("**** validity Partition ****\n")
     if(!(length(object@nbClusters)==0&length(object@clusters)==0&length(object@id)==0)){#not empty object
         if(any(c(length(object@nbClusters)==0,length(object@clusters)==0,length(object@id)==0))){
             stop("[Partition:validity]: at least one slot is empty")}else{}
-        if(object@nbClusters > 10){
-            stop("[Partition:validity]: More than 10 clusters")}else{}
+        if(object@nbClusters > 25){
+            stop("[Partition:validity]: More than 25 clusters")}else{}
         if(length(object@id)!=length(object@clusters)){
             stop("[Partition:validity]: Some individual have no cluster")}else{}
         if(!all(na.omit(object@clusters)%in%LETTERS[1:object@nbClusters])){
-            stop("[Partition:validity]: Bad clusters name (should be in {A,B,C,D,E,F,G,H,I,J})")}else{}
+            stop("[Partition:validity]: Clusters name out of range")}else{}
         if(!identical(sort(tabulate(na.omit(object@clusters)),decreasing=TRUE),tabulate(na.omit(object@clusters)))){
             stop("[Partition:validity]: Clusters are not in decreasing order")}else{}
         if(any(is.na(object@id))){
@@ -36,8 +36,10 @@ cat("### Definition ###\n")
  #           stop("[Partition:validity]: More cluster than indicated in nbClusters")}else{}
     }else{}
     return(TRUE)
-
 }
+
+
+
 cleanProg(.Partition.validity,,,1)  # LETTERS
 setClass(
    Class="Partition",
@@ -95,13 +97,11 @@ cat("\n####################################################################
 #rm(.Partition.initialize)
 
 
-setGenericVerif("partition",function(nbClusters,id,clusters){standardGeneric("partition")})
-setMethod("partition",signature=c("missing","missing","missing"),
-    function(nbClusters,id,clusters){new("Partition")})
+setMethod("partition",signature=c("missing","missing","missing"),function(id,nbClusters,clusters){new("Partition")})
 setMethod("partition",signature=c("ANY","ANY","ANY"),
-    function(nbClusters,id,clusters){
+    function(id,nbClusters,clusters){
         if(missing(nbClusters)){
-            nbClusters <- max(1,match(clusters,LETTERS[1:10]),na.rm=TRUE)
+            nbClusters <- max(1,match(clusters,LETTERS),na.rm=TRUE)
         }else{}
         clusters=factor(clusters,levels=LETTERS[1:nbClusters])
         new("Partition",
@@ -118,51 +118,35 @@ cat("\n####################################################################
 ############################# Accesseurs ###########################
 ####################################################################\n")
 
-cat("### Getteur : 'nbCluster' ###\n")
-setGenericVerif("getNbClusters",function(object){standardGeneric("getNbClusters")})
-setMethod("getNbClusters","Partition",function(object){return(object@nbClusters)})
 
-cat("### Getteur : 'clusters' ###\n")
-setGenericVerif("getClusters",function(object){standardGeneric("getClusters")})
-setMethod("getClusters","Partition",function(object){return(object@clusters)})
+cat("### Getteur ###\n")
+setMethod("[","Partition",
+    function(x,i,j,drop){
+        switch(EXPR=i,
+            "id"={return(x@id)},
+            "nbClusters"={return(x@nbClusters)},
+            "clusters"={return(x@clusters)},
+            stop("[Partition:getteur]: there is not such a slot in Partition")
+        )
+    }
+)
 
-cat("### Getteur : 'id' ###\n")
-setGenericVerif("getId",function(object){standardGeneric("getId")})
-setMethod("getId","Partition",function(object){return(object@id)})
-
-cat("### Setteur : 'nbClusters' ###\n")
-.Partition.setNbClusters <- function(object,value){
-    object@nbClusters <- value
-    validObject(object)
-    return(object)
-}
-cleanProg(.Partition.setNbClusters,,,0)
-setGenericVerif("setNbClusters<-",function(object,value){standardGeneric("setNbClusters<-")})
-setReplaceMethod("setNbClusters","Partition",.Partition.setNbClusters)
-rm(.Partition.setNbClusters)
-
-
-cat("### Setteur : 'clusters' ###\n")
-.Partition.setClusters <- function(object,value){
-    object@clusters <- factor(value,levels=LETTERS[0:object@nbClusters])
-    validObject(object)
-    return(object)
-}
-cleanProg(.Partition.setClusters,,,1) # LETTERS
-setGenericVerif("setClusters<-",function(object,value){standardGeneric("setClusters<-")})
-setReplaceMethod("setClusters","Partition",.Partition.setClusters)
-rm(.Partition.setClusters)
-
-cat("### Setteur : 'id' ###\n")
-.Partition.setId <- function(object,value){
-    object@id <- as.character(value)
-    validObject(object)
-    return(object)
-}
-cleanProg(.Partition.setId,,,0)
-setGenericVerif("setId<-",function(object,value){standardGeneric("setId<-")})
-setReplaceMethod("setId","Partition",.Partition.setId)
-rm(.Partition.setId)
+cat("### Setteur ###\n")
+setReplaceMethod("[","Partition",
+    function(x,i,j,value){
+        switch(EXPR=i,
+            "id"={x@id<-as.character(value)},
+            "clusters"={
+                clusters <- factor(value,levels=LETTERS[1:x@nbClusters])
+                x@clusters <- factor(clusters,levels=LETTERS[order(table(clusters),decreasing=TRUE)],labels=LETTERS[1:x@nbClusters])
+            },
+            "nbClusters"={x@nbClusters<-value},
+            stop("[LongData:getteur]: this is not a LongData slot")
+        )
+        validObject(x)
+        return(x)
+    }
+)
 
 
 
@@ -173,46 +157,26 @@ cat("\n####################################################################
 
 cat("### Method : 'show' for partition ###\n") # Si on ajouter un titre a traj, on pourra afficher 'associate traj ='
 .Partition.show <- function(object){
-    cat("******* show(Partition) *******\n",sep="")
-    if(length(object@nbClusters)==0){
-        cat("* empty partition")
-    }else{
-        cat("* nbClusters = ",object@nbClusters,"\n")
-        cat("* clusters   :")
+    cat("   ~~~ Class :",class(object),"~~~ ")
+    cat("\n ~ nbClusters = ",object@nbClusters)
+    cat("\n ~ clusters   :")
+    if(length(object@nbClusters)!=0){
         for (iCluster in LETTERS[1:object@nbClusters]){
-            cat("\n*   ",iCluster," : ")
             toKeep <- iCluster==object@clusters
-            .catShort(object@id[toKeep & !is.na(toKeep)])
+            cat("\n    ",iCluster," : [",sum(toKeep,na.rm=TRUE),"] ",sep="")
+            catShort(object@id[toKeep & !is.na(toKeep)])
         }
-        cat("\n*  <NA> : ")
-        .catShort(object@id[is.na(object@clusters)])
+        cat("\n   <NA> : [",sum(is.na(object@clusters)),"] ",sep="")
+        catShort(object@id[is.na(object@clusters)])
+        cat("\n")
+    }else{
+        cat("\n     <empty Partition>\n")
     }
-    cat("\n*** End of  show(Partition) ***\n",sep="")
     return(invisible(object))
 }
 cleanProg(.Partition.show,,,1) #LETTERS
 setMethod(f="show",signature="Partition",definition=.Partition.show)
 rm(.Partition.show)
-
-
-cat("### Method : 'print' for partition ###\n") # Si on ajouter un titre a traj, on pourra afficher 'associate traj ='
-.Partition.print <- function(x,...){
-    cat("******* print(Partition) *******\n",sep="")
-    if(length(x@nbClusters)==0){
-        cat("* empty partition")
-    }else{
-        cat("* nbClusters = ",x@nbClusters,"\n")
-        cat("* id         :\n")
-        print(x@id)
-        cat("* clusters   :\n")
-        print(x@clusters)
-    }
-    cat("\n*** End of  print(Partition) ***\n",sep="")
-    return(invisible(x))
-}
-cleanProg(.Partition.print,,,1) #LETTERS
-setMethod(f="print",signature="Partition",definition=.Partition.print)
-rm(.Partition.print)
 
 
 
@@ -221,14 +185,14 @@ cat("\n####################################################################
 ############################### Autre ##############################
 ####################################################################\n")
 
+# Fonction qui augmente ajoute des individus a une partition existante.
+# Elle ne les met pas dans un cluster mais leur donne pour valeur NA.
 cat("### expend : 'clusters' ###\n")
 .Partition.expandPartition <- function(object,listId){
     clusters <- object@clusters[match(listId,object@id)]
     return(partition(clusters=clusters,id=listId,nbClusters=object@nbClusters))
 }
-cleanProg(.Partition.expandPartition,,,0) # LETTERS
-setGenericVerif("expandPartition",function(object,listId){standardGeneric("expandPartition")})
-#lockBinding("setClusters<-",.GlobalEnv)
+cleanProg(.Partition.expandPartition,,,0)
 setMethod("expandPartition","Partition",.Partition.expandPartition)
 rm(.Partition.expandPartition)
 
