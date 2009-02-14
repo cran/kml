@@ -1,0 +1,13 @@
+rm(.Clusterization.show)
+rm(.ClusterizLongData.validity)
+rm(.clusterizLongData.show)
+rm(.clusterizLongData.plotAllCriterion)
+rm(.clusterizLongData.plotCriterion)
+rm(.clusterizLongData.plot)
+rm(.ClusterizLongData.plotSubGroups)
+rm(.ClusterizLongData.plotAll)
+
+rm(.partitionInitialise)
+rm(.clusterizLongData.kml)
+rm(.Clusterization.export)
+rm(.clusterizLongData.choice)

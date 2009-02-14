@@ -17,7 +17,7 @@ choice(Object, typeGraph = "bmp",...)
   \item{typeGraph}{\code{[character]} for every selected \code{clusterization}, \code{choice} export some graphs. \code{type} set
     the format that will be used. Possible formats are the one available
     for \code{\link{savePlot}}}
-  \item{\dots}{  }
+  \item{\dots}{For graphical parameters.}
 }
 
 
