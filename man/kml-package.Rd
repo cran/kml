@@ -2,21 +2,21 @@
 \alias{kml-package}
 \docType{package}
 \title{~ Overview: K-means for Longitudinal data ~}
-}
+
 \description{
-  KmL is a non parametric algorithm for clustering longitudinal
-  data. Here is an overview of the package. For the description of the
+  \code{KmL} is a new implematation of k-means for longitudinal data (or trajectories).
+  Here is an overview of the package. For the description of the
   algorithm, see \code{\link{kml}}.
 }
 \details{
   \tabular{ll}{
     Package: \tab kml\cr
     Type: \tab Package\cr
-    Version: \tab 0.9.0\cr
-    Date: \tab 2008-05-01\cr
+    Version: \tab 0.9.1\cr
+    Date: \tab 2009-01-01\cr
     License: \tab GPL (>= 2)\cr
     Lazyload: \tab yes\cr
-    Depends: \tab methods,codetools,clv\cr
+    Depends: \tab methods,clv\cr
     URL:\tab http://www.r-project.org\cr
     URL:\tab http://christophe.genolini.free.fr/kml\cr
   }
@@ -39,24 +39,31 @@
 \section{1. Data preparation}{
   \code{KmL} works on object of class \code{\linkS4class{ClusterizLongData}} (abreviated \code{cld}).
   Data preparation therfore simply consists in tranforming data into an object \code{ClusterizLongData}.
-  This is done via function
-  \code{\link[=as.clusterizLongData]{as.cld}}. This function deals with
-  \code{matrix} (see \code{\link{as.clusterizLongData.data.frame}}) and
-  \code{data.frame} (see \code{\link{as.clusterizLongData.matrix}}).
+  This can be done via function
+  \code{\link[=clusterizLongData]{clusterizLongData}}
+  (\code{\link[=clusterizLongData]{cld}} in short) or
+  \code{\link[=as.clusterizLongData]{as.clusterizLongData}}
+  (\code{\link[=as.clusterizLongData]{as.cld}} in short).
+  The formers let the user build some data from scratch, the latters
+  convert a \code{data.frame} in \code{\linkS4class{ClusterizLongData}}.
 
   Instead of working on real data, one can also work on artificial
-  data. Such data will be of the \code{\link{ArtificialLongData}} type. It is
-  then possible to turn them into \code{ClusterizLongData} using
-  function \code{as.cld} for \code{ArtificialLongData} (see \code{\link{as.cld.artificialLongData}}).
+  data. Such data can be created with
+  \code{\link[=generateArtificialLongData]{generateArtificialLongData}}
+  (\code{\link[=generateArtificialLongData]{gald}} in short). The resulting data
+  will be of class \code{\linkS4class{ArtificialLongData}}
+  which is a subclass of \code{\linkS4class{ClusterizLongData}}.
 }
 
 \section{2. Building "optimal" clusterization}{
-  Once the object \code{ClusterizLongData} has been created, the algorithm
-  \code{\link[=kml]{KmL}} can be executed.
+  Once an object of class \code{\linkS4class{ClusterizLongData}} has been created, the algorithm
+  \code{\link[=kml]{kml}} can be run.
 
   Starting with a \code{ClusterizLongData}, \code{kml} built a \code{\linkS4class{Clusterization}}.
   A object of class \code{Clusterization} is a partition of trajectories
-  into subgroups. The object also contains a information as the percentage of trajectories contained in each group or the Calinski criterion.\cr
+  into subgroups that also contains some information like the
+  percentage of trajectories contained in each group or the Calinski &
+  Harabasz criterion.\cr
 
   \code{kml} is a "hill-climbing" algorhithm. The specificity of this
   kind of algorithm is that it always converges towards a maximum, but
@@ -68,38 +75,38 @@
   and chooses the \code{Clusterization} maximising the determinant of the matrix between.
 
   Likewise, it is not possible to know \emph{beforehand} the optimum number of clusters.
-  On the other hand, \emph{afterwards}, it is possible to calculate clues that will enable us to choose. \code{kml} uses the \code{Calinski criterion}.
+  On the other hand, \emph{afterwards}, it is possible to calculate
+  clues that will enable us to choose. \code{kml} uses the Calinski &
+  Harabasz criterion.
 
   In the end, \code{kml} tests by default 2, 3, 4, 5 et 6 clusters, 20 times each.
 }
 
 \section{3. Exporting results}{
-  When \code{kml} has constructed a certain number of
+  When \code{\link[=kml]{kml}} has constructed some
   \code{Clusterization}, the user can examine them one by one and choose
-  the one that suits
-  them best. This can be done via function \code{\link{choice}}. \code{choice} opens two graphic windows.
-  The one on the left shows all of Calinski criterion calculated for each \code{Clusterization} ;
-  the one on the right shows the slected \code{Clusterization}. The arrows on keyboard enable to move from one \code{Clusterization} to another.
+  to export some. This can be done via function
+  \code{\link{choice}}. \code{choice} opens a graphic windows showing
+  various information including the trajectories cluterized by a specific
+  \code{Clusterization}.
 
-  When a \code{Clusterization} has been chosen, it is possible to put it
-  on the screen, to save it in memory or to export it towards a file. The clusters are therefore exported towards the file
-  \code{nom-cluster.csv}. Criteria are exported towards \code{nom-criteres.csv}. The distances and posterior probability are in
-  \code{nom-distance.csv} (in preparation, non implemented for the time being).
-
-  Last but not least, it is possible to exporte a graphic representation
-  of clusters. With the keyboard, it is possible to the aspect of the graphic (black and white or color, presence or absence of trajectories, sub groups, size of fonts...). The final graphic
-can be exported in the usual manner : right click on the figure...
+  When some \code{Clusterization} has been selected (the user can select
+  more than 1), it is possible to
+  save them. The clusters are therefore exported towards the file
+  \code{nom-cluster.csv}. Criteria are exported towards
+  \code{nom-criteres.csv}. The graphs are exported according to their
+  extention.
 }
 
 \references{Article submited\cr
-web site: \code{http://christophe.genolini.free.fr/kml}
+  Web site: \code{\link[http://christophe.genolini.free.fr/kml]{http://christophe.genolini.free.fr/kml}}
 }
 \section{Author(s)}{
   Christophe Genolini\cr
   PSIGIAM: Paris Sud Innovation Group in Adolescent Mental Health\cr
   INSERM U669 / Maison de Solenn / Paris\cr\cr
 
-  Responsable : <genolini@u-paris10.fr>
+  Contact author : <genolini@u-paris10.fr>
 }
 
 \section{English translation}{
@@ -108,7 +115,14 @@ web site: \code{http://christophe.genolini.free.fr/kml}
   University of Paris 10 / Nanterre
 }
 
-
+\seealso{
+  Overview: \code{\link{kml-package}} \cr
+  Classes : \code{\linkS4class{ClusterizLongData}}, \code{\linkS4class{Clusterization}}, \code{\linkS4class{ArtificialLongData}} \cr
+  Methods : \code{\link{clusterizLongData}}, \code{\link{kml}}, \code{\link{generateArtificialLongData}}, \code{\link{choice}}, \code{\link{as.clusterizLongData}}\cr
+  Plot : \code{\link[kml:plot]{plot: overview}}, \code{\link[=plotTraj]{plot(ClusterizLongData)}},
+  \code{\link[=plotCalinski]{plot(Calinski)}},
+  \code{\link[=plotSubGroups]{plotSubGroups(ClusterizLongData)}}, \code{\link[=plotAll]{plotAll(ClusterizLongData)}}
+}
 
 \keyword{package}  % Package Summaries
 \keyword{dplot}    % Computations Related to Plotting
@@ -128,9 +142,10 @@ web site: \code{http://christophe.genolini.free.fr/kml}
 ### 1. Data Preparation
 myCld <- as.clusterizLongData(generateArtificialLongData())
 
-### 2. Building "optimal" clusterization (with only 5 redrawings)
-#kml(myCld,,5,print="all")
+### 2. Building "optimal" clusterization (with only 3 redrawings)
+kml(myCld,nbRedrawing=3,printCal=TRUE,printTraj=TRUE)
 
 ### 3. Exporting results
-#choice(myCld)
+try(choice(myCld))
 }
+

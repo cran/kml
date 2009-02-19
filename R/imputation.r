@@ -166,7 +166,6 @@ cleanProg(.LongData.copy,,,0)
 
 cat("### imputeLongData, methode ###\n")
 #.Object <- ld2n#;partition <- p2b
-setGenericVerif("imputeLongData",function(.Object,method,yPartition)standardGeneric("imputeLongData"))
 
 .LongData.ImputeLongDataSansPart <- function(.Object,method){
     if(method=="LOCF"){
@@ -190,7 +189,7 @@ cat("### imputeLongData, methode ###\n")
     clusters <- yPartition@clusters
     traj <- .Object@traj[!is.na(clusters),]
     clusters <- clusters[!is.na(clusters)]
-    trajMeanObs <- aggregate(traj,by=list(clusters),FUN=.meanNA)[,-1]
+    trajMeanObs <- aggregate(traj,by=list(clusters),FUN=meanNA)[,-1]
     trajMeanObs <- t(apply(trajMeanObs,1,.LongData.InterpoLin))
     trajMeanObs <- trajMeanObs[as.integer(clusters),]
     valAndMeans <- array(c(traj,trajMeanObs),dim=c(dim(traj),2))
@@ -212,7 +211,7 @@ cat("### imputeLongData, methode ###\n")
     clusters <- yPartition
     traj <- .Object[!is.na(clusters),]
     clusters <- clusters[!is.na(clusters)]
-    trajMeanObs <- aggregate(traj,by=list(clusters),FUN=.meanNA)[,-1]
+    trajMeanObs <- aggregate(traj,by=list(clusters),FUN=meanNA)[,-1]
     trajMeanObs <- t(apply(trajMeanObs,1,.LongData.InterpoLin))
     trajMeanObs <- trajMeanObs[as.integer(clusters),]
     valAndMeans <- array(c(traj,trajMeanObs),dim=c(dim(traj),2))

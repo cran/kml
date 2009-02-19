@@ -294,5 +294,8 @@ Sys.time()->d;for(i in 1:100)imputeLongData(ld2n,"copyMean",p2a);Sys.time()->f;f
 ###   et enfin ajouter a line[InfNA]
 
 ### Fonctions moyenne, ecart type et which.min résistante aux NA.
+cat("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++ Fin Test  imputation +++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
 
 
