@@ -50,10 +50,10 @@ cat("\n###################################################################
 #    function(traj,id,time,varName,trajMinSize){new("ClusterizLongData")}
 #)
 #setMethod("clusterizLongData",signature=c("ANY","ANY","ANY","ANY","ANY"),
-  clusterizLongData <- function(traj,id,time,varName="V",trajMinSize=1){
-        dimnames(traj) <- list(id,paste(varName,time,sep=""))
-        new("ClusterizLongData",id=as.character(id),time=time,varName=varName,traj=traj,trajMinSize=trajMinSize)
-    }
+clusterizLongData <- function(traj,id,time,varName="V",trajMinSize=1){
+    dimnames(traj) <- list(id,paste(varName,time,sep=""))
+    new("ClusterizLongData",id=as.character(id),time=time,varName=varName,traj=traj,trajMinSize=trajMinSize)
+}
 #)
 cld <- clusterizLongData
 
