@@ -368,7 +368,7 @@ cat("### Method: 'choice' pour clusterizLongData ###\n")
                                col.mean=colMeanPossible[styleMeanTraj],type.mean=typeMeanPossible[styleMeanTraj],main="",cex=size,
                                pch.mean=pchMeanPossible[styleMeanTraj],pch.time=pch.time,
                                col.sub=colTrajPossible[styleTraj],type.sub=typeTrajPossible[styleTraj],
-                               col.mean.sub=colMeanPossible[styleMeanTraj],type.mean.sub=typeMeanPossible[styleMeanTraj],main.sub="",...)
+                               col.mean.sub=colMeanPossible[styleMeanTraj],type.mean.sub=typeMeanPossible[styleMeanTraj],main.sub="")
 
         if(print.cal){
             points(y[2],Object["calinski"][y[1],y[2]],pch=19,lwd=5)

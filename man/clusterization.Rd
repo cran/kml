@@ -10,7 +10,7 @@
 }
 \usage{
 clusterization(xPartition, yLongData, convergenceTime = 0, criterionName
-= c("calinski","ray","davies"), criterionValue = numeric(),
+= c("calinski"), criterionValue = numeric(),
 imputationMethod = "linearInterpolation", startingCondition = "", algorithmUsed = "")
 }
 \arguments{

@@ -47,10 +47,10 @@ cat("####################################################################
 ####################################################################\n")
 
 clusterization <- function(xPartition,yLongData,convergenceTime=0,
-    criterionName=c("calinski","ray","davies"),criterionValue=numeric(),
+    criterionName=c("calinski"),criterionValue=numeric(),
     imputationMethod="linearInterpolation",startingCondition="",algorithmUsed=""
 ){
-#   cat("*** initialize Clusterization ***\n")
+   cat("*** initialize Clusterization ***\n")
     if(missing(yLongData) && missing(xPartition)){
         new("Clusterization")
     }else{
