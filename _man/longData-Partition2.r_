@@ -1,0 +1,298 @@
+
+
+x <- as(xx <- gald(functionClusters=list(function(t)0,function(t)sin(t)),
+             functionNoise=function(t,sdSeq){rnorm(1,0,0.1*t+1.5*(10-t)/10)},
+             time=0:100/10
+             ),"LongData")
+y <- partition(id=1:100,nbClusters=2,LETTERS[rep(1:2,each=50)])
+subGroups=c("A","B")
+p3d(x,y,nbPoints=101,subGroups="B",adjust=1)
+
+p3d <- .LongData.partition.plot3D <- function(x,y,adjust=5,nbPoints=10,subGroups=LETTERS[1:y@nbClusters],yRange=NA,zMax=NA,scale=2,scaleLim=1,...){
+    if(missing(y)){y <- partition(clusters=rep("A",length(x["id"])),id=x["id"],nbClusters=1)}else{}
+    noNA <- selectSupTrajSizeMin(x) # Selection des trajectoires a tracer.
+    trajNoNA <- x@traj[noNA,]
+    partNoNA <- y@clusters[noNA]
+
+#    trajNoNA <- trajNoNA[partNoNA %in% subGroups,,drop=FALSE]
+ #   partNoNA <- partNoNA[partNoNA %in% subGroups,drop=FALSE]
+
+    trajMean <- aggregate(trajNoNA,list(partNoNA),meanNA)[,-1]
+
+    # calcul des limites des  axes
+    xTemps <- 1:length(x@time)
+    if(length(xTemps)>nbPoints){
+        xTempsShort <- xTemps[floor(seq(1,length(xTemps),length=nbPoints))]
+    }else{
+        xTempsShort <- xTemps
+    }
+
+    if(any(is.na(yRange))){
+        yRange <- range(na.omit(trajMean))
+        for(j in 1:nrow(trajMean)){
+            for (k in xTempsShort){
+                val <- na.omit(trajNoNA[partNoNA==LETTERS[j],k])
+                dens <- density(val,adjust=adjust)
+                densX <- (dens$x-mean(val))/scaleLim+mean(val)
+                yRange <- range(densX,yRange)
+            }
+        }
+    }else{}
+
+    if(is.na(zMax)){
+        zMax <- 0
+        for(j in 1:nrow(trajMean)){
+            for (k in xTempsShort){
+                val <- na.omit(trajNoNA[partNoNA==LETTERS[j],k])
+                dens <- density(val,adjust=adjust)
+                densY <- dens$y/scaleLim
+                zMax <- max(densY,zMax)
+            }
+        }
+    }else{}
+
+
+    # initialisation du graphe
+    zDens <- matrix(NA,length(xTemps),length(yRange))
+    zDens[1,1] <- 0
+    zDens[length(xTemps),length(yRange)] <- zMax
+
+    res <- persp(x=xTemps, y=yRange, z=zDens,
+                 theta = 30, phi = 10, expand = 0.5, ltheta = 120, shade = 0.75, ticktype = "detailed",
+                 xlab = "time", ylab = "moy", zlab = "Frequence"
+                 )
+
+    for(j in (1:nrow(trajMean))[LETTERS[1:nrow(trajMean)] %in% subGroups] ){
+        lines( trans3d(xTemps, t(trajMean[j,]),0, pmat = res),col=j+1,type="l",lwd=3)
+        lines( trans3d(xTempsShort,t(trajMean[j,xTempsShort]),0, pmat = res),col=j+1,type="p",lwd=3)
+
+        for(k in xTempsShort){
+            val <- na.omit(trajNoNA[partNoNA==LETTERS[j],k])
+            dens <- density(val,adjust=adjust)
+            densX <- (dens$x-mean(val))/scale+mean(val)
+            densY <- dens$y/scale
+            lines( trans3d(k, densX,densY, pmat = res),col=j+1,type="l")
+        }
+    }
+
+    return(invisible())
+}
+p3d(x,y,nbPoints=101,subGroups="B",adjust=1)
+
+
+
+p3d(ce,pe)#,adjust=0.1)
+
+cleanProg(.LongData.partition.plot3D,,,2) # LETTERS meanNA
+#x <- ld1;y<-p1a;color=c("c","b","c");main="Exemple"
+#setMethod("plotTraj",signature=c(x="LongData"),def=.LongData.partition.plot)
+#setMethod("plot",signature=c(x="LongData"),def=.LongData.partition.plot)
+#rm(.LongData.partition.plot)
+
+
+#par("mar"=c(4,2,2,2))
+#symboles <- c(3,4,5,6)
+#dn <- rbind(matrix(rnorm(20),5))
+#layout(matrix(c(1,1,1,2,2,3),3))
+#
+#
+#for(i in 1:3){
+#    matplot(dn,type="b",xlab="",pch=symboles,ylab="")
+#    legend(grconvertX(0.5,'nfc'), grconvertY(0,'nfc'),
+#           xjust=0.42, yjust=0,bty="n",
+#           pch = unique(symboles),
+#           legend = c("a","b","c","d"),
+#           horiz = TRUE, xpd = NA)
+#}
+
+
+plot3Dlinesrgl <- function(x, angle = 20, delais = 1000, color, ...){
+    require(rgl)
+    X <- array(NA, dim = dim(x) + c(0, 0, 1))
+    X[ , , 2:3] <- x
+    X[ , , 1] <- matrix(rep(1:dim(x)[[2]], dim(X)[1]), byrow = TRUE, nrow = dim(X)[1])
+    if (missing(color))
+        color <- 1:dim(X)[1]
+    open3d()
+
+    for (i in 1:dim(X)[1]){
+        lines3d(X[i, , ][ , c(1, 3, 2)], col = color[i])
+    }
+    box3d()
+    max1 <- apply(X, 3, max)
+    max1 <- max(max1)/max1
+    max1 <- max1/max(max1)
+    aspect3d(max1)
+    repeat{
+        for (i in 1:100000){
+            for (j in 1:delais){}
+            rgl.viewpoint(i,20)
+        }
+    }
+}
+plot3Dlinesrgl(data2)
+
+x <- gald(functionClusters=list(function(t)0,function(t)t),
+             functionNoise=function(t){rnorm(1,0,1)},
+             time=0:100/10
+             )
+y <- partition(id=1:100,nbClusters=2,LETTERS[rep(1:2,each=50)])
+subGroups=c("A","B")
+p3d(x,y,nbPoints=101,subGroups="B",adjust=1)
+
+
+nbPoints <- 11;adjust <- 1 ; scal <- 1
+p3s <- function(x,adjust=1,nbPoints=10,scal=1,color=2){
+    noNA <- selectSupTrajSizeMin(x) # Selection des trajectoires a tracer.
+    trajNoNA <- x@traj[noNA,]
+    trajMean <- apply(trajNoNA,1,mean)
+
+    # calcul des limites des  axes
+    xTemps <- 1:length(x@time)
+    if(length(xTemps)>nbPoints){xTempsShort <- xTemps[floor(seq(1,length(xTemps),length=nbPoints))]}else{xTempsShort <- xTemps}
+    zrange <-  range(trajNoNA,na.rm=TRUE)
+
+    ted <- numeric()
+    for (t in xTempsShort){
+        val <- na.omit(trajNoNA[,t])
+        dens <- density(val,from=zrange[1],bw=0.5,to=zrange[2],adjust=adjust)
+        densX <- (dens$x-mean(val))/scal+mean(val)
+        densY <- dens$y/scal
+        ted <- rbind(ted,cbind(t,densX,densY))
+    }
+    ted <- ted[order(ted[,2]),]
+    surface3d(x=xTempsShort,y=densX,z=ted[,3],zlim=c(0,0.1),col=color)
+}
+
+
+
+x1 <- gald(functionClusters=list(function(t)sin(t)),
+             functionNoise=function(t,sdSeq){rnorm(1,0,0.1*t+1.5*(10-t)/10)},
+             time=0:100/10
+             )
+p3s(x1,nbPoints=101,adjust=1)
+plot(x1)
+
+x2 <- gald(functionClusters=list(function(t)0),#,function(t)sin(t)),
+             functionNoise=function(t,sdSeq){rnorm(1,0,0.1*t+1.5*(10-t)/10)},
+             time=0:100/10
+             )
+p3s(x2,nbPoints=101,adjust=1)
+
+x3 <- gald(functionClusters=list(function(t)0,function(t)sin(t)),
+             functionNoise=function(t,sdSeq){rnorm(1,0,0.1*t+1.5*(10-t)/10)},
+             time=0:100/10
+             )
+p3s(x3,nbPoints=101,adjust=1)
+
+
+
+
+
+
+
+aspect3d(c(1,1,10))
+rgl.viewpoint(20)
+
+p3d(ce,pe)#,adjust=0.1)
+
+
+
+a1 <- rnorm(100,0,1)
+a2 <- rnorm(100,2,1.5)
+a3 <- rnorm(100,3,2)
+a4 <- rnorm(100,2,2)
+a5 <- rnorm(100,2,3)
+
+d1 <- density(a1,bw=0.5,from=-5, to=20)
+d2 <- density(a2,bw=0.5,from=-5, to=20)
+d3 <- density(a3,bw=0.5,from=-5, to=20)
+d4 <- density(a4,bw=0.5,from=-5, to=20)
+d5 <- density(a5,bw=0.5,from=-5, to=20)
+pairs(cbind(d1$x,d2$x,d3$x,d4$x,d5$x))
+
+require(rgl)
+
+ted <- cbind(rep(1,length(d1$x)),d1$x,d1$y)
+ted <- rbind(ted,cbind(rep(2,length(d2$x)),d2$x,d2$y))
+ted <- rbind(ted,cbind(rep(3,length(d3$x)),d3$x,d3$y))
+ted <- rbind(ted,cbind(rep(4,length(d4$x)),d4$x,d4$y))
+ted <- rbind(ted,cbind(rep(5,length(d5$x)),d5$x,d5$y))
+
+open3d()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a1 <- rnorm(100)
+a2 <- rnorm(100,2,1.5)
+a3 <- rnorm(100,1,3)
+
+m1 <- mean(a1)
+m2 <- mean(a2)
+m3 <- mean(a3)
+
+
+temps <- 1:3
+moy <- c(min(a3),max(a3))
+dist <- matrix(NA,length(temps),length(moy))
+dist[1,1] <- 0
+dist[length(temps),length(moy)] <- 1
+
+res <- persp(x=temps, y=moy, z=dist, theta = 30, phi = 10, expand = 0.5, col = "lightblue",ltheta = 120, shade = 0.75, ticktype = "detailed",xlab = "time", ylab = "moy", zlab = "Frequence")
+
+lines( trans3d(temps, c(m1,m2,m3),0, pmat = res),col=2,type="b")
+dens <- density(a1)
+lines( trans3d(1, dens$x,dens$y, pmat = res),col=1,type="l")
+dens <- density(a2)
+lines( trans3d(2, dens$x,dens$y, pmat = res),col=1,type="l")
+dens <- density(a3)
+lines( trans3d(3, dens$x,dens$y, pmat = res),col=1,type="l")
+
+
+meanNA <- function(x)mean(x,na.rm=TRUE)
+
+  dt <- densityTraj <- function(traj,nbPoints=10,adjust=5){
+	xTemps <- 1:ncol(traj)
+	yMoy <- range(na.omit(traj))
+	zMax <- 1
+	for (i in 1:ncol(traj)){
+	  dens <- density(na.omit(traj[,i]),adjust=adjust)
+	  yMoy <- range(dens$x,yMoy)
+	  zMax <- max(dens$y,zMax)
+	}
+	zDens <- matrix(NA,length(xTemps),length(yMoy))
+	zDens[1,1] <- 0
+	zDens[length(xTemps),length(yMoy)] <- zMax
+
+	res <- persp(x=xTemps, y=yMoy, z=zDens,
+ 		       theta = 30, phi = 10, expand = 0.5, ltheta = 120, shade = 0.75, ticktype = "detailed",
+			 xlab = "time", ylab = "moy", zlab = "Frequence"
+			)
+
+	moy <- apply(traj,2,meanNA)
+      lines( trans3d(xTemps, moy,0, pmat = res),col=2,type="l")
+
+	xTempsShort <- floor(seq(1,ncol(traj),length=nbPoints))
+      lines( trans3d(xTempsShort, moy[xTempsShort],0, pmat = res),col=2,type="b")
+
+	for (i in xTempsShort){
+ 	  dens <- density(na.omit(traj[,i]),adjust=adjust)
+	  lines( trans3d(i, dens$x,dens$y, pmat = res),col=1,type="l")
+	}
+}
+
+par(mfrow=c(1,3))
+dt(trajA)
+dt(trajB)
+dt(trajC)

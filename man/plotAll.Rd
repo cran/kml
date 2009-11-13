@@ -2,85 +2,101 @@
 \alias{plotAll}
 \alias{plotAll,ClusterizLongData}
 \alias{plotAll,ClusterizLongData-method}
-
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ ~ Function: plotAll for ClusterizLongData ~ }
 \description{
-  \code{plot} the trajectories, the Calinski's criterions and the
+  \code{plot} the trajectories, the quality's criteria and the
   subgroups of an object \code{\linkS4class{ClusterizLongData}} on a
   single graph.
 }
 \usage{
-plotAll(x, y, ...)
+\S4method{plotAll}{ClusterizLongData}(x, y, print.cal = TRUE, print.traj = TRUE,
+        print.sub = FALSE, allCrit = TRUE, nbCriterion = 100, col = 1,
+        type = "l", col.mean = "clusters", type.mean = "b", main = "",
+        size = 1, ylim = NA,
+        col.sub = 1, type.sub = "l", col.mean.sub = "clusters",
+        type.mean.sub = "b", main.sub = "", size.sub = 1, ylim.sub = NA,
+        ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{[ClusterizLongData] Object containing the trajectories to plot.}
   \item{y}{[numeric] or [vector(numeric)] Give the \code{Clusterization}
     to represent. If \code{y} is missing, the \code{Clusterization} with
-    the highest Calinski creterion is selected. If \code{y} is a number,
-    the first \code{Clusterization} of the sublist \code{c y} is
+    the highest quality criterion is selected. If \code{y} is a number,
+    the first \code{Clusterization} of the sublist \code{c-y} is
     selected. If \code{y} is a couple of numeric, the \code{y[2]}th
-    \code{Clusterization} of the sublist \code{c y[1]} is selected.}
-  \item{\dots}{Graphical
-    parameters to be passed to methods (see \code{plot}). For
-    \code{ClusterizLongData} object specificly :
-    \describe{
-      \item{printCall}{[logical]: if TRUE, the Calinski criterion will
-	be printed.}
-      \item{printTraj}{[logical]: if TRUE, a "main" graph, showing all the
-	trajectories at once, will be printed.}
-      \item{printSub}{[logical]: if TRUE, several sub-graphs, each containing
-	a specific cluster of trajetories, will be printed.}
-      \item{colorTraj}{[character]: Precise the color of the
-	trajectories on the main graph. \code{'black'} draw all the trajectories in
-	black. 'color' draw each subgroups with a specific color. 'no' does
-	not plot the trajectories.}
-      \item{colorTrajSub}{[character] Precise the color of the
-	trajectories on the sub-graphs. Same option that \code{colorTraj}.}
-      \item{colorMean}{[character]: Precise the color of the
-	mean trajectories of each subgroups on the main graph. \code{'black'} draw all the
-	mean trajectories in black. 'color' draw each mean trajectories with
-	a specific color. 'both' draw each mean trajectories with
-	a specific color and add a small border in black. 'no' does
-	not plot the mean trajectories.}
-      \item{colorMeanSub}{[character]: Precise the color of the
-	mean trajectories of each subgroups on the sub-graphs. Same option that \code{colorMean}.}
-      \item{main}{[charater]: give the title on the main graph.}
-      \item{mainSub}{[charater] give the title of the sub-graphs.}
-      \item{point}{[character]: Precise the kind of the point to plot on the
-	mean trajectories on the main graph. 'point' adds a black dot ; 'symbols' adds a symbol
-	; 'letters' adds letters ; 'no' does not add points.}
-      \item{pointSub}{[character]: Precise the kind of the point to plot on the
-	mean trajectories on the sub-graphs. Same option that \code{point}.}
-      \item{size}{[numeric]: If some point are added on the mean trajectories, \code{size} fixe the
-	size of the point (on the main graph).}
-      \item{sizeSub}{[numeric]: If some point are added on the mean trajectories, \code{size} fixe the
-	size of the point on the sub-graphs.}
-      \item{ylimSub}{[numeric]: give the y limit of the sub-graphs}
-    }
-  }
+    \code{Clusterization} of the sublist \code{c-y[1]} is selected.}
+  \item{print.cal}{[logical]: if TRUE, the quality criterion are printed.}
+  \item{print.traj}{[logical]: if TRUE, a "main" graph, showing all the
+    trajectories at once, is printed.}
+  \item{print.sub}{[logical]: if TRUE, several sub-graphs, each containing
+    a specific cluster of trajetories, are printed.}
+  \item{allCrit}{[logical] shall all the quality criterion be display, or
+    only the best one for each clusters' number ?}
+  \item{nbCriterion}{[numeric]: gives an upper limit to the number of quality
+    criterion to print.}
+  \item{col}{[character], [numeric] or vector[numeric]: Specification of the ploting
+    color of the individual trajectories. In addition to the standard
+    possibles values, col="clusters" can be use to color the individual
+    trajectories according to their clusters.}
+  \item{col.mean}{[character], [numeric] or vector[numeric]:
+    Specification of the plotting color of the mean trajectories. In
+    addition to the standard possible values, col="clusters" can be used
+    to color each mean trajectories according to its clusters.}
+  \item{type}{[character]: what type of plot should be drawn for the individual trajectories.}
+  \item{type.mean}{[character]: what type of plot should be drawn for
+    the mean trajectories ?}
+  \item{main}{[charater]: give the title of the graph.}
+  \item{size}{[numeric]: If some point are added on the mean trajectories, \code{size} fixe the
+    size of the point.}
+  \item{ylim}{[couple(numeric)]: fixe the ylim parameter.}
+
+  \item{col.sub}{[character], [numeric] or vector[numeric]: Specification of the ploting
+    color of the individual trajectories on the sub-groups graph. In addition to the standard
+    possible values, col="clusters" can be used to color the individual
+    trajectories according to their clusters.}
+  \item{type.sub}{[character]: what type of plot should be drawn for the
+    individual trajectories on the sub-groups graph.}
+  \item{col.mean.sub}{[character], [numeric] or vector[numeric]:
+    Specification of the ploting color of the mean trajectories on the sub-groups graph. In
+    addition to the standard possible values, col="clusters" can be used
+    to color each mean trajectories according to its clusters.}
+  \item{type.mean.sub}{[character]: what type of plot should be drawn for
+    the mean trajectories on the sub-groups graph ?}
+  \item{main.sub}{[charater]: gives the title of the sub-groups graph.}
+  \item{size.sub}{[numeric]: If some point are added on the mean trajectories, \code{size} sets the
+    size of the point on the sub-groups graph.}
+  \item{ylim.sub}{[couple(numeric)]: sets the ylim parameter for the sub-groups graph.}
+
+  \item{\dots}{Graphical parameters to be passed to methods, see
+    \code{\link[longitudinalData:plot]{plot(LongData)}} and
+    \code{\link{par}} for details.}
 }
+
 
 \details{
   For every \code{clusterizLongData} object, there is three possible
-  graphical representation: calinski criterion, all the trajectories at once
-  and trajectories clusters by clusters. This function combine these three
-  graphical output (or only two, or one, accorind to the three arguments \code{printCal}, \code{printTraj} and
-  \code{printSub}). Thus every option (like colorMean,...) are
-  duplicate : one is for the main graph (colorMean), the second is for
-  the sub-graphs (colorMeanSub).
+  graphical representation: quality criterion, all the trajectories at once
+  and trajectories clusters by clusters. This function combines these three
+  graphic outputs (or only two, or one, according to the three arguments \code{print.cal}, \code{print.traj} and
+  \code{print.sub}). Thus every option (like \code{col.mean},...) are
+  duplicated : one is for the main graph (\code{col.mean}), the second is for
+  the sub-graphs (\code{col.mean.sub}).
 }
 
-\references{Article submited\cr
-  Web site: \code{\link[http://christophe.genolini.free.fr/kml]{http://christophe.genolini.free.fr/kml}}
+
+
+\references{Article "KmL: K-means for Longitudinal Data", in
+  Computational Statistics (accepted on 11-11-2009) \cr
+  Web site: \url{http://christophe.genolini.free.fr/kml}
 }
 \section{Author(s)}{
   Christophe Genolini\cr
   PSIGIAM: Paris Sud Innovation Group in Adolescent Mental Health\cr
   INSERM U669 / Maison de Solenn / Paris\cr\cr
 
-  Contact author : <genolini@u-paris10.fr>
+  Contact author : \email{genolini@u-paris10.fr}
 }
 
 \section{English translation}{
@@ -90,37 +106,41 @@ plotAll(x, y, ...)
 }
 
 
+
 \seealso{
   Overview: \code{\link{kml-package}} \cr
-  Classes : \code{\linkS4class{ClusterizLongData}}, \code{\linkS4class{ArtificialLongData}} \cr
-  Plot : \code{\link[kml:plot]{plot: overview}}, \code{\link[=plotTraj]{plot(ClusterizLongData)}},
-  \code{\link[=plotCalinski]{plot(Calinski)}}, \code{\link[=plotSubGroups]{plotSubGroups(ClusterizLongData)}}
+  Classes : \code{\linkS4class{ClusterizLongData}}\cr
+  Plot : \code{\link[kml:plot]{plot(ClusterizLongData)}},
+  \code{\link[=plotCriterion]{plotCriterion}}, \code{\link[=plotSubGroups]{plotSubGroups(ClusterizLongData)}}
 }
 
 \examples{
-ld <- gald()
-kml(ld,2:5,5)
-kml(ld,16,5)
+##################
+### Data construction
+dn <- as.cld(gald())
+kml(dn,2:5,5)
+kml(dn,16,5)
 par(ask=TRUE)
 
 ### Default ploting
-plotAll(ld)
+plotAll(dn)
+plotAll(dn,legend=FALSE)
 
 ### Only the calinski criterion (same effect than plotCalinski(ld))
-plotAll(ld,printCal=TRUE,printTraj=FALSE,printSub=FALSE)
+plotAll(dn,print.cal=TRUE,print.traj=FALSE,print.sub=FALSE)
 
 ### Groups and sub-groups
-plotAll(ld,printCal=FALSE,printTraj=TRUE,printSub=TRUE)
-plotAll(ld,printCal=FALSE,printTraj=TRUE,printSub=TRUE,colorTraj="black",colorMean="no",colorMeanSub="black")
+plotAll(dn,print.cal=FALSE,print.traj=TRUE,print.sub=TRUE,legend=FALSE)
+plotAll(dn,print.cal=FALSE,print.traj=TRUE,print.sub=TRUE,col="black",type.mean="n",legend=FALSE)
 
 ### All at once
-plotAll(ld,printCal=TRUE,printTraj=TRUE,printSub=TRUE)
+plotAll(dn,print.cal=TRUE,print.traj=TRUE,print.sub=TRUE)
 
 ### To see the clusterization with only 2 clusters
-plotAll(ld,2,printCal=FALSE,printTraj=TRUE,printSub=TRUE)
+plotAll(dn,2,print.cal=FALSE,print.traj=TRUE,print.sub=TRUE)
 
 ### To see the third clusterization with 16 clusters
-plotAll(ld,c(16,3),printCal=FALSE,printTraj=TRUE,printSub=TRUE)
+plotAll(dn,c(16,3),print.cal=FALSE,type.mean="b",type="n")
 
 par(ask=FALSE)
 }
