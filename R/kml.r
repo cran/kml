@@ -33,14 +33,24 @@ cat("\n###################################################################
     )
     return(partition(clusters=part,nbClusters=nbClusters))
 }
-cleanProg(.partitionInitialise,,,2) # LETTERSletters sums
 setMethod("partitionInitialise",signature=c("numeric","numeric"),.partitionInitialise)
-rm(.partitionInitialise)
+
 
 calculCenterGeneralized <- function(traj,xPart,centerMethod=meanNA){
     clustersCenter <- as.matrix(aggregate(traj,by=list(xPart["clusters"]),FUN=centerMethod)[,-1])
     clustersCenter <- rbind(clustersCenter,matrix(NA,ncol=ncol(clustersCenter),nrow=xPart["nbClusters"]-nrow(clustersCenter)))
     return(clustersCenter)
+}
+
+calculMean  <- function(traj,xPart){
+#    print(as.integer(xPart["clusters"]))
+    # L'initialisation de trajMean sous R a 0 est indispensable.
+    trajMean <- matrix(0,xPart["nbClusters"],ncol(traj))
+    result <- .C("calculMean",mTraj=as.double(t(traj)),iNbInd=as.integer(nrow(traj)),iNbTime=as.integer(ncol(traj)),
+        vClusterAffectation=as.integer(xPart["clusters"]),iNbCluster=as.integer(xPart["nbClusters"]),
+        mTrajMean=as.numeric(t(trajMean)),NAOK=TRUE)$mTrajMean
+
+    return(matrix(result,xPart["nbClusters"],byrow=TRUE))
 }
 
 #traj<-ld2["traj"]
@@ -66,30 +76,15 @@ affectIndivGeneralized <- function(traj,clustersCenter,distance=function(x,y){re
     return(partition(clusterAffectation,nrow(clustersCenter)))
 }
 
-
-
-#dyn.load("kml")
-
-calculMean  <- function(traj,xPart){
-#    print(as.integer(xPart["clusters"]))
-    # L'initialisation de trajMean sous R a 0 est indispensable.
-    trajMean <- matrix(0,xPart["nbClusters"],ncol(traj))
-    result <- .C("calculMean",mTraj=as.double(t(traj)),iNbInd=as.integer(nrow(traj)),iNbTime=as.integer(ncol(traj)),
-        vClusterAffectation=as.integer(xPart["clusters"]),iNbCluster=as.integer(xPart["nbClusters"]),
-        mTrajMean=as.numeric(t(trajMean)),NAOK=TRUE)$mTrajMean
-
-    return(matrix(result,xPart["nbClusters"],byrow=TRUE))
-}
-
 affectIndiv <- function(traj,clustersCenter,distance="euclidean",power=2){
     nbId <- nrow(traj)
     part <- rep(0,nrow(traj))
-    distInt <- pmatch(distance,METHODS)
+    power <- c(1,2,power,Inf,-1,-2)[[pmatch(distance,c("manhattan","euclidean","minkowski","maximum","canberra","binary"))]]
     result <- .C("affecteIndiv",mTraj=as.double(t(traj)),iNbInd=as.integer(nbId),iNbTime=as.integer(ncol(traj)),
-        mTrajMean=as.numeric(t(clustersCenter)),iNbCluster=as.integer(nrow(clustersCenter)),distance=as.integer(distInt),power=as.numeric(power),
+        mTrajMean=as.numeric(t(clustersCenter)),iNbCluster=as.integer(nrow(clustersCenter)),power=as.numeric(power),
         vClusterAffectation=as.integer(part),NAOK=TRUE
     )
-    print(result)
+#    print(result)
     return(partition(result$vClusterAffectation,nrow(clustersCenter)))
 }
 
@@ -121,7 +116,6 @@ trajKmlSlow <- function(traj,clusterAffectation,nbId=nrow(traj),nbTime=ncol(traj
     }
     return(list=c(clusterAffectation=clusterAffectation,convergenceTime=Inf))
 }
-cleanProg(trajKmlSlow,,,2)   # distEuclideGower meanNA
 #trajKmlSlow(ld4n["traj"],partitionInitialise(5,180),screenPlot=1,centerMethod=meanNA)
 
 
@@ -139,7 +133,7 @@ cleanProg(trajKmlSlow,,,2)   # distEuclideGower meanNA
 
 .clusterizLongData.kml <- function(Object,nbClusters=2:6,nbRedrawing=20,saveFreq=100,maxIt=200,trajMinSize=2,
     print.cal=FALSE,print.traj=FALSE,imputationMethod="copyMean",
-    distance,power=2,centerMethod=meanNA,startingCond="allMethods",distanceStartingCond="euclidean",...
+    distance="euclidean",power=2,centerMethod=meanNA,startingCond="allMethods",distanceStartingCond="euclidean",...
 ){
     nbIdFull <- nrow(Object["traj"])
     convergenceTime <- 0
@@ -148,7 +142,7 @@ cleanProg(trajKmlSlow,,,2)   # distEuclideGower meanNA
     nbTime <- length(Object["time"])
     nbId <- nrow(trajNoNA)
     saveCld <-0
-    if(print.cal|print.traj|print.sub){
+    if(print.cal|print.traj){
         scr <- plotAll(Object,print.cal=print.cal,print.traj=print.traj,print.sub=FALSE,col="black",type.mean="n")
     }else{}
 
@@ -164,7 +158,7 @@ cleanProg(trajKmlSlow,,,2)   # distEuclideGower meanNA
 
     ################
     ### Fast or Slow, according to distance and to print.traj
-    if(missing(distance)){distance<-"euclidean"}
+#    if(missing(distance)){distance<-"euclidean"}
     if(is.character(distance)){distInt <- pmatch(distance,METHODS)}else{distInt <- NA}
     if(print.traj){
         cat(" ~ Slow KmL ~\n")
@@ -228,9 +222,7 @@ cleanProg(trajKmlSlow,,,2)   # distEuclideGower meanNA
     save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
     return(invisible())
 }
-cleanProg(.clusterizLongData.kml,,,2) # LETTERS meanNA
 setMethod("kml","ClusterizLongData",.clusterizLongData.kml)
-rm(.clusterizLongData.kml)
 
 
 
@@ -244,10 +236,10 @@ rm(.clusterizLongData.kml)
     write.csv2(data.frame(id=object["id"],clusters=part["clusters"]),
                file=paste(nameObject,"-Clusters.csv",sep=""),
                row.names=FALSE)
-    detail <- c(part["algorithmUsed"],part["nbClusters"],part["convergenceTime"],part["percentEachCluster"],part["criterionName"],part["criterionValue"],
+    detail <- c(part["algorithmUsed"],part["nbClusters"],part["convergenceTime"],part["percentEachCluster"],part["criterionValue"],
        part["imputationMethod"],part["startingCondition"])
-    names(detail) <- c("algorithmUsed","nbClusters","convergenceTime",paste("percent",LETTERSletters[1:part["nbClusters"]]),"criterionName",
-       "criterionValue","imputationMethod","startingCondition")
+    names(detail) <- c("algorithmUsed","nbClusters","convergenceTime",paste("percent",LETTERSletters[1:part["nbClusters"]]),
+       part["criterionName"],"imputationMethod","startingCondition")
     write.csv2(detail,
                file=paste(nameObject,"-Details.csv",sep=""),
                row.names=TRUE)
@@ -262,9 +254,7 @@ rm(.clusterizLongData.kml)
     savePlot(filename=paste(nameObject,"-SubGroup",sep=""),type=typeGraph)
     return(invisible())
 }
-cleanProg(.Clusterization.export,,,2) # LETTERS, .GlobalEnv
 setMethod("exportClusterization","ClusterizLongData",.Clusterization.export)
-rm(.Clusterization.export)
 
 
 
@@ -290,12 +280,12 @@ cat("### Method: 'choice' pour clusterizLongData ###\n")
 
     size <- 1
     nbTime <- length(Object["time"])
-    pointCal <- function(z){points(z[2],Object["criterionValue"][z[1],z[2]],lwd=3,cex=3)}
-    calMatrix <- Object["criterionValue"]
+    pointCal <- function(z){points(z[2],Object["calinski"][z[1],z[2]],lwd=3,cex=3)}
+    calMatrix <- Object["calinski"]
     calSelected <- list()
     y <- c(which.max(calMatrix[,1]),1)
     plotAll(Object,y,print.cal=print.cal,print.traj=print.traj,print.sub=print.sub,...)
-    points(y[2],Object["criterionValue"][y[1],y[2]],pch=19,lwd=5)
+    points(y[2],Object["calinski"][y[1],y[2]],pch=19,lwd=5)
     while(TRUE){
 
         texte <- paste("     ~ Choice : menu ~
@@ -381,7 +371,7 @@ cat("### Method: 'choice' pour clusterizLongData ###\n")
                                col.mean.sub=colMeanPossible[styleMeanTraj],type.mean.sub=typeMeanPossible[styleMeanTraj],main.sub="",...)
 
         if(print.cal){
-            points(y[2],Object["criterionValue"][y[1],y[2]],pch=19,lwd=5)
+            points(y[2],Object["calinski"][y[1],y[2]],pch=19,lwd=5)
             lapply(calSelected,pointCal)
         }else{}
     }
@@ -406,7 +396,5 @@ cat("### Method: 'choice' pour clusterizLongData ###\n")
     bringToTop(-1)
     return(invisible())
 }
-cleanProg(.clusterizLongData.choice,,,0)
 setMethod("choice",signature=c("ClusterizLongData"),.clusterizLongData.choice)
-rm(.clusterizLongData.choice)
 

@@ -9,7 +9,6 @@ cat("\n#######################################################################
     validObject(as(object,"LongData"))
     return(TRUE)
 }
-cleanProg(.ClusterizLongData.validity,,,0)
 cat("### Definition ###\n")
 # id       : identifiant of the individual (or lines).
 # time     : real time
@@ -40,7 +39,6 @@ setClass(
     ),
     validity=.ClusterizLongData.validity
 )
-rm(.ClusterizLongData.validity)
 
 
 cat("\n###################################################################
@@ -166,63 +164,88 @@ setMethod("[","ClusterizLongData",
                     }
                 }
             },
-             "criterionValue"={
-                ncolMatrix = max(c(unlist(lapply(x@clusters,length)),1))
-                criterionList <- matrix(NA,nrow=52,ncol=ncolMatrix,dimnames=list(paste("c",1:52,sep=""),list()))
-                getCriterion <- function(object){object["criterionValue"][1]}
-                for(i in 1:52){
-                    calLine <-lapply(x@clusters[[i]],getCriterion)
-                    criterionList[i,] <- c(unlist(calLine),rep(NA,ncolMatrix-length(calLine)))
-                }
-                if(missing(j)){
-                    return(criterionList)
-                }else{
-                    if(length(j)==1){
-                        return(criterionList[j,])
-                    }else{
-                        if(length(j)==2){
-                            return(criterionList[j[1],as.integer(j[2])])
-                        }else{
-                            stop("[ClusterizLongData] : j should be 'cx' or c('cx',y), nothing else")
-                        }
-                    }
-                }
-                return(criterionList)
-            },
             "criterionName"={
-                ncolMatrix = max(c(unlist(lapply(x@clusters,length)),1))
-                criterionList <- matrix(NA,nrow=52,ncol=ncolMatrix,dimnames=list(paste("c",1:52,sep=""),list()))
-                getCriterionName <- function(object){object["criterionName"][1]}
-                for(i in 1:52){
-                    calLine <-lapply(x@clusters[[i]],getCriterionName)
-                    criterionList[i,] <- c(unlist(calLine),rep(NA,ncolMatrix-length(calLine)))
-                }
-                if(missing(j)){
-                    return(criterionList)
-                }else{
-                    if(length(j)==1){
-                        return(criterionList[j,])
-                    }else{
-                        if(length(j)==2){
-                            return(criterionList[j[1],as.integer(j[2])])
-                        }else{
-                            stop("[ClusterizLongData] : j should be 'cx' or c('cx',y), nothing else")
-                        }
-                    }
+                getCriterionName <- function(object){object["criterionName"]}
+                criterionList <- character()
+                for(k in 1:52){
+                    criterionList <-unique(c(unlist(lapply(x@clusters[[k]],getCriterionName)),criterionList))
                 }
                 return(criterionList)
             },
+#           "criterionValue"={
+ #              ncolMatrix = max(c(unlist(lapply(x@clusters,length)),1))
+  #             criterionList <- matrix(NA,nrow=52,ncol=ncolMatrix,dimnames=list(paste("c",1:52,sep=""),list()))
+   #            getCriterion <- function(object){object["criterionValue"][1]}
+    #           for(i in 1:52){
+     #              calLine <-lapply(x@clusters[[i]],getCriterion)
+      #             criterionList[i,] <- c(unlist(calLine),rep(NA,ncolMatrix-length(calLine)))
+
+                                        #        }
+        #       if(missing(j)){
+         #          return(criterionList)
+          #     }else{
+           #        if(length(j)==1){
+            #           return(criterionList[j,])
+             #      }else{
+              #         if(length(j)==2){
+               #            return(criterionList[j[1],as.integer(j[2])])
+                #       }else{
+                 #          stop("[ClusterizLongData] : j should be 'cx' or c('cx',y), nothing else")
+                  #     }
+   #                }
+  #             }
+ #              return(criterionList)
+#           },
+#           "criterionName"={
+ #              ncolMatrix = max(c(unlist(lapply(x@clusters,length)),1))
+  #             criterionList <- matrix(NA,nrow=52,ncol=ncolMatrix,dimnames=list(paste("c",1:52,sep=""),list()))
+   #            getCriterionName <- function(object){object["criterionName"][1]}
+    #           for(i in 1:52){
+     #              calLine <-lapply(x@clusters[[i]],getCriterionName)
+      #             criterionList[i,] <- c(unlist(calLine),rep(NA,ncolMatrix-length(calLine)))
+       #        }
+        #       if(missing(j)){
+         #          return(criterionList)
+          #     }else{
+           #        if(length(j)==1){
+            #           return(criterionList[j,])
+             #      }else{
+              #         if(length(j)==2){
+               #            return(criterionList[j[1],as.integer(j[2])])
+                #       }else{
+                 #          stop("[ClusterizLongData] : j should be 'cx' or c('cx',y), nothing else")
+                  #     }
+   #                }
+  #             }
+ #              return(criterionList)
+#           },
             if(i %in% paste("c",1:52,sep="")){
                 if(missing(j)){
                     return(x@clusters[[i]])
                 }else{
                     return(x@clusters[[i]][[j]])}
             }else{
-                crit <- x["criterionName"]==i
-                if(any(!is.na(crit)) && any(crit)){
-                    val <- x["criterionValue"]
-                    val[!crit] <- NA
-                    return(val)
+                if(i %in% c("calinski","ray","davies")){
+                    ncolMatrix = max(c(unlist(lapply(x@clusters,length)),1))
+                    criterionList <- matrix(NA,nrow=52,ncol=ncolMatrix,dimnames=list(paste("c",1:52,sep=""),list()))
+                    getCriterion <- function(object){object[i][1]}
+                    for(k in 1:52){
+                        calLine <-lapply(x@clusters[[k]],getCriterion)
+                        criterionList[k,] <- c(unlist(calLine),rep(NA,ncolMatrix-length(calLine)))
+                    }
+                    if(missing(j)){
+                        return(criterionList)
+                    }else{
+                        if(length(j)==1){
+                            return(criterionList[j,])
+                        }else{
+                            if(length(j)==2){
+                                return(criterionList[j[1],as.integer(j[2])])
+                            }else{
+                                stop("[ClusterizLongData] : j should be 'cx' or c('cx',y), nothing else")
+                            }
+                        }
+                    }
                 }else{
                     stop("[ClusterizLongData:getteur]: there is not such a slot in ClusterizLongData")
                 }
@@ -274,27 +297,16 @@ cat("### Method: 'show' pour ClusterizLongData ###\n")
     }else{cat("   <no trajectories>\n")}
 
 
-    cat("\n ~ criterion name :\n")
+    cat("\n ~ criterion name availables :")
     toPrint <- object["criterionName"]
-    toPrint <- toPrint[!is.na(toPrint[,1]),,drop=FALSE]
     if(length(toPrint)==0){
-        cat("   <no clusterization>\n")
+        cat(" <no clusterization>\n")
     }else{
-        if(length(table(toPrint))==1){
-            cat(na.omit(unlist(toPrint))[1],"\n")
-        }else{
-            if(ncol(toPrint)>10){
-                toPrint <- as.data.frame(toPrint[,1:10])
-                toPrint$more <- "..."
-                print(toPrint)
-            }else{
-                print(toPrint)
-            }
-        }
+        cat(" ",toPrint)
     }
-    cat("\n ~ criterion value\n")
+    cat("\n ~ criterion value (calinski)\n")
 
-    toPrint <- object["criterionValue"]
+    toPrint <- object["calinski"]
     toPrint <- toPrint[!is.na(toPrint[,1]),,drop=FALSE]
     if(length(toPrint)==0){
         cat("   <no clusterization>\n")
@@ -309,48 +321,67 @@ cat("### Method: 'show' pour ClusterizLongData ###\n")
     }
     return(invisible(object))
 }
-cleanProg(.clusterizLongData.show,,,0)
 setMethod("show","ClusterizLongData",.clusterizLongData.show)
-rm(.clusterizLongData.show)
 
 
 
 
-.clusterizLongData.plotCriterion <- function(x,nbCriterion=100,allCrit=FALSE){
-    crit <- x["criterionValue"]
-    if(length(table(x["criterionName"]))==1){
-        main <- na.omit(x["criterionName"])[1]
-    }else{
-        main <- "Criterion"
+.clusterizLongData.plotAllCriterion <- function(x,method="linearInterpolation"){
+    toEvaluate <- !is.tna(x["calinski"][,1])
+    crit <- matrix(NA,52,3)
+    for (i in 1:52){
+        if(toEvaluate[i]){
+            crit[i,] <- unlist(criterion3(x["traj"],x["clusters"][[c(i,1)]],method=method))
+        }else{}
     }
+
+    crit[,1] <- crit[,1]-min(crit[,1],na.rm=TRUE)
+    crit[,1] <- crit[,1]/max(crit[,1],na.rm=TRUE)
+
+    crit[,2] <- crit[,2]-min(crit[,2],na.rm=TRUE)
+    crit[,2] <- crit[,2]/max(crit[,2],na.rm=TRUE)
+
+    crit[,3] <- max(crit[,3],na.rm=TRUE)-crit[,3]
+    crit[,3] <- crit[,3]/max(crit[,3],na.rm=TRUE)
+
+    minVal <- min(which(apply(crit,1,function(x){any(!is.na(x))})))
+    maxVal <- max(which(apply(crit,1,function(x){any(!is.na(x))})))
+
+    xlab <- "red=+Calinski ; green=+Ray ; blue=-Davies"
+    main <- "Qualities criteria (normalized, higher is better)"
+    matplot(c(1:52)[minVal:maxVal],(crit[minVal:maxVal,]),col=2:4,type="b",lty=1,xlab=xlab,ylab="",main=main,pch=c("C","R","D"))
+    return(invisible())
+}
+setMethod("plotAllCriterion","ClusterizLongData",.clusterizLongData.plotAllCriterion)
+
+
+
+.clusterizLongData.plotCriterion <- function(x,criterion="calinski",nbCriterion=100,allCrit=FALSE){
+    crit <- x[criterion]
     if(!all(is.na(crit))){
         if(!allCrit){
-            plot(NAtrunc(crit[,1]),type="b",xlab="",ylab="",main=main)
+            plot(NAtrunc(crit[,1]),type="b",xlab="",ylab="",main=criterion)
         }else{
-            matplot(1:min(ncol(crit),nbCriterion),t(crit[,1:min(ncol(crit),nbCriterion)]),type="b",xlab="",ylab="",main=main)
+            matplot(1:min(ncol(crit),nbCriterion),t(crit[,1:min(ncol(crit),nbCriterion)]),type="b",xlab="",ylab="",main=criterion)
         }
     }else{
         plot(1,main="All criterion are undefined",type="n")
     }
     return(invisible())
 }
-cleanProg(.clusterizLongData.plotCriterion,,,0)
 setMethod("plotCriterion","ClusterizLongData",.clusterizLongData.plotCriterion)
-rm(.clusterizLongData.plotCriterion)
-
-
 
 
 
 cat("### Method: 'plot' pour clusterizLongData ###\n")
 .clusterizLongData.plot <- function(x,y,col="clusters",col.mean="clusters",main="",type="l",type.mean="b",size=1,...){
     if(missing(y)){
-        if(all(is.tna(x["criterionValue"]))){#only true NA => no cluster define => plot without subgroups
+        if(all(is.tna(x["calinski"]))){#only true NA => no cluster define => plot without subgroups
             part <- partition(clusters=rep("A",length(x["id"])),nbClusters=1)
             plot(x=as(x,"LongData"),y=part,col=col,col.mean=col.mean,main=main,type=type,type.mean=type.mean,size=size,...)
             return(invisible())
         }else{
-            y <- c(which.max(x["criterionValue"][,1]),1)
+            y <- c(which.max(x["calinski"][,1]),1)
         }
     }else{}
 
@@ -359,22 +390,20 @@ cat("### Method: 'plot' pour clusterizLongData ###\n")
     plot(x=as(x,"LongData"),y=part,col=col,col.mean=col.mean,main=main,type=type,type.mean=type.mean,size=size,...)
     return(invisible())
 }
-cleanProg(.clusterizLongData.plot)
 #setGenericVerif("plotClusterizLongData",function(x,y,...){standardGeneric("plotClusterizLongData")})
 #setMethod("plotTraj",c("ClusterizLongData","ANY"),.clusterizLongData.plot)
 setMethod("plot",c("ClusterizLongData","numeric"),.clusterizLongData.plot)
 setMethod("plot",c("ClusterizLongData","missing"),.clusterizLongData.plot)
-rm(.clusterizLongData.plot)
 
 
 .ClusterizLongData.plotSubGroups <- function(x,y,col="clusters",col.mean="clusters",main="",type="l",type.mean="b",size=1,...){
     if(missing(y)){
-        if(all(is.tna(x["criterionValue"]))){#only true NA => no cluster define => plot without subgroups
+        if(all(is.tna(x["calinski"]))){#only true NA => no cluster define => plot without subgroups
             part <- partition(clusters=rep("A",length(x["id"])),nbClusters=1)
             plot(x=as(x,"LongData"),y=part,col=col,col.mean=col.mean,main=main,type=type,type.mean=type.mean,size=size,...)
             return(invisible())
         }else{
-            y <- c(which.max(x["criterionValue"][,1]),1)
+            y <- c(which.max(x["calinski"][,1]),1)
         }
     }else{}
 
@@ -383,18 +412,16 @@ rm(.clusterizLongData.plot)
     plotSubGroups(x=as(x,"LongData"),y=part,col=col,col.mean=col.mean,main=main,type=type,type.mean=type.mean,size=size,...)
     return(invisible())
 }
-cleanProg(.ClusterizLongData.plotSubGroups,,,2) # LETTERS meanNA
 #x <- ld1;y<-p1a;color=c("c","b","c");main="Exemple"
 setMethod("plotSubGroups",signature=c("ClusterizLongData","ANY"),def=.ClusterizLongData.plotSubGroups)
-rm(.ClusterizLongData.plotSubGroups)
 
 
 
 #x <- a
-print.cal=TRUE;print.traj=TRUE;print.sub=FALSE;
-all=TRUE;nbCriterion=100
-col=1;type="l";col.mean="clusters";type.mean="b";main="";size=1;ylim=NA;
-col.sub=1;type.sub="l";col.mean.sub="clusters";type.mean.sub="b";main.sub="";size.sub=1;ylim.sub=NA
+#print.cal=TRUE;print.traj=TRUE;print.sub=FALSE;
+#all=TRUE;nbCriterion=100
+#col=1;type="l";col.mean="clusters";type.mean="b";main="";size=1;ylim=NA;
+#col.sub=1;type.sub="l";col.mean.sub="clusters";type.mean.sub="b";main.sub="";size.sub=1;ylim.sub=NA
 
 
 
@@ -442,7 +469,7 @@ col.sub=1;type.sub="l";col.mean.sub="clusters";type.mean.sub="b";main.sub="";siz
     }
 
     if(missing(y)){
-        if(all(is.tna(x["criterionValue"]))){#only true NA => no cluster define => plot without subgroups
+        if(all(is.tna(x["calinski"]))){#only true NA => no cluster define => plot without subgroups
 
             if(print.traj){
                 screen(printScreen[2])
@@ -459,7 +486,7 @@ col.sub=1;type.sub="l";col.mean.sub="clusters";type.mean.sub="b";main.sub="";siz
             return(printScreen)
 
         }else{
-            y <- c(which.max(x["criterionValue"][,1]),1)
+            y <- c(which.max(x["calinski"][,1]),1)
         }
     }else{}
     if(length(y)==1){y<-c(y,1)}else{}
@@ -477,10 +504,8 @@ col.sub=1;type.sub="l";col.mean.sub="clusters";type.mean.sub="b";main.sub="";siz
     }else{}
     return(printScreen)
 }
-cleanProg(.ClusterizLongData.plotAll,,,0) # LETTERS meanNA
 #x <- ld1;y<-p1a;color=c("c","b","c");main="Exemple"
 setMethod("plotAll",signature=c(x="ClusterizLongData"),def=.ClusterizLongData.plotAll)
-rm(.ClusterizLongData.plotAll)
 
 
 

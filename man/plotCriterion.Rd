@@ -12,11 +12,13 @@
   \code{\linkS4class{Clusterization}} of a \code{\linkS4class{ClusterizLongData}} object.
 }
 \usage{
-plotCriterion(x, nbCriterion = 100, allCrit = FALSE)
+plotCriterion(x, criterion="calinski",nbCriterion = 100, allCrit = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{[ClusterizLongData]: object whose quality criterion should be displayed.}
+  \item{x}{[ClusterizLongData]: object whose quality criterion should be
+    displayed.}
+  \item{criterion}{[character]: name of the criterion to plot.}
   \item{nbCriterion}{[numeric]: if there is a big number of
     \code{Clusterization}, the graphical display of all of them can be
     slow. \code{nbCriterion} lets the user limit the number of criteria

@@ -13,7 +13,6 @@ cat("### Definition ###\n")
     validObject(as(object,"Partition"))
     return(TRUE)
 }
-cleanProg(.Clusterization.validity,,,)
 
 # nbCluster : cluster number
 # clusterIndex :
@@ -48,10 +47,10 @@ cat("####################################################################
 ####################################################################\n")
 
 clusterization <- function(xPartition,yLongData,convergenceTime=0,
-    criterionName="calinski",criterionValue=numeric(),
+    criterionName=c("calinski","ray","davies"),criterionValue=numeric(),
     imputationMethod="linearInterpolation",startingCondition="",algorithmUsed=""
 ){
-#    cat("*** initialize Clusterization ***\n")
+#   cat("*** initialize Clusterization ***\n")
     if(missing(yLongData) && missing(xPartition)){
         new("Clusterization")
     }else{
@@ -62,7 +61,7 @@ clusterization <- function(xPartition,yLongData,convergenceTime=0,
         traj <- yLongData["traj"]
         tab <- as.numeric(table(clusters))
         new("Clusterization",clusters=clusters,nbClusters=xPartition["nbClusters"],percentEachCluster=tab/sum(tab),convergenceTime=convergenceTime,
-             criterionName=criterionName,criterionValue=criterion(yLongData,xPartition,imputationMethod)[[criterionName]],
+             criterionName=criterionName,criterionValue=unlist(criterion(yLongData,xPartition,imputationMethod)[criterionName]),
              imputationMethod=imputationMethod,startingCondition=startingCondition,algorithmUsed=algorithmUsed)
     }
 }
@@ -131,9 +130,8 @@ cat("### Method : 'show' for yPartition ###\n") # Si on ajouter un titre a traj,
     }
     return(invisible(object))
 }
-cleanProg(.Clusterization.show,,,1) #LETTERS
 setMethod(f="show",signature="Clusterization",definition=.Clusterization.show)
-rm(.Clusterization.show)
+
 
 cat("\n####################################################################
 ######################## Class Clusterization ######################

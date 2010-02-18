@@ -1,9 +1,19 @@
+source("../testsDev/testClusterization.r")
 source("../R/clusterizLongData.r")
 
 cat("\n#######################################################################
 ######################## Test  ClusterizLongData #######################
 ############################### Creation ###############################
 ####################################################################\n")
+
+cleanProg(.ClusterizLongData.validity,,,0)
+cleanProg(.clusterizLongData.show,,,0)
+cleanProg(.clusterizLongData.plotAllCriterion,,,0)
+cleanProg(.clusterizLongData.plotCriterion,,,0)
+cleanProg(.clusterizLongData.plot)
+cleanProg(.ClusterizLongData.plotSubGroups,,,2) # LETTERS meanNA
+cleanProg(.ClusterizLongData.plotAll,,,0) # LETTERS meanNA
+
 
 new("ClusterizLongData")
 new("ClusterizLongData",id=c("1","2","3"),time=c(2,4,8),varName="Age",traj=array(c(1,2,3,1,4,6,1,8,10),dim=c(3,3)))
@@ -57,11 +67,11 @@ cld2["clusters"] <- clusterization(p1a,cld2)
 
 
 c2aA <- c2a
-c2aA@criterionName <- "A"
-c2aA@criterionValue <- 2
+#c2aA@criterionName <- "A"
+#c2aA@criterionValue <- 2
 
 c2dA <- c2d
-c2dA@criterionName <- "A"
+#c2dA@criterionName <- "A"
 cld2["clusters"] <- c2aA
 cld2["clusters"] <- c2dA
 cld2["clusters"] <- c2dA
@@ -151,7 +161,7 @@ cld2n["calinski"]
 cld3["calinski"]
 cld4n["calinski"]
 cld5n["calinski"]
-cld2["A"]
+#cld2["A"]
 
 cld1["traj"]
 cld2n["traj"]
@@ -170,14 +180,14 @@ cld2["c3"]
 cld2["c3",3]
 try(cld2["clusters",53])
 
-cld2["criterionValue"]
-cld2["criterionValue",1]
-cld2["criterionValue",2]
-cld2["criterionValue",3]
-cld2["criterionValue",c(3,2)]
-cld2["criterionValue",4]
-cld2["criterionValue",c(4,2)]
-try(cld2["criterionValue",53])
+#cld2["criterionValue"]
+#cld2["criterionValue",1]
+#cld2["criterionValue",2]
+#cld2["criterionValue",3]
+#cld2["criterionValue",c(3,2)]
+#cld2["criterionValue",4]
+#cld2["criterionValue",c(4,2)]
+#try(cld2["criterionValue",53])
 
 cld2["criterionName"]
 cld2["criterionName",1]

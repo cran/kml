@@ -9,7 +9,9 @@
   \code{clusterization} is the constructor of the class \code{\linkS4class{Clusterization}}.
 }
 \usage{
-clusterization(xPartition, yLongData, convergenceTime = 0, criterionName = "calinski", criterionValue = numeric(), imputationMethod = "", startingCondition = "", algorithmUsed = "")
+clusterization(xPartition, yLongData, convergenceTime = 0, criterionName
+= c("calinski","ray","davies"), criterionValue = numeric(),
+imputationMethod = "linearInterpolation", startingCondition = "", algorithmUsed = "")
 }
 \arguments{
   \item{xPartition}{[Partition]: object that will be turn into a \code{Clusterization}}

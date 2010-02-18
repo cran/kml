@@ -4,35 +4,29 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <float.h>
+//#include <R_ext/Rdynload.h>
 
+//void R_init_kml(DllInfo *info);
 
-double euclideanNA(double *x,double *y,int *taille);
-static double R_euclidean2(double *x,double *y,int taille);
-static double R_manhattan2(double *x,double *y,int taille);
-static double R_maximum2(double *x,double *y,int taille);
-static double R_canberra2(double *x,double *y,int taille);
-static double R_dist_binary2(double *x,double *y,int taille);
-static double R_minkowski2(double *x,double *y,int taille,double power);
-double manathanNA(double *x,double *y,int *taille);
-double manathanNA(double *x,double *y,int *taille);
-double maximumNA(double *x,double *y,int *taille);
-double minkowskiNA(double *x,double *y,int *taille, double *power);
-void distance(double *x, double *y, int *taille, double *power, double *dist);
-void R_distance2(double *x, double *y, int *taille, int *method, double *power, double *dist);
+// all distance 'Traj' are optimized to work with trajectories
+static double manhattanTraj(double *x,double *y,int *taille);
+static double euclideanTraj(double *x,double *y,int *taille);
+static double minkowskiTraj(double *x,double *y,int *taille,double *power);
+static double maximumTraj(double *x,double *y,int *taille);
+static double canberraTraj(double *x,double *y,int *taille);
+static double binaryTraj(double *x,double *y,int *taille);
 
-void pour(int *t);
-void printMatrix(double *mTraj,int *nbCol, int *nbLigne);
-//void essai(double *traj, int *ncol, int *nlig);
+// distance that switch to one of the distance'Traj'
+void distanceTraj(double *x, double *y, int *taille, double *power, double *dist);
 
-
-double meanNA(double *x,int taille);
-//double medianNA(double *x,int taille);
-
+// k-means
 void calculMean(double *mTraj, int *iNbInd, int *iNbTime, int *vClusterAffectation, int *iNbClusters,
 		double *mTrajMean);
-void affecteIndiv(double *mTraj, int *iNbInd, int *iNbTime, double *mTrajMean, int *iNbClusters, int *distance, double *power,
+
+void affecteIndiv(double *mTraj, int *iNbInd, int *iNbTime, double *mTrajMean, int *iNbClusters, double *power,
 		  int *vClusterAffectation);
 
-/*void kml1(double *mTraj, int *pNbId, int *pNbTime, double *mClustersCenter, int *pNbClusters,
-  int *pConvergenceTime, int *vClusterAffectation);*/
+// kml
+void kml1(double *mTraj, int *pNbInd, int *pNbTime, int *pNbClusters, int *maxIt,
+	  int *distance, double *power, int *vClusterAffectation1, int *convergenceTime);
 
