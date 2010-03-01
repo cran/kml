@@ -7,7 +7,7 @@ export(
     "updateClusterizLongData","partitionInitialise",
     "calculCenterGeneralized","affectIndivGeneralized",
     "calculMean","affectIndiv","imputation",
-    "exportClusterization","plotCriterion"
+    "exportClusterization","plotCriterion","plotAllCriterion"
 )
 exportMethods(
     "choice",

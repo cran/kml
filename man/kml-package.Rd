@@ -12,8 +12,8 @@
   \tabular{ll}{
     Package: \tab kml\cr
     Type: \tab Package\cr
-    Version: \tab 1.1\cr
-    Date: \tab 2009-2-14\cr
+    Version: \tab 1.1.1\cr
+    Date: \tab 2009-03-01\cr
     License: \tab GPL (>= 2)\cr
     Lazyload: \tab yes\cr
     Depends: \tab methods,clv,longitudinalData\cr
