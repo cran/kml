@@ -102,12 +102,6 @@ choice(Object, typeGraph = "bmp",...)
   University of Paris 10 / Nanterre
 }
 
-
-
-
-\references{Article submited \cr
-  Web site: \url{http://christophe.genolini.free.fr/kml}
-}
 \section{Author(s)}{
   Christophe Genolini\cr
   PSIGIAM: Paris Sud Innovation Group in Adolescent Mental Health\cr
