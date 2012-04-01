@@ -1,23 +1,36 @@
-useDynLib(kml)
+#useDynLib(kml)
 
 export(
-    "clusterization","updateClusterization",
-    "cld","clusterizLongData",
-    "as.cld","as.clusterizLongData",
-    "updateClusterizLongData","partitionInitialise",
-    "calculCenterGeneralized","affectIndivGeneralized",
-    "calculMean","affectIndiv","imputation",
-    "exportClusterization","plotCriterion","plotAllCriterion"
-)
-exportMethods(
-    "choice",
-    "plot",
-    "plotAll",
-    "kml"
-)
-exportClasses(
-    "Clusterization",
-    "ClusterizLongData"
-)
+       ## ClusterLongData
+       "cld","getClusters","gald","generateArtificialLongData",
 
-import(methods,graphics,clv,longitudinalData)
+       ## parKml
+       "parKml",
+
+       ## kml, small functions
+       "calculTrajFuzzyMean","affectFuzzyIndiv","calculTrajMean","affectIndiv","calculTrajMeanC","affectIndivC",
+       ##"resizePartition","calculTrajMeanPoint","legendCol","varNumAndName","adjustGraph3d
+
+       ## Kml
+       "fuzzyKmlSlow","kml",
+       # "kmlSlow",
+
+       ## internal only, export for kml3d
+       "kmlFast","expandStartingCond","cutScreen","fastOrSlow","choiceChangeParam","partPermut",".clusterLongData.choice"
+       )
+
+
+exportMethods(
+              "clusterLongData",#"plotCriterion",
+              "exportPartition",
+              "choice"
+              )
+
+exportClasses(
+              "ParKml",
+#              "ParChoice",
+#              "Clustering",
+              "ClusterLongData"
+              )
+
+import(methods,longitudinalData)#,rgl,misc3d)

@@ -1,0 +1,13 @@
+#library(rgl)
+#library(misc3d)
+library(longitudinalData)
+
+setwd("C:/Users/GENOLLINI/Documents/cgenolini/packages/kml/testsDev")
+source("testFunction.R")
+source("fromLongitudinalData.r")
+#source("testListPartition.R")
+source("testClusterLongData.R")
+source("testParKml.r")
+source("testParChoice.R")
+source("testKml.r")
+source("../R/clean.r")

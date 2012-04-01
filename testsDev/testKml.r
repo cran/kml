@@ -1,380 +1,258 @@
-source("testClusterizLongData.r")
+#library(rgl)
+#library(misc3d)
+## library(longitudinalData)
+
+## setwd("C:/Users/GENOLLINI/Documents/cgenolini/packages/kml/testsDev")
+## source("testFunction.R")
+## source("fromLongitudinalData.r")
+## source("testClusterLongData.R")
+## source("testParKml.r")
+## source("testParChoice.R")
+
+cat("\n####################################################################
+################################ kml ###############################
+############################### Tests ##############################
+####################################################################\n")
+
+
 source("../R/kml.r")
-dyn.load("./kml.dll")
+dyn.load("../src/kml") # dyn.load("../src-i386/kml")
 
-cleanProg(.partitionInitialise,,,2) # LETTERSletters sums
 
-point <- matrix(c(0,0, 0,1, -1,0, 0,-1, 1,0),5,byrow=TRUE)
-points <- rbind(point,t(t(point)+c(10,0)),t(t(point)+c(5,6)))
-points <- rbind(points,t(t(points)+c(30,0)),t(t(points)+c(15,20)),t(-t(point)+c(20,10)))
+################################
+### fuzzy K-means par étapes ###
+################################
 
-paInit <- partitionInitialise(2,nrow(points),as.matrix(dist(points)),method="maxDist")
-plot(points)
-lines(points[!is.na(paInit["clusters"]),],col=2,type="p")
+############################
+### Fonctions simples
+cleanProg(calculTrajFuzzyMean,,,1) # tapply
+fuzMatrice <- matrix(runif(15,0,1),5,3)
+cent2a <- calculTrajFuzzyMean(ld2["traj"],fuzMatrice)
+cent2b <- calculTrajFuzzyMean(ld2["traj"],fuzMatrice)
 
-paInit <- partitionInitialise(3,nrow(points),as.matrix(dist(points)),method="maxDist")
-plot(points)
-lines(points[!is.na(paInit["clusters"]),],col=2,type="p")
+cent2c <- calculTrajFuzzyMean(ld2["traj"],fuzMatrice)
 
-paInit <- partitionInitialise(4,nrow(points),as.matrix(dist(points)),method="maxDist")
-plot(points)
-lines(points[!is.na(paInit["clusters"]),],col=2,type="p")
+fuzMatrice <- matrix(runif(24,0,1),8,3)
+cent3a <- calculTrajFuzzyMean(ld3["traj"],fuzMatrice)
+cent3b <- calculTrajFuzzyMean(ld3["traj"],fuzMatrice)
+cent3c <- calculTrajFuzzyMean(ld3["traj"],fuzMatrice)
+cent3d <- calculTrajFuzzyMean(ld3["traj"],fuzMatrice)
+cent3e <- calculTrajFuzzyMean(ld3["traj"],fuzMatrice)
+cent3f <- calculTrajFuzzyMean(ld3["traj"],fuzMatrice)
 
-paInit <- partitionInitialise(3,nrow(points),as.matrix(dist(points)),method="randomK")
-plot(points)
-lines(points[!is.na(paInit["clusters"]),],col=2,type="p")
+cleanProg(affectFuzzyIndiv,,,1)
+aC <- affectFuzzyIndiv(ld2["traj"],cent2a)
+bC <- affectFuzzyIndiv(ld2["traj"],cent2b)
+cC <- affectFuzzyIndiv(ld2["traj"],cent2c)
 
-paInit <- partitionInitialise(3,nrow(points),as.matrix(dist(points)),method="randomAll")
-plot(points,col=as.integer(paInit["clusters"]))
 
-par(mfrow=c(2,3))
+##############################
+### K-means par étapes (times = 2 pour les graphes)
 
-pa <- partitionInitialise(3,243,as.matrix(dist(cld3["traj"])),method="randomK")
-plot(ld3,pa)
+### Initialisation
+tra <- ld3["traj"][,3:4]
+plot(tra)
 
-pa <- partitionInitialise(3,243,as.matrix(dist(cld3["traj"])),method="randomAll")
-plot(ld3,pa)
+### Initialisation, exemple 2
+tra <- ld4["traj"][,3:4]
+plot(tra)
 
-pa <- partitionInitialise(3,243,as.matrix(dist(cld3["traj"])),method="maxDist")
-plot(ld3,pa)
+partInit <- initializePartition(3,nrow(tra),method="kmeans-",tra)
+lines(tra,col=partInit+1,cex=2,type="p",lwd=3)
+cent <- tra[!is.na(partInit),]
 
-pa <- partitionInitialise(3,180,as.matrix(dist(cld4["traj"])),method="randomK")
-plot(ld4,pa)
+### Boucle 1
+affInd <- affectFuzzyIndiv(tra,cent,fuzzyfier=1.5)
+appartient <- apply(affInd,1,which.max)
+plot(tra,col=appartient+1,pch=16)
 
-pa <- partitionInitialise(3,180,as.matrix(dist(cld4["traj"])),method="randomAll")
-plot(ld4,pa)
+cent <- calculTrajFuzzyMean(tra,affInd)
+lines(cent,col=2:4,cex=2,type="p",lwd=3)
 
-pa <- partitionInitialise(3,180,as.matrix(dist(cld4["traj"])),method="maxDist")
-plot(ld4,pa)
+### Boucle 2
+affInd <- affectFuzzyIndiv(tra,cent,fuzzyfier=1.5)
+appartient <- apply(affInd,1,which.max)
+plot(tra,col=appartient+1,pch=16)
 
-pa <- partitionInitialise(4,243,as.matrix(dist(cld3["traj"])),method="randomK")
-plot(ld3n,pa)
+cent <- calculTrajFuzzyMean(tra,affInd)
+lines(cent,col=2:4,cex=2,type="p",lwd=3)
 
-pa <- partitionInitialise(4,243,as.matrix(dist(cld3["traj"])),method="randomAll")
-plot(ld3n,pa)
+### Boucle 3
+affInd <- affectFuzzyIndiv(tra,cent,fuzzyfier=1.5)
+appartient <- apply(affInd,1,which.max)
+plot(tra,col=appartient+1,pch=16)
 
-pa <- partitionInitialise(4,243,as.matrix(dist(cld3["traj"])),method="maxDist")
-plot(ld3n,pa)
+cent <- calculTrajFuzzyMean(tra,affInd)
+lines(cent,col=2:4,cex=2,type="p",lwd=3)
+### Fin boucle
 
-pa <- partitionInitialise(4,180,as.matrix(dist(cld4["traj"])),method="randomK")
-plot(ld4n,pa)
 
-pa <- partitionInitialise(4,180,as.matrix(dist(cld4["traj"])),method="randomAll")
-plot(ld4n,pa)
+### Fuzzy k-means slow
 
-pa <- partitionInitialise(4,180,as.matrix(dist(cld4["traj"])),method="maxDist")
-plot(ld4n,pa)
+cleanProg(fuzzyKmlSlow,,,1)    ### which.max
+partInit <- initializePartition(3,8,method="randomK")
+system.time(kmlSlow(ld3['traj'],partInit))
+partInit <- initializePartition(6,200,method="kmeans--",ld4["traj"])
+system.time(kmlSlow(ld4['traj'],partInit))
 
 
 
-###############################################################################
-################################# Generalized #################################
-###############################################################################
 
-cent2a <- calculCenterGeneralized(ld2["traj"],p2a)
-cent2b <- calculCenterGeneralized(ld2["traj"],p2b)
-cent2c <- calculCenterGeneralized(ld2["traj"],p2c)
-cent2aC <- calculMean(ld2["traj"],p2a)
-cent2bC <- calculMean(ld2["traj"],p2b)
-cent2cC <- calculMean(ld2["traj"],p2c)
-if(identical(c(cent2a[-3,]),c(cent2aC[-3,]))&identical(c(cent2b[-3,]),c(cent2bC[-3,]))&identical(c(cent2c),c(cent2cC))){}else{stop("CalculMean 1\a")}
+##########################
+### K-means par étapes ###
+##########################
 
-a <- affectIndivGeneralized(ld2["traj"],cent2a)
-b <- affectIndivGeneralized(ld2["traj"],cent2b)
-c <- affectIndivGeneralized(ld2["traj"],cent2c)
-aC <- affectIndiv(ld2["traj"],cent2a)
-bC <- affectIndiv(ld2["traj"],cent2b)
-cC <- affectIndiv(ld2["traj"],cent2c)
-if(identical(a,aC)&identical(b,bC)&identical(c,cC)){}else{stop("AffectIndiv 1\a")}
+############################
+### Fonctions simples
+cleanProg(calculTrajMean,,,1) # tapply
+cent2a <- calculTrajMean(ld2["traj"],p2a['clusters'])
+cent2b <- calculTrajMean(ld2["traj"],p2b['clusters'])
+cent2c <- calculTrajMean(ld2["traj"],p2c['clusters'],medianNA)
 
+(cent3a <- calculTrajMean(ld3["traj"],p3a['clusters']))
+(cent3b <- calculTrajMean(ld3["traj"],p3b['clusters']))
+(cent3c <- calculTrajMean(ld3["traj"],p3c['clusters']))
+cent3d <- calculTrajMean(ld3["traj"],p3d['clusters'])
+cent3e <- calculTrajMean(ld3["traj"],p3e['clusters'])
+cent3f <- calculTrajMean(ld3["traj"],p3f['clusters'])
 
-#calculCenterGeneralized(ld2["traj"],p2an,centerMethod=medianNA)
-#calculCenterGeneralized(ld2["traj"],p2bn)
-#try(calculCenterGeneralized(ld2["traj"],p2cn))
 
-#cent2an <- calculCenterGeneralized(ld2n["traj"],p2a,centerMethod=medianNA)
-#cent2bn <- calculCenterGeneralized(ld2n["traj"],p2b)
-#cent2cn <- calculCenterGeneralized(ld2n["traj"],p2c)
-#calculMean(ld2["traj"],p2an)
-#calculMean(ld2["traj"],p2bn)
-#calculMean(ld2["traj"],p2cn)
+(cent2a <- calculTrajMeanC(ld2["traj"],p2a['clustersAsInteger']))
+(cent2b <- calculTrajMeanC(ld2["traj"],p2b['clustersAsInteger']))
+(cent2c <- calculTrajMeanC(ld2["traj"],p2c['clustersAsInteger']))
 
+cent3a <- calculTrajMeanC(ld3["traj"],p3a['clustersAsInteger'])
+cent3b <- calculTrajMeanC(ld3["traj"],p3b['clustersAsInteger'])
+cent3c <- calculTrajMeanC(ld3["traj"],p3c['clustersAsInteger'])
+cent3d <- calculTrajMeanC(ld3["traj"],p3d['clustersAsInteger'])
+cent3e <- calculTrajMeanC(ld3["traj"],p3e['clustersAsInteger'])
+cent3f <- calculTrajMeanC(ld3["traj"],p3f['clustersAsInteger'])
 
-#affectIndivGeneralized(ld2["traj"],cent2an)
-#affectIndivGeneralized(ld2["traj"],cent2bn)
-#affectIndivGeneralized(ld2["traj"],cent2cn)
-#affectIndiv(ld2["traj"],cent2an)
-#affectIndiv(ld2["traj"],cent2bn)
-#affectIndiv(ld2["traj"],cent2cn)
-
-#cent2ann <- calculCenterGeneralized(ld2n["traj"],p2an)
-#cent2bnn <- calculCenterGeneralized(ld2n["traj"],p2bn)
-
-#affectIndivGeneralized(ld2["traj"],cent2ann)
-#affectIndivGeneralized(ld2["traj"],cent2bnn)
-
-cent3a <- calculCenterGeneralized(ld3["traj"],p3a)
-cent3b <- calculCenterGeneralized(ld3["traj"],p3b)
-cent3c <- calculCenterGeneralized(ld3["traj"],p3c)
-cent3d <- calculCenterGeneralized(ld3["traj"],p3d)
-cent3e <- calculCenterGeneralized(ld3["traj"],p3e)
-cent3f <- calculCenterGeneralized(ld3["traj"],p3f)
-
-cent3aC <- calculMean(ld3["traj"],p3a)
-cent3bC <- calculMean(ld3["traj"],p3b)
-cent3cC <- calculMean(ld3["traj"],p3c)
-cent3dC <- calculMean(ld3["traj"],p3d)
-cent3eC <- calculMean(ld3["traj"],p3e)
-cent3fC <- calculMean(ld3["traj"],p3f)
-if(all(c(cent3a)-c(cent3aC)<1e-15)&all(c(cent3b)-c(cent3bC)<1e-15)&all(c(cent3c[1:3,])-c(cent3cC[1:3,])<1e-15)&
-   all(c(cent3d[1:3,])-c(cent3dC[1:3,])<1e-15)&all(c(cent3e[-21,])-c(cent3eC[-21,])<1e-15)&all(c(cent3f)-c(cent3fC)<1e-15)){
-}else{stop("CalculMean 1\a")}
-
-par(mfrow=c(1,2))
-af1 <- affectIndivGeneralized(ld3["traj"],cent3a);plot(ld3,af1)
-af1C <- affectIndiv(ld3["traj"],cent3a);plot(ld3,af1C)
-if(identical(af1,af1C)){}else{stop("AffectIndiv 1\a")}
-
-af2 <- affectIndivGeneralized(ld3["traj"],cent3b);plot(ld3,af2)
-af2C <- affectIndiv(ld3["traj"],cent3b);plot(ld3,af2C)
-if(identical(af2,af2C)){}else{stop("AffectIndiv 1\a")}
-
-af3 <- affectIndivGeneralized(ld3["traj"],cent3c);plot(ld3,af3)
-af3C <- affectIndiv(ld3["traj"],cent3c);plot(ld3,af3C)
-if(identical(af3,af3C)){}else{stop("AffectIndiv 1\a")}
-
-af4 <- affectIndivGeneralized(ld3["traj"],cent3d);plot(ld3,af4)
-af4C <- affectIndiv(ld3["traj"],cent3d);plot(ld3,af4C)
-if(identical(af4,af4C)){}else{stop("AffectIndiv 1\a")}
-
-af5 <- affectIndivGeneralized(ld3["traj"],cent3e);plot(ld3,af5)
-af5C <- affectIndiv(ld3["traj"],cent3e);plot(ld3,af5C)
-if(identical(af5,af5C)){}else{stop("AffectIndiv 1\a")}
-
-af6 <- affectIndivGeneralized(ld3["traj"],cent3f);plot(ld3,af6)
-af6C <- affectIndiv(ld3["traj"],cent3f);plot(ld3,af6C)
-if(identical(af6,af6C)){}else{stop("AffectIndiv 1\a")}
-
-
-af1 <- affectIndivGeneralized(ld3n["traj"],cent3a);plot(ld3n,af1)
-af1C <- affectIndiv(ld3n["traj"],cent3a);plot(ld3n,af1C)
-if(identical(af1,af1C)){}else{stop("AffectIndiv 1\a")}
-
-af2 <- affectIndivGeneralized(ld3n["traj"],cent3b);plot(ld3n,af2)
-af2C <- affectIndiv(ld3n["traj"],cent3b);plot(ld3n,af2C)
-if(identical(af2,af2C)){}else{stop("AffectIndiv 1\a")}
-
-af3 <- affectIndivGeneralized(ld3n["traj"],cent3c);plot(ld3n,af3)
-af3C <- affectIndiv(ld3n["traj"],cent3c);plot(ld3n,af3C)
-if(identical(af3,af3C)){}else{stop("AffectIndiv 1\a")}
-
-af4 <- affectIndivGeneralized(ld3n["traj"],cent3d);plot(ld3n,af4)
-af4C <- affectIndiv(ld3n["traj"],cent3d);plot(ld3n,af4C)
-if(identical(af4,af4C)){}else{stop("AffectIndiv 1\a")}
-
-af5 <- affectIndivGeneralized(ld3n["traj"],cent3e);plot(ld3n,af5)
-af5C <- affectIndiv(ld3n["traj"],cent3e);plot(ld3n,af5C)
-if(identical(af5,af5C)){}else{stop("AffectIndiv 1\a")}
-
-af6 <- affectIndivGeneralized(ld3n["traj"],cent3f);plot(ld3n,af6)
-af6C <- affectIndiv(ld3n["traj"],cent3f);plot(ld3n,af6C)
-if(identical(af6,af6C)){}else{stop("AffectIndiv 1\a")}
-
-
-
-cent4a <- calculCenterGeneralized(ld4["traj"],p4a)
-cent4b <- calculCenterGeneralized(ld4["traj"],p4b)
-cent4c <- calculCenterGeneralized(ld4["traj"],p4c)
-cent4d <- calculCenterGeneralized(ld4["traj"],p4d)
-cent4e <- calculCenterGeneralized(ld4["traj"],p4e)
-
-cent4aC <- calculMean(ld4["traj"],p4a)
-cent4bC <- calculMean(ld4["traj"],p4b)
-cent4cC <- calculMean(ld4["traj"],p4c)
-cent4dC <- calculMean(ld4["traj"],p4d)
-cent4eC <- calculMean(ld4["traj"],p4e)
-
-if(all(c(cent4a)-c(cent4aC)<1e-14)&all(c(cent4b)-c(cent4bC)<1e-14)&all(c(cent4c[1:2,])-c(cent4cC[1:2,])<1e-14)&
-   all(c(cent4d)-c(cent4dC)<1e-14)&all(c(cent4e)-c(cent4eC)<1e-15)){
-}else{stop("CalculMean 1\a")}
-
-par(mfrow=c(1,2))
-af1 <- affectIndivGeneralized(ld4["traj"],cent4a);plot(ld4,af1)
-af1C <- affectIndiv(ld4["traj"],cent4a);plot(ld4,af1C)
-if(identical(af1,af1C)){}else{stop("AffectIndiv 1\a")}
-af2 <- affectIndivGeneralized(ld4["traj"],cent4b);plot(ld4,af2)
-af2C <- affectIndiv(ld4["traj"],cent4b);plot(ld4,af2C)
-if(identical(af2,af2C)){}else{stop("AffectIndiv 1\a")}
-af3 <- affectIndivGeneralized(ld4["traj"],cent4c);plot(ld4,af3)
-af3C <- affectIndiv(ld4["traj"],cent4c);plot(ld4,af3C)
-if(identical(af3,af3C)){}else{stop("AffectIndiv 1\a")}
-af4 <- affectIndivGeneralized(ld4["traj"],cent4d);plot(ld4,af4)
-af4C <- affectIndiv(ld4["traj"],cent4d);plot(ld4,af4C)
-if(identical(af4,af4C)){}else{stop("AffectIndiv 1\a")}
-af5 <- affectIndivGeneralized(ld4["traj"],cent4e);plot(ld4,af5)
-af5C <- affectIndiv(ld4["traj"],cent4e);plot(ld4,af5C)
-if(identical(af5,af5C)){}else{stop("AffectIndiv 1\a")}
-
-
-
-
-
-cent4a <- calculCenterGeneralized(ld4n["traj"],p4an)
-cent4b <- calculCenterGeneralized(ld4n["traj"],p4bn)
-cent4c <- calculCenterGeneralized(ld4n["traj"],p4cn)
-cent4d <- calculCenterGeneralized(ld4n["traj"],p4dn)
-cent4e <- calculCenterGeneralized(ld4n["traj"],p4en)
-
-cent4aC <- calculMean(ld4n["traj"],p4an)
-cent4bC <- calculMean(ld4n["traj"],p4bn)
-cent4cC <- calculMean(ld4n["traj"],p4cn)
-cent4dC <- calculMean(ld4n["traj"],p4dn)
-cent4eC <- calculMean(ld4n["traj"],p4en)
-
-if(all(c(!is.na(cent4a))-c(!is.na(cent4aC))<1e-14)&all(c(!is.na(cent4b))-c(!is.na(cent4bC))<1e-14)&
-   all(c(!is.na(cent4c[1:2,]))-c(!is.na(cent4cC[1:2,]))<1e-14)&all(c(!is.na(cent4d))-c(!is.na(cent4dC))<1e-14)&
-   all(c(!is.na(cent4e))-c(!is.na(cent4eC))<1e-14)){
-}else{stop("CalculMean 1\a")}
-
-par(mfrow=c(1,2))
-af1 <- affectIndivGeneralized(ld4n["traj"],cent4a);plot(ld4n,af1)
-af1C <- affectIndiv(ld4n["traj"],cent4a);plot(ld4n,af1C)
-if(identical(af1,af1C)){}else{stop("AffectIndiv 1\a")}
-af2 <- affectIndivGeneralized(ld4n["traj"],cent4b);plot(ld4n,af2)
-af2C <- affectIndiv(ld4n["traj"],cent4b);plot(ld4n,af2C)
-if(identical(af2,af2C)){}else{stop("AffectIndiv 1\a")}
-af3 <- affectIndivGeneralized(ld4n["traj"],cent4c);plot(ld4n,af3)
-af3C <- affectIndiv(ld4n["traj"],cent4c);plot(ld4n,af3C)
-if(identical(af3,af3C)){}else{stop("AffectIndiv 1\a")}
-af4 <- affectIndivGeneralized(ld4n["traj"],cent4d);plot(ld4n,af4)
-af4C <- affectIndiv(ld4n["traj"],cent4d);plot(ld4n,af4C)
-if(identical(af4,af4C)){}else{stop("AffectIndiv 1\a")}
-af5 <- affectIndivGeneralized(ld4n["traj"],cent4e);plot(ld4n,af5)
-af5C <- affectIndiv(ld4n["traj"],cent4e);plot(ld4n,af5C)
-if(identical(af5,af5C)){}else{stop("AffectIndiv 1\a")}
-
-cent5a <- calculCenterGeneralized(ld5["traj"],p5a)
-cent5b <- calculCenterGeneralized(ld5["traj"],p5b)
-cent5c <- calculCenterGeneralized(ld5["traj"],p5c)
-cent5an <- calculCenterGeneralized(ld5n["traj"],p5a)
-cent5bn <- calculCenterGeneralized(ld5n["traj"],p5b)
-cent5cn <- calculCenterGeneralized(ld5n["traj"],p5c)
-
-cent5aC <- calculMean(ld5["traj"],p5a)
-cent5bC <- calculMean(ld5["traj"],p5b)
-cent5cC <- calculMean(ld5["traj"],p5c)
-cent5anC <- calculMean(ld5n["traj"],p5a)
-cent5bnC <- calculMean(ld5n["traj"],p5b)
-cent5cnC <- calculMean(ld5n["traj"],p5c)
-
-if(all(c(cent5a)-c(cent5aC)<1e-14)&all(c(cent5b)-c(cent5bC)<1e-14)&all(c(cent5c)-c(cent5cC)<1e-14)&
-   all(c(cent5an)-c(cent5anC)<1e-14)&all(c(cent5bn)-c(cent5bnC)<1e-14)&all(c(cent5cn)-c(cent5cnC)<1e-14)){
-}else{stop("CalculMean 1\a")}
-
-af1 <- affectIndiv(ld5["traj"],cent5an);plot(ld5,af1)
-af1C <- affectIndivGeneralized(ld5["traj"],cent5an);plot(ld5,af1C)
-if(identical(af1,af1C)){}else{stop("AffectIndiv 1\a")}
-af2 <- affectIndiv(ld5["traj"],cent5bn);plot(ld5,af2)
-af2C <- affectIndivGeneralized(ld5["traj"],cent5bn);plot(ld5,af2C)
-if(identical(af2,af2C)){}else{stop("AffectIndiv 1\a")}
-af3 <- affectIndiv(ld5["traj"],cent5cn);plot(ld5,af3)
-af3C <- affectIndivGeneralized(ld5["traj"],cent5cn);plot(ld5,af3C)
-if(identical(af3,af3C)){}else{stop("AffectIndiv 1\a")}
-af4 <- affectIndiv(ld5["traj"],cent5an);plot(ld5n,af4)
-af4C <- affectIndivGeneralized(ld5["traj"],cent5an);plot(ld5n,af4C)
-if(identical(af4,af4C)){}else{stop("AffectIndiv 1\a")}
-af5 <- affectIndiv(ld5["traj"],cent5bn);plot(ld5n,af5)
-af5C <- affectIndivGeneralized(ld5["traj"],cent5bn);plot(ld5n,af5C)
-if(identical(af5,af5C)){}else{stop("AffectIndiv 1\a")}
-af6 <- affectIndiv(ld5["traj"],cent5cn);plot(ld5n,af6)
-af6C <- affectIndivGeneralized(ld5["traj"],cent5cn);plot(ld5n,af6C)
-if(identical(af6,af6C)){}else{stop("AffectIndiv 1\a")}
-
-
-
-
-
-
-
-cleanProg(trajKmlSlow,,,2)   # distEuclideGower meanNA
+cleanProg(affectIndiv,,,1)
+(aC <- affectIndiv(ld2["traj"],cent2a))
+(bC <- affectIndiv(ld2["traj"],cent2b))
+(cC <- affectIndiv(ld2["traj"],cent2c))
+
+(aC <- affectIndivC(ld2["traj"],cent2a))
+(bC <- affectIndivC(ld2["traj"],cent2b))
+(cC <- affectIndivC(ld2["traj"],cent2c))
+(dC <- affectIndivC(ld3["traj"],cent3a))
+(eC <- affectIndivC(ld3["traj"],cent3b))
+(fC <- affectIndivC(ld3["traj"],cent3c))
+
+
+##############################
+### K-means par étapes (times = 2 pour les graphes)
+
+### Initialisation
+tra <- ld3["traj"][,3:4]
+plot(tra)
+
+### Initialisation, exemple 2
+tra <- ld4["traj"][,3:4]
+plot(tra)
+
+partInit <- initializePartition(3,nrow(tra),method="kmeans-",tra)
+lines(tra,col=partInit+1,cex=2,type="p",lwd=3)
+cent <- calculTrajMean(tra,partInit)
+
+### Boucle 1
+affInd <- affectIndiv(tra,cent)
+plot(tra,col=affInd+1,pch=16)
+
+cent <- calculTrajMean(tra,affInd)
+lines(cent,col=2:4,cex=2,type="p",lwd=3)
+
+### Boucle 2
+affInd <- affectIndiv(tra,cent)
+plot(tra,col=affInd+1,pch=16)
+
+cent <- calculTrajMean(tra,affInd)
+lines(cent,col=2:4,cex=2,type="p",lwd=3)
+
+### Boucle 3
+affInd <- affectIndiv(tra,cent)
+plot(tra,col=affInd+1,pch=16)
+
+cent <- calculTrajMean(tra,affInd)
+lines(cent,col=2:4,cex=2,type="p",lwd=3)
+### Fin boucle
+
+
+
+
+
+
+cleanProg(kmlSlow)
+partInit <- initializePartition(3,8,method="randomK")
+system.time(kmlSlow(ld3['traj'],partInit))
+partInit <- initializePartition(6,200,method="kmeans--",ld4["traj"])
+system.time(kmlSlow(ld4['traj'],partInit))
+#partInit <- initializePartition(6,2000,method="randomK")
+#system.time(kmlSlow(ld5['traj'],partInit))
+
+
+cleanProg(kmlFast)
+partInit <- initializePartition(3,8,method="randomK")
+system.time(a <- kmlFast(ld3['traj'],partInit))
+system.time(b <- kmlSlow(ld3['traj'],partInit))
+
+partInit <- initializePartition(3,200,method="randomK")
+system.time(a <- kmlFast(ld4['traj'],partInit))
+system.time(b <- kmlSlow(ld4['traj'],partInit))
+identical(a,b)
+
+partInit <- initializePartition(6,2000,method="randomK")
+system.time(a <- kmlFast(ld5['traj'],partInit))
+system.time(a <- kmlFast(ld5n['traj'],partInit))
+
+
+#partInit <- initializePartition(6,200,method="randomK")
+#system.time(kmlFast(LD4['traj'],partInit))
+#partInit <- initializePartition(6,2000,method="randomK")
+#system.time(kmlFast(LD5['traj'],partInit))
+
+
+cleanProg(expandStartingCond)
+expandStartingCond(startingCond="all",10,"")
+expandStartingCond(startingCond="all",10,"maxDist")
+expandStartingCond(startingCond="all",10,"kmeans-")
+expandStartingCond(startingCond="all",10,c("maxDist","kmeans-"))
+
+expandStartingCond(startingCond="nearlyAll",10,"")
+expandStartingCond(startingCond="nearlyAll",10,"maxDist")
+expandStartingCond(startingCond="nearlyAll",10,"kmeans-")
+expandStartingCond(startingCond="nearlyAll",10,c("maxDist","kmeans-"))
+
+expandStartingCond(startingCond="kmeans-",10,"")
+expandStartingCond(startingCond=c("kmeans-","randomK"),10,"randomK")
+
+cleanProg(cutScreen)
+cutScreen("both")
+cutScreen("boteeh")
+
+cleanProg(fastOrSlow,,,1) #DISTANCE_METHODS
+fastOrSlow("both","euclidean")
+fastOrSlow("none","euclidean")
+fastOrSlow("none","manhattan")
+
+
+cleanProg(kml)
+kml(cld3)
 dev.off()
-pi <- partitionInitialise(3,243)
-pa1 <- trajKmlSlow(ld3["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld3["traj"],ld3["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[4]!=0){stop("trajKmlSlow \a")}
-
-pi <- partitionInitialise(4,243)
-pa1 <- trajKmlSlow(ld3["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld3["traj"],ld3["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[5]!=0){stop("trajKmlSlow \a")}
-
-pi <- partitionInitialise(5,243)
-pa1 <- trajKmlSlow(ld3["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld3["traj"],ld3["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[6]!=0){stop("trajKmlSlow \a")}
+kml(cld4,,1,toPlot="both")
 
 
-trajKmlSlow(ld3["traj"],partitionInitialise(4,243),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"))
-trajKmlSlow(ld3n["traj"],partitionInitialise(4,243),screenPlot=1,centerMethod=medianNA)
-trajKmlSlow(ld3["traj"],partitionInitialise(4,243),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"),centerMethod=medianNA)
+cleanProg(exportPartition)
+exportPartition(cld4,3,1,"testPart")
+
+#choice(cld3)
+cleanProg(choiceChangeParam,,,2) # choiceChangeParam
+cleanProg(choice,,,0) # choiceChangeParam
 
 
-pi <- partitionInitialise(2,180)
-pa1 <- trajKmlSlow(ld4["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld4["traj"],ld4["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[3]!=0){stop("trajKmlSlow \a")}
 
-pi <- partitionInitialise(3,180)
-pa1 <- trajKmlSlow(ld4["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld4["traj"],ld4["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[4]!=0){stop("trajKmlSlow \a")}
-
-pi <- partitionInitialise(4,180)
-pa1 <- trajKmlSlow(ld4["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld4["traj"],ld4["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[5]!=0){stop("trajKmlSlow \a")}
-
-pi <- partitionInitialise(5,180)
-pa1 <- trajKmlSlow(ld4["traj"],pi,screenPlot=1)
-pa2 <- kmeans(ld4["traj"],ld4["traj"][!is.na(pi["clusters"]),],algorithm="Lloyd",iter=100)
-if(sort(c(table(pa1[[1]]["clusters"],pa2[[1]])),TRUE)[6]!=0){stop("trajKmlSlow \a")}
-
-
-trajKmlSlow(ld4n["traj"],partitionInitialise(2,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"))
-trajKmlSlow(ld4n["traj"],partitionInitialise(3,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"))
-trajKmlSlow(ld4n["traj"],partitionInitialise(4,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"))
-trajKmlSlow(ld4n["traj"],partitionInitialise(5,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"))
-
-trajKmlSlow(ld4n["traj"],partitionInitialise(2,180),screenPlot=1,centerMethod=medianNA)
-trajKmlSlow(ld4n["traj"],partitionInitialise(3,180),screenPlot=1,centerMethod=medianNA)
-trajKmlSlow(ld4n["traj"],partitionInitialise(4,180),screenPlot=1,centerMethod=medianNA)
-trajKmlSlow(ld4n["traj"],partitionInitialise(5,180),screenPlot=1,centerMethod=medianNA)
-
-trajKmlSlow(ld4n["traj"],partitionInitialise(2,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"),centerMethod=medianNA)
-trajKmlSlow(ld4n["traj"],partitionInitialise(3,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"),centerMethod=medianNA)
-trajKmlSlow(ld4n["traj"],partitionInitialise(4,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"),centerMethod=medianNA)
-trajKmlSlow(ld4n["traj"],partitionInitialise(5,180),screenPlot=1,distance=function(x,y)dist(rbind(x,y),method="manhattan"),centerMethod=medianNA)
-
-
-### slow, test des différentes options
-cleanProg(.clusterizLongData.kml,,,2) # LETTERS meanNA
-kml(cld3,3,2,print.traj=TRUE)
-kml(cld3n,3,1,print.traj=TRUE,print.cal=TRUE)
-kml(cld3n,2:4,3,print.traj=TRUE,print.cal=TRUE,saveFreq=3)
-kml(cld3,5,2,print.traj=TRUE,print.cal=TRUE,distanceStartingCond="maximum")
-dis <- function(x,y)min(x,y)
-kml(cld3,3,1,print.traj=TRUE,print.cal=TRUE,distance=dis)
-kml(cld3,3,1,print.traj=TRUE,print.cal=TRUE,startingCond="randomAll")
-
-### fast, test des différentes options
-kml(cld3n)
-kml(cld3n,3,2,print.cal=TRUE,print.sub=TRUE)
-kml(cld4n,2:4,3,print.cal=TRUE,saveFreq=3)
-kml(cld4n,2:4,3,print.cal=TRUE,trajMinSize=10)
-kml(cld3,5,2,print.cal=TRUE,distanceStartingCond="maximum")
-dis <- function(x,y)min(x,y)
-kml(cld3,3,1,print.cal=TRUE,distance=dis)
-kml(cld3,2:3,1,print.traj=TRUE,print.cal=TRUE)
-
-cleanProg(.Clusterization.export,,,2) # LETTERS, .GlobalEnv
-cleanProg(.clusterizLongData.choice,,,0)
+cat("\n--------------------------------------------------------------------
+------------------------------ Fin kml -----------------------------
+------------------------------- Tests ------------------------------
+--------------------------------------------------------------------\n")
