@@ -2,17 +2,17 @@
 
 export(
        ## ClusterLongData
-       "cld","getClusters","gald","generateArtificialLongData",
+       "cld","getClusters","getBestPostProba","gald","generateArtificialLongData",
 
        ## parKml
-       "parKml",
+       "parKml","parALGO",
 
        ## kml, small functions
        "calculTrajFuzzyMean","affectFuzzyIndiv","calculTrajMean","affectIndiv","calculTrajMeanC","affectIndivC",
        ##"resizePartition","calculTrajMeanPoint","legendCol","varNumAndName","adjustGraph3d
 
        ## Kml
-       "fuzzyKmlSlow","kml",
+       "fuzzyKmlSlow","kml","plot",
        # "kmlSlow",
 
        ## internal only, export for kml3d

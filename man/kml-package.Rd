@@ -12,11 +12,11 @@
   \tabular{ll}{
     Package: \tab kml\cr
     Type: \tab Package\cr
-    Version: \tab 2.0\cr
-    Date: \tab 2012-04-01\cr
+    Version: \tab 2.1\cr
+    Date: \tab 2012-08-01\cr
     License: \tab GPL (>= 2)\cr
     Lazyload: \tab yes\cr
-    Depends: \tab methods,clv,longitudinalData\cr
+    Depends: \tab methods,clv,longitudinalData(>= 2.1)\cr
     URL:\tab http://www.r-project.org\cr
     URL:\tab http://christophe.genolini.free.fr/kml\cr
   }
@@ -102,13 +102,15 @@
 
 \examples{
 ### 1. Data Preparation
-myCld <- generateArtificialLongData()
+data(pregnandiol)
+names(pregnandiol)
+cldPregnan <- cld(pregnandiol,timeInData=1:30*2+1)
 
 ### 2. Building "optimal" clusteration (with only 3 redrawings)
-kml(myCld,nbRedrawing=3,toPlot="both")
+kml(cldPregnan,nbRedrawing=3,toPlot="both")
 
 ### 3. Exporting results
-try(choice(myCld))
+try(choice(cldPregnan))
 }
 
 \keyword{package}  % Package Summaries

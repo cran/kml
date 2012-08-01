@@ -190,7 +190,19 @@ setMethod("[","ClusterLongData",.ClusterLongData.get)
 
 ### MET-ON clusterRank = 1 par défaut ?
 getClusters <- function(xCld,nbCluster,clusterRank=1,asInteger=FALSE){
-    return(xCld[paste("c",nbCluster,sep="")][[clusterRank]][ifelse(asInteger,"clustersAsInteger","clusters")])
+    cluster <-  xCld["idAll"] %in% xCld["idFewNA"]
+    cluster[cluster] <- xCld[paste("c",nbCluster,sep="")][[clusterRank]]["clustersAsInteger"]
+    cluster[!cluster] <- NA
+    if(!asInteger){cluster <- factor(LETTERS[cluster])}else{}
+    return(cluster)
+}
+
+
+getBestPostProba <- function(xCld,nbCluster,clusterRank=1){
+    bestPP <-  xCld["idAll"] %in% xCld["idFewNA"]
+    bestPP[!bestPP] <- NA
+    bestPP[!is.na(bestPP)] <- apply(xCld[paste("c",nbCluster,sep="")][[clusterRank]]["postProba"],1,max,na.rm=TRUE)
+    return(bestPP)
 }
 
 
@@ -218,14 +230,14 @@ cat("\n####################################################################
 
 
 ### On a un cld et un num, on plot le longData et la Partition qui va avec.
-.plot.clusterLongData.num <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=200){
+.plot.clusterLongData.num <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=200,...){
 #    if(class(y[1])=="character"){
  #       y[1] <- substr(y[1],2,3)
   #      y <- as.numeric(y)
    # }else{}
     if(length(y)==1){y<-c(y,1)}else{}
     yPartition <- x[paste('c',y[1],sep="")][[y[2]]]
-    plot(x=as(x,"LongData"),y=yPartition,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample)
+    plotTraj(x=as(x,"LongData"),y=yPartition,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
     return(invisible())
 }
 #setMethod("plot",signature=c("ClusterLongData","ANY"),.clusterLongData.num.plot)
@@ -234,20 +246,20 @@ cat("\n####################################################################
 ### Si y est manquant :
 ###  - soit il est calculable et on le calcul puis on appelle plot.ClusterLongData
 ###  - soit il n'est pas calculable et on appelle plot.LongData.num
-.plot.clusterLongData.missingY <- function(x,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=200){
+.plot.clusterLongData.missingY <- function(x,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=200,...){
     if(all(is.tna(x["criterionValues"]))){
-        plot(x=as(x,"LongData"),parTraj=parTraj,parWin=parWin,nbSample=nbSample)
+        plotTraj(x=as(x,"LongData"),parTraj=parTraj,parWin=parWin,nbSample=nbSample,...)
     }else{
         allCrit <- sapply(x["criterionValues"] , function(x){result <- x[[1]];names(result)<-NULL;result})
         y <- as.integer(substr(names(which.max(allCrit)),2,3))
-        .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample)
+        .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
     }
     return(invisible())
 }
 
 ##setMethod("plot",signature=c("ClusterLongData","missing"),.clusterLongData.plot)
 .plotAll <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=1000,toPlot=c("both"),
-                     criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE){
+                     criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE,...){
     switch(EXPR=toPlot,
            "both"={
                listScreen <- split.screen(matrix(c(0,0.3,0.3,1,0,0,1,1),2))
@@ -255,9 +267,9 @@ cat("\n####################################################################
                parSubWindows <- parWin
                parSubWindows['closeScreen']<-TRUE
                if(missing(y)){
-                   .plot.clusterLongData.missingY(x,parTraj=parTraj,parMean=parMean,parWin=parSubWindows,nbSample=nbSample)
+                   .plot.clusterLongData.missingY(x,parTraj=parTraj,parMean=parMean,parWin=parSubWindows,nbSample=nbSample,...)
                }else{
-                   .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parSubWindows,nbSample=nbSample)
+                   .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parSubWindows,nbSample=nbSample,...)
                }
                screen(listScreen[1])
                ## ??? Liste des arguments a vérifier
@@ -272,9 +284,9 @@ cat("\n####################################################################
            },
            "traj"={
                if(missing(y)){
-                   .plot.clusterLongData.missingY(x,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample)
+                   .plot.clusterLongData.missingY(x,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
                }else{
-                   .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample)
+                   .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
                }
            },
            "criterion"={
@@ -284,22 +296,23 @@ cat("\n####################################################################
 }
 setMethod("plot",signature=c("ClusterLongData","missing"),.plotAll)
 setMethod("plot",signature=c("ClusterLongData","numeric"),.plotAll)
+setMethod("plot",signature=c("ClusterLongData","Partition"),function(x,y,...){plotTraj(x,y,...)})
 
 
 
 gald <- generateArtificialLongData <- function(
     nbEachClusters=50,time=0:10,varNames="V",
-    functionClusters=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
-    constantPersonal=function(t){rnorm(1,0,2)},
-    functionNoise=function(t){rnorm(1,0,2)},
+    meanTrajectories=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
+    personalVariation=function(t){rnorm(1,0,2)},
+    residualVariation=function(t){rnorm(1,0,2)},
     decimal=2,percentOfMissing=0
 ){
-    nbClusters <- length(functionClusters)
+    nbClusters <- length(meanTrajectories)
     if(length(nbEachClusters)==1){nbEachClusters <- rep(nbEachClusters,nbClusters)}else{}
-    if(is.numeric(constantPersonal)){eval(parse(text=paste("constantPersonal <- function(t){rnorm(1,0,",constantPersonal,")}",sep="")))}else{}
-    if(length(constantPersonal)==1){constantPersonal <- rep(list(constantPersonal),nbClusters)}else{}
-    if(is.numeric(functionNoise)){eval(parse(text=paste("functionNoise <- function(t){rnorm(1,0,",functionNoise,")}",sep="")))}else{}
-    if(length(functionNoise)==1){functionNoise <- rep(list(functionNoise),nbClusters)}else{}
+    if(is.numeric(personalVariation)){eval(parse(text=paste("personalVariation <- function(t){rnorm(1,0,",personalVariation,")}",sep="")))}else{}
+    if(length(personalVariation)==1){personalVariation <- rep(list(personalVariation),nbClusters)}else{}
+    if(is.numeric(residualVariation)){eval(parse(text=paste("residualVariation <- function(t){rnorm(1,0,",residualVariation,")}",sep="")))}else{}
+    if(length(residualVariation)==1){residualVariation <- rep(list(residualVariation),nbClusters)}else{}
     if(length(percentOfMissing)==1){percentOfMissing <- rep(percentOfMissing,nbClusters)}else{}
     nbTime <- length(time)
     idAll <- paste("i",1:(sum(nbEachClusters)),sep="")
@@ -307,9 +320,9 @@ gald <- generateArtificialLongData <- function(
 
     traj <- matrix(NA,nrow=sum(nbEachClusters),ncol=nbTime)
     for (iIndiv in 1:nrow(traj)){
-        traj[iIndiv,] <- functionClusters[[indivInCluster[iIndiv]]](time)+
-                         constantPersonal[[indivInCluster[iIndiv]]](time)+
-                         apply(t(time),2,functionNoise[[indivInCluster[iIndiv]]])
+        traj[iIndiv,] <- meanTrajectories[[indivInCluster[iIndiv]]](time)+
+                         personalVariation[[indivInCluster[iIndiv]]](time)+
+                         apply(t(time),2,residualVariation[[indivInCluster[iIndiv]]])
     }
     traj <- round(traj,digits=decimal)
 

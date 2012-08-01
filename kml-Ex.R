@@ -73,11 +73,11 @@ myCld <- gald(15)
 kml(myCld,,2,toPlot="both")
 
 ### Using median instead of mean
-parWithMedian <- parKml(centerMethod=function(x){median(x,na.rm=TRUE)})
+parWithMedian <- parALGO(centerMethod=function(x){median(x,na.rm=TRUE)})
 kml(myCld,,2,toPlot="both",parAlgo=parWithMedian)
 
 ### Using distance max
-parWithMax <- parKml(distanceName="maximum")
+parWithMax <- parALGO(distanceName="maximum")
 kml(myCld,,2,toPlot="both",parAlgo=parWithMax)
 
 
@@ -312,7 +312,7 @@ plot(ex1,part1)
 #####################
 ### Three diverging lines
 
-ex2 <- generateArtificialLongData(functionClusters=list(function(t)0,function(t)-t,function(t)t))
+ex2 <- generateArtificialLongData(meanTrajectories=list(function(t)0,function(t)-t,function(t)t))
 part2 <- partition(rep(1:3,each=50))
 plot(ex2,part2)
 
@@ -321,9 +321,9 @@ plot(ex2,part2)
 ### Three diverging lines with high variance, unbalance groups and missing value
 
 ex3 <- generateArtificialLongData(
-   functionClusters=list(function(t)0,function(t)-t,function(t)t),
+   meanTrajectories=list(function(t)0,function(t)-t,function(t)t),
    nbEachClusters=c(100,30,10),
-   functionNoise=function(t){rnorm(1,0,3)},
+   residualVariation=function(t){rnorm(1,0,3)},
    percentOfMissing=c(0.25,0.5,0.25)
 )
 part3 <- partition(rep(1:3,c(100,30,10)))
@@ -335,8 +335,8 @@ plot(ex3,part3)
 
 ex4 <- generateArtificialLongData(
     nbEachClusters=c(300,200,100,100),
-    functionClusters=list(function(t){-10+2*t},function(t){-0.6*t^2+6*t-7.5},function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
-    functionNoise=function(t){rnorm(1,0,3)},
+    meanTrajectories=list(function(t){-10+2*t},function(t){-0.6*t^2+6*t-7.5},function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
+    residualVariation=function(t){rnorm(1,0,3)},
     time=0:10,decimal=2,percentOfMissing=0.3)
 part4 <- partition(rep(1:4,c(300,200,100,100)))
 plot(ex4,part4)
@@ -354,6 +354,30 @@ par(ask=FALSE)
 
 
 graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+cleanEx()
+nameEx("getBestPostProba")
+### * getBestPostProba
+
+flush(stderr()); flush(stdout())
+
+### Name: getBestPostProba
+### Title: ~ Function: getBestPostProba ~
+### Aliases: getBestPostProba
+
+### ** Examples
+
+### Creation of an object ClusterLongData
+myCld <- gald(20)
+
+### Computation of some partition
+kml(myCld,2:4,3)
+
+### Extraction the best posterior probabilities
+### form the list of partition with 3 clusters of the second clustering
+getBestPostProba(myCld,3,2)
+
+
+
 cleanEx()
 nameEx("getCluster")
 ### * getCluster
@@ -393,13 +417,15 @@ flush(stderr()); flush(stdout())
 ### ** Examples
 
 ### 1. Data Preparation
-myCld <- generateArtificialLongData()
+data(pregnandiol)
+names(pregnandiol)
+cldPregnan <- cld(pregnandiol,timeInData=1:30*2+1)
 
 ### 2. Building "optimal" clusteration (with only 3 redrawings)
-kml(myCld,nbRedrawing=3,toPlot="both")
+kml(cldPregnan,nbRedrawing=3,toPlot="both")
 
 ### 3. Exporting results
-try(choice(myCld))
+try(choice(cldPregnan))
 
 
 
@@ -437,7 +463,7 @@ flush(stderr()); flush(stdout())
 
 ### Name: parKml
 ### Title: ~ Function: parKml ~
-### Aliases: parKml
+### Aliases: parKml parALGO
 
 ### ** Examples
 
@@ -445,8 +471,8 @@ flush(stderr()); flush(stdout())
 cld1 <- generateArtificialLongData(15)
 
 ### Setting two different set of option :
-(option1 <- parKml())
-(option2 <- parKml(distanceName="maximum",centerMethod=function(x)median(x,na.rm=TRUE)))
+(option1 <- parALGO())
+(option2 <- parALGO(distanceName="maximum",centerMethod=function(x)median(x,na.rm=TRUE)))
 
 ### Running kml We suspect 3, 4 or 5 clusters, we want 2 redrawing.
 kml(cld1,3:5,2,toPlot="both",parAlgo=option1)
@@ -465,6 +491,7 @@ flush(stderr()); flush(stdout())
 ### Aliases: plot plot-method plot,ClusterLongData
 ###   plot,ClusterLongData,ANY-method plot,ClusterLongData,missing-method
 ###   plot,ClusterLongData,numeric-method
+###   plot,ClusterLongData,Partition-method
 ### Keywords: dplot iplot chron spatial classif cluster ts
 
 ### ** Examples

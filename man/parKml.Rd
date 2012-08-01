@@ -1,14 +1,17 @@
 \name{parKml}
 \Rdversion{1.1}
 \alias{parKml}
+\alias{parALGO}
 
 \title{ ~ Function: parKml ~}
 
 \description{
-  \code{parKml} is the constructor of object \code{\linkS4class{ParKml}}.
+  \code{parKml} and \code{parALGO} are constructor for the object \code{\linkS4class{ParKml}}.
 }
 \usage{
-parKml(saveFreq=100,maxIt=200,imputationMethod="copyMean",distanceName="euclidean",power=2,distance=function(){},centerMethod=meanNA,startingCond="nearlyAll",nbCriterion=100)
+parKml(saveFreq,maxIt,imputationMethod,distanceName,power,distance,centerMethod,startingCond,nbCriterion,scale)
+
+parALGO(saveFreq=100,maxIt=200,imputationMethod="copyMean",distanceName="euclidean",power=2,distance=function(){},centerMethod=meanNA,startingCond="nearlyAll",nbCriterion=100,scale=TRUE)
 }
 \arguments{
   \item{saveFreq}{\code{[numeric]}: Long computations can take several
@@ -17,7 +20,8 @@ parKml(saveFreq=100,maxIt=200,imputationMethod="copyMean",distanceName="euclidea
     defines the frequency of the saving
     process. The \code{ClusterLongData} is saved every \code{saveFreq}
     clustering calculations. The object is saved in the file
-    \code{objectName.Rdata} in the curent folder.
+    \code{objectName.Rdata} in the curent folder. If \code{saveFreq} is
+    set to \code{Inf}, the object is never saved.
   }
   \item{maxIt}{\code{[numeric]}: Set a limit to the number of iteration if
     convergence is not reached.
@@ -69,6 +73,15 @@ parKml(saveFreq=100,maxIt=200,imputationMethod="copyMean",distanceName="euclidea
     a high criterion number an slow down the overall process). The
     default value is 100.
   }
+
+  \item{scale}{\code{[logical]}: if TRUE, then the data will be
+    automaticaly scaled (using the function \code{\link{scale}} with
+    default values) before the execution of k-means on joint
+    trajectories. Then the data
+    will be restore (using the function \code{\link{restoreRealData}})
+    just before the end of the function \code{\link[kml3d]{kml3d}}. This option
+    has no effect on \code{\link{kml}}.
+  }
 }
 
 \details{
@@ -85,8 +98,8 @@ parKml(saveFreq=100,maxIt=200,imputationMethod="copyMean",distanceName="euclidea
 cld1 <- generateArtificialLongData(15)
 
 ### Setting two different set of option :
-(option1 <- parKml())
-(option2 <- parKml(distanceName="maximum",centerMethod=function(x)median(x,na.rm=TRUE)))
+(option1 <- parALGO())
+(option2 <- parALGO(distanceName="maximum",centerMethod=function(x)median(x,na.rm=TRUE)))
 
 ### Running kml We suspect 3, 4 or 5 clusters, we want 2 redrawing.
 kml(cld1,3:5,2,toPlot="both",parAlgo=option1)
