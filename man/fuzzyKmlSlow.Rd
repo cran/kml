@@ -8,7 +8,7 @@
 }
 
 \usage{
-fuzzyKmlSlow(traj, clusterAffectation, toPlot = "traj", fuzzyfier = 1.25, parAlgo = parKml())
+fuzzyKmlSlow(traj, clusterAffectation, toPlot = "traj", fuzzyfier = 1.25, parAlgo = parALGO())
 }
 \arguments{
   \item{traj}{\code{[matrix(numeric)]}: Matrix holding the longitudinal data}

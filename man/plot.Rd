@@ -5,6 +5,7 @@
 \alias{plot,ClusterLongData,ANY-method}
 \alias{plot,ClusterLongData,missing-method}
 \alias{plot,ClusterLongData,numeric-method}
+\alias{plot,ClusterLongData,Partition-method}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ ~ Function: plot for ClusterLongData ~ }
@@ -13,7 +14,7 @@
   to a \code{\linkS4class{Partition}}.
 }
 \usage{
-\S4method{plot}{ClusterLongData,ANY}(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar'],addLegend=TRUE),nbSample=1000,toPlot=c("both"),criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE)
+\S4method{plot}{ClusterLongData,ANY}(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar'],addLegend=TRUE),nbSample=1000,toPlot=c("both"),criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -64,6 +65,8 @@
   \item{standardized}{\code{[logical]}: if several criterion are display
     on the same graph, should they be mapped into [0:1] (in order to be
     on the same scale and therefor being comparable) ?}
+
+  \item{...}{Some other parameters can be passed to the method.}
 }
 
 \details{
@@ -79,11 +82,6 @@
   class \code{\linkS4class{ParLongData}}.
 
 }
-
-
-
-
-
 
 \seealso{
   Overview: \code{\link{kml-package}} \cr

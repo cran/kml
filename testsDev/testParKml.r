@@ -8,11 +8,11 @@ cleanProg(.ParKml.validity)
 cleanProg(parKml,,,2) # DISTANCE_METHODS meanNA
 cleanProg(.ParKml.show)
 new("ParKml")
-parKml()
-parKml(saveFreq=300)
-pk <- parKml(distanceName="maximum")
-pk2 <- parKml(distanceName="manhattan",saveFreq=30,maxIt=50,imputationMethod="copyMean")
-pk3 <- parKml(distanceName="minkowski",power=3,saveFreq=30,maxIt=50,imputationMethod=c(method="copyMean",boundInf="min",boundSup="max"),centerMethod=medianNA,startingCond="randomAll")
+parALGO()
+parALGO(saveFreq=300)
+pk <- parALGO(distanceName="maximum")
+pk2 <- parALGO(distanceName="manhattan",saveFreq=30,maxIt=50,imputationMethod="copyMean")
+pk3 <- parALGO(distanceName="minkowski",power=3,saveFreq=30,maxIt=50,imputationMethod=c(method="copyMean",boundInf="min",boundSup="max"),centerMethod=medianNA,startingCond="randomAll")
 pk['distance']
 pk['distanceName']<-"manhattan"
 pk['distance'](1:3,2:4)

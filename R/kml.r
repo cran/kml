@@ -37,7 +37,7 @@ affectFuzzyIndiv <- function(traj,clustersCenter,fuzzyfier=1.25){
 }
 
 
-fuzzyKmlSlow <- function(traj,clusterAffectation,toPlot="traj",fuzzyfier=1.25,parAlgo=parKml()){
+fuzzyKmlSlow <- function(traj,clusterAffectation,toPlot="traj",fuzzyfier=1.25,parAlgo=parALGO()){
     nbId <- nrow(traj)
     nbClusters <- max(clusterAffectation,na.rm=TRUE)
 
@@ -45,7 +45,7 @@ fuzzyKmlSlow <- function(traj,clusterAffectation,toPlot="traj",fuzzyfier=1.25,pa
     clusterAppartenance[na.omit(matrix(c(1:nbId,clusterAffectation),nbId))] <- 1
     exClusterAffectation <- exExClusterAffectation <- exExExClusterAffectation <- NA
     if(toPlot%in%c("traj","both")){
-        plot(longData(traj),partition(clusterAffectation))
+        plotTraj(longData(traj),partition(clusterAffectation))
     }else{}
     for(iterations in 1:parAlgo['maxIt']){
         clustersCenter <- calculTrajFuzzyMean(traj=traj,fuzzyClust=clusterAppartenance)
@@ -122,7 +122,7 @@ affectIndivC <- function(traj,clustersCenter){
 }
 
 
-kmlSlow <- function(traj,clusterAffectation,toPlot="traj",parAlgo=parKml()){
+kmlSlow <- function(traj,clusterAffectation,toPlot="traj",parAlgo=parALGO()){
 #    if (distance %in% METHODS){distanceFun <- function(x,y){return(dist(t(cbind(x,y)),method=distance))}}else{distanceFun <- distance}
  #   print(distanceFun)
     longDatTraj <- longData(traj,maxNA=ncol(traj)-1)
@@ -131,13 +131,13 @@ kmlSlow <- function(traj,clusterAffectation,toPlot="traj",parAlgo=parKml()){
 
     exClusterAffectation <- NA
     if(toPlot%in%c("traj","both")){
-        plot(longDatTraj,partition(clusterAffectation))
+        plotTraj(longDatTraj,partition(clusterAffectation))
     }else{}
     for(iterations in 1:parAlgo['maxIt']){
         clustersCenter <- calculTrajMean(traj=traj,clust=clusterAffectation,centerMethod=kmlCenterMethod)
         clusterAffectation <- affectIndiv(traj=traj,clustersCenter=clustersCenter,distance=kmlDistance)
         if(toPlot%in%c("traj","both")){
-            plot(longDatTraj,partition(clusterAffectation))
+            plotTraj(longDatTraj,partition(clusterAffectation))
         }else{}
         if(identical(clusterAffectation,exClusterAffectation)){
             clusterAffectation <- partition(clusterAffectation,longDatTraj,
@@ -203,13 +203,13 @@ cutScreen <- function(toPlot){
 #    return(listScreen)
 #}
 
-fastOrSlow <- function(toPlot,distName){
-    if(toPlot%in%c("both","traj") | !(distName=="euclidean")){
-        cat(" ~ Slow KmL ~\n")
-        fast <- FALSE
-    }else{
+fastOrSlow <- function(toPlot,parAlgo){
+    if((toPlot%in%c("criterion","none")) & (parAlgo['distanceName']=="euclidean") & identical(parAlgo["centerMethod"],parALGO()["centerMethod"])){
         cat(" ~ Fast KmL ~\n")
         fast <- TRUE
+    }else{
+        cat(" ~ Slow KmL ~\n")
+        fast <- FALSE
     }
     return(fast)
 }
@@ -217,7 +217,7 @@ fastOrSlow <- function(toPlot,distName){
 
 
 
-kml <- function(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parKml()){
+kml <- function(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parALGO()){
     if(class(object)=="ClusterLongData3d"){
         stop("[kml]: kml is for longitudinal data (object 'ClusterLongData').
 For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
@@ -247,8 +247,8 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
 #    if("maxDist" %in% startingCond){matDistance <- as.matrix(dist["traj"])}else{}
 
     ################
-    ## Fast or Slow, according to distance and to toPlot
-    fast <- fastOrSlow(toPlot,parAlgo['distanceName'])
+    ## Fast or Slow, according to parAlgo to toPlot
+    fast <- fastOrSlow(toPlot,parAlgo)
 #    fast <- FALSE
 
     for(iRedraw in 1:nbRedrawing){
@@ -293,7 +293,7 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
         }
     }
     cat("\n")
-    if(saveCld<Inf){save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))}else{}
+    if(parAlgo["saveFreq"]<Inf){save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))}else{}
     ## La fenetre graphique est fermée grace a 'on.exit' défini en début de fonction
     ordered(object)
     if(toPlot=="both"){
@@ -332,7 +332,7 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
     write.csv2(trajMean,file=paste(nameObject,"-TrajMean.csv",sep=""),row.names=TRUE)
 
     eval(parse(text=paste(typeGraph,"(filename='",nameObject,"-Traj.",typeGraph,"')",sep="")))
-    plot(as(object,"LongData"),part,parTraj=parTraj,parMean=parMean)
+    plotTraj(as(object,"LongData"),part,parTraj=parTraj,parMean=parMean)
     dev.off()
         #lty=lty,lty.mean=lty.mean,pch=pch,pch.mean=pch.mean,pch.time=pch.time,
         #xlab=xlab,ylab=ylab,ylim=ylim,cex.mean=cex.mean,legends=legends,sizeMin=sizeMin,...)
@@ -570,7 +570,8 @@ cat("### Method: 'choice' pour clusterizLongData ###\n")
             plotCriterion(as(object,"ListPartition"),nbCriterion=1,criterion=CRITERION_NAMES,standardized=TRUE)
         dev.off()
     }
-
+    assign(nameObject,object,envir=parent.frame())
+    return(invisible())
 
 #    lapply(paramChoice['selectedPart'],exportSelected)
 #                               col=colTrajPossible[styleTraj],type=typeTrajPossible[styleTraj],

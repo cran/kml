@@ -13,7 +13,7 @@
 }
 
 \usage{
-kml(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parKml())
+kml(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parALGO())
 }
 
 \arguments{

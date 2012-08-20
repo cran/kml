@@ -24,11 +24,15 @@ getClusters(xCld, nbCluster, clusterRank = 1, asInteger = FALSE)
     vector of integer ? If FALSE, a vector of LETTERS is return.}
 }
 \details{
-   This function is a shortcut for \code{xCld[paste("c",nbCluster,sep="")][[clusterRank]]}.
+  This function extract a clusters from an object
+  \code{\linkS4class{ClusterLongData}}.
+  It is almost the same as
+  \code{xCld[paste("c",nbCluster,sep="")][[clusterRank]]} except that
+  the individual with too many missing value (and thus excludes from the
+  analysis) will be noted by some NA values.
 }
 
-\value{A vector of numeric or a LETTER, according to the value of \code{asInteger}.
-}
+\value{A vector of numeric or a LETTER, according to the value of \code{asInteger}.}
 
 \seealso{
 \code{\linkS4class{ClusterLongData}}

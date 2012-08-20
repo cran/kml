@@ -17,7 +17,8 @@
       defines the frequency of the saving
       process. The \code{ClusterLongData} is saved every \code{saveFreq}
       clustering calculations. The object is saved in the file
-      \code{objectName.Rdata} in the curent folder.
+      \code{objectName.Rdata} in the curent folder. If \code{saveFreq} is
+    set to \code{Inf}, the object is never saved.
     }
     \item{\code{maxIt}:}{\code{[numeric]}: Set a limit to the number of iteration if
       convergence is not reached.
@@ -68,6 +69,15 @@
       a high criterion number an slow down the overall process). The
       default value is 100.
     }
+
+    \item{scale}{\code{[logical]}: if TRUE, then the data will be
+      automaticaly scaled (using the function \code{\link{scale}} with
+      default values) before the execution of k-means on joint
+      trajectories. Then the data
+      will be restore (using the function \code{\link{restoreRealData}})
+      just before the end of the function \code{\link[kml3d]{kml3d}}. This option
+      has no effect on \code{\link{kml}}.
+    }
   }
 }
 
@@ -86,11 +96,11 @@ myCld <- gald(15)
 kml(myCld,,2,toPlot="both")
 
 ### Using median instead of mean
-parWithMedian <- parKml(centerMethod=function(x){median(x,na.rm=TRUE)})
+parWithMedian <- parALGO(centerMethod=function(x){median(x,na.rm=TRUE)})
 kml(myCld,,2,toPlot="both",parAlgo=parWithMedian)
 
 ### Using distance max
-parWithMax <- parKml(distanceName="maximum")
+parWithMax <- parALGO(distanceName="maximum")
 kml(myCld,,2,toPlot="both",parAlgo=parWithMax)
 }
 

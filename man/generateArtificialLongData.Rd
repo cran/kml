@@ -12,16 +12,16 @@
 }
 \usage{
 gald(nbEachClusters=50,time=0:10,varNames="V",
-    functionClusters=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
-    constantPersonal=function(t){rnorm(1,0,2)},
-    functionNoise=function(t){rnorm(1,0,2)},
+    meanTrajectories=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
+    personalVariation=function(t){rnorm(1,0,2)},
+    residualVariation=function(t){rnorm(1,0,2)},
     decimal=2,percentOfMissing=0)
 
 
 generateArtificialLongData(nbEachClusters=50,time=0:10,varNames="V",
-    functionClusters=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
-    constantPersonal=function(t){rnorm(1,0,2)},
-    functionNoise=function(t){rnorm(1,0,2)},
+    meanTrajectories=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
+    personalVariation=function(t){rnorm(1,0,2)},
+    residualVariation=function(t){rnorm(1,0,2)},
     decimal=2,percentOfMissing=0)
 }
 
@@ -31,14 +31,14 @@ generateArtificialLongData(nbEachClusters=50,time=0:10,varNames="V",
     number is given, it is duplicated for all groups.}
   \item{time}{[vector(numeric)]: time at which measures are made.}
   \item{varNames}{[character]: name of the variable.}
-  \item{functionClusters}{[list(function)]: lists the functions
+  \item{meanTrajectories}{[list(function)]: lists the functions
     define the average trajectories of each cluster.}
-  \item{constantPersonal}{[function] or [list(function)]: lists the functions
+  \item{personalVariation}{[function] or [list(function)]: lists the functions
     defining the personnal variation between an individual and the mean
     trajectories of its cluster. Note that these function should be
     constant function (the personal variation can not evolve with time). If
     a single function is given, it is duplicated for all groups (see detail).}
-  \item{functionNoise}{[function] or [list(function)]: lists the functions
+  \item{residualVariation}{[function] or [list(function)]: lists the functions
     generating the noise of each trajectory within its own cluster. If
     a single function is given, it is duplicated for all groups (see detail).}
   \item{decimal}{[numeric]: number of decimals used to round up values.}
@@ -52,9 +52,9 @@ generateArtificialLongData(nbEachClusters=50,time=0:10,varNames="V",
   \code{generateArtificialLongData} (\code{gald} in short) is a
   function that contruct a set of artificial longitudinal data.
   Each individual is considered as belonging to a group. This group
-  follows a theoretical trajectory, function of time. These functions (one per group) are given via the argument \code{functionClusters}.
+  follows a theoretical trajectory, function of time. These functions (one per group) are given via the argument \code{meanTrajectories}.
 
-  Within a group, the individual undergoes individal variations. Individual variations are given via the argument \code{functionNoise}.
+  Within a group, the individual undergoes individal variations. Individual variations are given via the argument \code{residualVariation}.
 
   The number of individuals in each group is given by \code{nbEachClusters}.
 
@@ -104,7 +104,7 @@ plot(ex1,part1)
 #####################
 ### Three diverging lines
 
-ex2 <- generateArtificialLongData(functionClusters=list(function(t)0,function(t)-t,function(t)t))
+ex2 <- generateArtificialLongData(meanTrajectories=list(function(t)0,function(t)-t,function(t)t))
 part2 <- partition(rep(1:3,each=50))
 plot(ex2,part2)
 
@@ -113,9 +113,9 @@ plot(ex2,part2)
 ### Three diverging lines with high variance, unbalance groups and missing value
 
 ex3 <- generateArtificialLongData(
-   functionClusters=list(function(t)0,function(t)-t,function(t)t),
+   meanTrajectories=list(function(t)0,function(t)-t,function(t)t),
    nbEachClusters=c(100,30,10),
-   functionNoise=function(t){rnorm(1,0,3)},
+   residualVariation=function(t){rnorm(1,0,3)},
    percentOfMissing=c(0.25,0.5,0.25)
 )
 part3 <- partition(rep(1:3,c(100,30,10)))
@@ -127,8 +127,8 @@ plot(ex3,part3)
 
 ex4 <- generateArtificialLongData(
     nbEachClusters=c(300,200,100,100),
-    functionClusters=list(function(t){-10+2*t},function(t){-0.6*t^2+6*t-7.5},function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
-    functionNoise=function(t){rnorm(1,0,3)},
+    meanTrajectories=list(function(t){-10+2*t},function(t){-0.6*t^2+6*t-7.5},function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
+    residualVariation=function(t){rnorm(1,0,3)},
     time=0:10,decimal=2,percentOfMissing=0.3)
 part4 <- partition(rep(1:4,c(300,200,100,100)))
 plot(ex4,part4)

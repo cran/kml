@@ -15,7 +15,8 @@ setClass(
         centerMethod="function",
         startingCond="character",
  #       distanceStartingCond="function",
-        nbCriterion="numeric"
+        nbCriterion="numeric",
+        scale="logical"
     ),
     prototype=prototype(
         saveFreq=numeric(),
@@ -27,23 +28,36 @@ setClass(
         centerMethod=function(){},
         startingCond=character(),
 #        distanceStartingCond=function(){},
-        nbCriterion=numeric()
+        nbCriterion=numeric(),
+        scale=logical()
     ),
     validity=.ParKml.validity
 )
 
-parKml <- function(saveFreq=100,maxIt=200,imputationMethod="copyMean",
-                   distanceName="euclidean",power=2,distance=function(){},
-                   centerMethod=meanNA,startingCond="nearlyAll",#distanceStartingCond=function(x,y)dist(rbind(x,y)),
-                   nbCriterion=100){
+parKml <- function(saveFreq,maxIt,imputationMethod,distanceName,power,distance,
+                   centerMethod,startingCond,nbCriterion,scale){
     if(distanceName %in%DISTANCE_METHODS){
         eval(parse(text=paste("distance <- function(x,y){dist(rbind(x,y),method='",distanceName,"',p=",power,")}",sep="")))
     }else{}
     new("ParKml",saveFreq=saveFreq,maxIt=maxIt,imputationMethod=imputationMethod,
         distanceName=distanceName,power=power,distance=distance,
         centerMethod=centerMethod,startingCond=startingCond,#distanceStartingCond=distanceStartingCond,
-        nbCriterion=nbCriterion)
+        nbCriterion=nbCriterion,scale=scale)
 }
+
+parALGO <- function(saveFreq=100,maxIt=200,imputationMethod="copyMean",
+                   distanceName="euclidean",power=2,distance=function(){},
+                   centerMethod=meanNA,startingCond="nearlyAll",#distanceStartingCond=function(x,y)dist(rbind(x,y)),
+                   nbCriterion=100,scale=TRUE){
+    if(distanceName %in%DISTANCE_METHODS){
+        eval(parse(text=paste("distance <- function(x,y){dist(rbind(x,y),method='",distanceName,"',p=",power,")}",sep="")))
+    }else{}
+    new("ParKml",saveFreq=saveFreq,maxIt=maxIt,imputationMethod=imputationMethod,
+        distanceName=distanceName,power=power,distance=distance,
+        centerMethod=centerMethod,startingCond=startingCond,#distanceStartingCond=distanceStartingCond,
+        nbCriterion=nbCriterion,scale=scale)
+}
+
 
 setMethod("[","ParKml",
     function(x,i,j,drop){
@@ -58,6 +72,7 @@ setMethod("[","ParKml",
             "startingCond"={return(x@startingCond)},
 #            "distanceStartingCond"={return(x@distanceStartingCond)},
             "nbCriterion"={return(x@nbCriterion)},
+            "scale"={return(x@scale)},
             stop("[ParKml:get]: there is not such a slot in ParWindows")
         )
     }
@@ -84,6 +99,7 @@ setMethod(f="[<-",signature="ParKml",
             "startingCond"={x@startingCond <- value},
 #            "distanceStartingCond"={x@distanceStartingCond <- value},
             "nbCriterion"={x@nbCriterion <- value},
+            "scale"={x@scale <- value},
             stop("[ParKml:set]: there is not such a slot in ParWindows")
         )
         validObject(x)
@@ -105,6 +121,7 @@ cat("### Method : 'show' for ParKml ###\n")
     cat(" ~ startingCond         :",object@startingCond)
 #    cat("\n ~ distanceStartingCond : ");print(object@distanceStartingCond)
     cat("\n ~ nbCriterion          :",object@nbCriterion,"\n")
+    cat("\n ~ scale                :",object@scale,"\n")
     return(invisible(object))
 }
 setMethod(f="show",signature="ParKml",definition=.ParKml.show)

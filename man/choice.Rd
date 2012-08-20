@@ -93,8 +93,7 @@ choice(object, typeGraph = "bmp")
   Overview: \code{\link{kml-package}} \cr
   Classes : \code{\linkS4class{ClusterLongData}}, \code{\linkS4class{Partition}} \cr
   Methods : \code{\link{kml}}\cr
-  Plot : \code{\link[kml:plot]{plot(ClusterLongData)}},
-  \code{\link[longitudinalData:plot]{plot}}
+  Plot : \code{\link{plot}}
 }
 
 
