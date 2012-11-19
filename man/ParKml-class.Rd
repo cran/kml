@@ -4,7 +4,7 @@
 \alias{ParKml-class}
 \alias{[,ParKml-method}
 \alias{[<-,ParKml-method}
-\alias{show,ParKml-method}
+%\alias{show,ParKml-method}
 
 \title{~ Class: "ParKml" ~ }
 \description{\code{ParKml} is an object containing some parameter used by \code{\link{kml}}.}
@@ -89,19 +89,21 @@
 
 
 \examples{
+\donttest{
 ### Building data
-myCld <- gald(15)
+myCld <- gald()
 
 ### Standard kml
-kml(myCld,,2,toPlot="both")
+kml(myCld,,3,toPlot="both")
 
 ### Using median instead of mean
 parWithMedian <- parALGO(centerMethod=function(x){median(x,na.rm=TRUE)})
-kml(myCld,,2,toPlot="both",parAlgo=parWithMedian)
+kml(myCld,,3,toPlot="both",parAlgo=parWithMedian)
 
 ### Using distance max
 parWithMax <- parALGO(distanceName="maximum")
-kml(myCld,,2,toPlot="both",parAlgo=parWithMax)
+kml(myCld,,3,toPlot="both",parAlgo=parWithMax)
+}
 }
 
 \keyword{classes}

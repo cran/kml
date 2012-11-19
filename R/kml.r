@@ -567,7 +567,7 @@ cat("### Method: 'choice' pour clusterizLongData ###\n")
             plot(object,toPlot="criterion")
         dev.off()
         eval(parse(text=paste(typeGraph,"(filename='",nameObject,"-criterionAll.",typeGraph,"')",sep="")))
-            plotCriterion(as(object,"ListPartition"),nbCriterion=1,criterion=CRITERION_NAMES,standardized=TRUE)
+            plotAllCriterion(as(object,"ListPartition"),criterion=CRITERION_NAMES,standardized=TRUE)
         dev.off()
     }
     assign(nameObject,object,envir=parent.frame())

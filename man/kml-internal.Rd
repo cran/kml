@@ -23,7 +23,7 @@
 \alias{[,ParChoice-method}
 \alias{[<-,ParChoice-method}
 
-\title{~ Internal kml objects and methods ~}
+\title{~ Internal KmL objects and methods ~}
 \description{Internal: KmL objects and methods}
 \details{These are not to be called by the user.\cr
   If you have a specific need or for more details on KmL, feel free to contact

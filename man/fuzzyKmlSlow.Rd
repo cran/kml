@@ -35,8 +35,8 @@ The matrix of the individual membership.
 }
 \examples{
 ### Data generation
-traj <- gald()["traj"]
-partInit <- initializePartition(3,200,"kmeans--",traj)
+traj <- gald(25)["traj"]
+partInit <- initializePartition(3,100,"kmeans--",traj)
 
 ### fuzzy Kml
 partResult <- fuzzyKmlSlow(traj,partInit)

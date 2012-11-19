@@ -14,7 +14,7 @@ flush(stderr()); flush(stdout())
 ### Name: ClusterLongData-class
 ### Title: ~ Class: ClusterLongData ~
 ### Aliases: ClusterLongData-class [,ClusterLongData-method
-###   [<-,ClusterLongData-method show,ClusterLongData-method
+###   [<-,ClusterLongData-method
 ### Keywords: classes chron spatial classif cluster nonparametric ts
 
 ### ** Examples
@@ -61,24 +61,10 @@ flush(stderr()); flush(stdout())
 ### Name: ParKml-class
 ### Title: ~ Class: "ParKml" ~
 ### Aliases: ParKml-class [,ParKml-method [<-,ParKml-method
-###   show,ParKml-method
 ### Keywords: classes
 
 ### ** Examples
 
-### Building data
-myCld <- gald(15)
-
-### Standard kml
-kml(myCld,,2,toPlot="both")
-
-### Using median instead of mean
-parWithMedian <- parALGO(centerMethod=function(x){median(x,na.rm=TRUE)})
-kml(myCld,,2,toPlot="both",parAlgo=parWithMedian)
-
-### Using distance max
-parWithMax <- parALGO(distanceName="maximum")
-kml(myCld,,2,toPlot="both",parAlgo=parWithMax)
 
 
 
@@ -199,16 +185,16 @@ flush(stderr()); flush(stdout())
 
 ### Name: choice
 ### Title: ~ Function: choice ~
-### Aliases: choice choice-methods choice,ClusterLongData-method
+### Aliases: choice choice,ClusterLongData-method
 ### Keywords: iplot chron spatial classif cluster nonparametric ts
 
 ### ** Examples
 
 ### Creation of articficial data
-cld1 <- gald()
+cld1 <- gald(25)
 
 ### Clusterisation
-kml(cld1,nbRedrawing=3,toPlot='both')
+kml(cld1,3:5,nbRedrawing=2,toPlot='both')
 
 ### Selection of the clustering we want
 #     (note that "try" is for compatibility with CRAN only,
@@ -225,9 +211,8 @@ flush(stderr()); flush(stdout())
 
 ### Name: clusterLongData
 ### Title: ~ Function: clusterLongData (or cld) ~
-### Aliases: cld clusterLongData clusterLongData,ANY,ANY,ANY,ANY,ANY,ANY
+### Aliases: cld clusterLongData
 ###   clusterLongData,ANY,ANY,ANY,ANY,ANY,ANY-method
-###   clusterLongData,missing,missing,missing,missing,missing,missing
 ###   clusterLongData,missing,missing,missing,missing,missing,missing-method
 ### Keywords: classes
 
@@ -263,6 +248,24 @@ clusterLongData(dn)
 
 
 cleanEx()
+nameEx("epipageShort")
+### * epipageShort
+
+flush(stderr()); flush(stdout())
+
+### Name: epipageShort
+### Title: ~ Data: epipageShort ~
+### Aliases: epipageShort
+### Keywords: datasets documentation
+
+### ** Examples
+
+data(epipageShort)
+str(epipageShort)
+
+
+
+cleanEx()
 nameEx("fuzzyKmlSlow")
 ### * fuzzyKmlSlow
 
@@ -276,8 +279,8 @@ flush(stderr()); flush(stdout())
 ### ** Examples
 
 ### Data generation
-traj <- gald()["traj"]
-partInit <- initializePartition(3,200,"kmeans--",traj)
+traj <- gald(25)["traj"]
+partInit <- initializePartition(3,100,"kmeans--",traj)
 
 ### fuzzy Kml
 partResult <- fuzzyKmlSlow(traj,partInit)
@@ -416,16 +419,6 @@ flush(stderr()); flush(stdout())
 
 ### ** Examples
 
-### 1. Data Preparation
-data(pregnandiol)
-names(pregnandiol)
-cldPregnan <- cld(pregnandiol,timeInData=1:30*2+1)
-
-### 2. Building "optimal" clusteration (with only 3 redrawings)
-kml(cldPregnan,nbRedrawing=3,toPlot="both")
-
-### 3. Exporting results
-try(choice(cldPregnan))
 
 
 
@@ -437,21 +430,11 @@ flush(stderr()); flush(stdout())
 
 ### Name: kml
 ### Title: ~ Algorithm kml: K-means for Longitidinal data ~
-### Aliases: kml kml-method kml,ClusterLongData-method
+### Aliases: kml kml,ClusterLongData-method
 ### Keywords: dplot chron spatial classif cluster nonparametric ts robust
 
 ### ** Examples
 
-### Generation of some data
-cld1 <- generateArtificialLongData()
-
-### We suspect 2, 3, 4 or 5 clusters, we want 3 redrawing.
-#     We want to "see" what happen (so printCal and printTraj are TRUE)
-kml(cld1,2:6,3,toPlot='both')
-
-### 4 seems to be the best. But to be sure, we try more redrawing 4 or 6 only.
-#     We don't want to see again, we want to get the result as fast as possible.
-kml(cld1,c(4,6),10)
 
 
 
@@ -467,16 +450,6 @@ flush(stderr()); flush(stdout())
 
 ### ** Examples
 
-### Generation of some data
-cld1 <- generateArtificialLongData(15)
-
-### Setting two different set of option :
-(option1 <- parALGO())
-(option2 <- parALGO(distanceName="maximum",centerMethod=function(x)median(x,na.rm=TRUE)))
-
-### Running kml We suspect 3, 4 or 5 clusters, we want 2 redrawing.
-kml(cld1,3:5,2,toPlot="both",parAlgo=option1)
-kml(cld1,3:5,2,toPlot="both",parAlgo=option2)
 
 
 
@@ -488,8 +461,8 @@ flush(stderr()); flush(stdout())
 
 ### Name: plot,ClusterLongData
 ### Title: ~ Function: plot for ClusterLongData ~
-### Aliases: plot plot-method plot,ClusterLongData
-###   plot,ClusterLongData,ANY-method plot,ClusterLongData,missing-method
+### Aliases: plot plot,ClusterLongData plot,ClusterLongData,ANY-method
+###   plot,ClusterLongData,missing-method
 ###   plot,ClusterLongData,numeric-method
 ###   plot,ClusterLongData,Partition-method
 ### Keywords: dplot iplot chron spatial classif cluster ts
