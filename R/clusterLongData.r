@@ -273,7 +273,7 @@ cat("\n####################################################################
                }
                screen(listScreen[1])
                ## ??? Liste des arguments a vérifier
-               plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion,standardized=standardized)
+               plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
 
                if(parWin['closeScreen']){
                     close.screen(listScreen)
@@ -290,7 +290,7 @@ cat("\n####################################################################
                }
            },
            "criterion"={
-               plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion,standardized=standardized)
+               plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
            }
     )
 }

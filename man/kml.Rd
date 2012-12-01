@@ -1,6 +1,6 @@
 \name{kml}
 \alias{kml}
-\alias{kml-method}
+%\alias{kml-method}
 \alias{kml,ClusterLongData-method}
 
 \title{~ Algorithm kml: K-means for Longitidinal data ~}
@@ -109,19 +109,20 @@ kml(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parALGO())
 }
 
 \examples{
+\donttest{
 ### Generation of some data
-cld1 <- generateArtificialLongData()
+cld1 <- generateArtificialLongData(25)
 
-### We suspect 2, 3, 4 or 5 clusters, we want 3 redrawing.
-#     We want to "see" what happen (so printCal and printTraj are TRUE)
-kml(cld1,2:6,3,toPlot='both')
+### We suspect 3, 4 or 6 clusters, we want 3 redrawing.
+###   We want to "see" what happen (so printCal and printTraj are TRUE)
+kml(cld1,c(3,4,6),3,toPlot='both')
 
-### 4 seems to be the best. But to be sure, we try more redrawing 4 or 6 only.
-#     We don't want to see again, we want to get the result as fast as possible.
-kml(cld1,c(4,6),10)
+### 4 seems to be the best. We want 7 more redrawing.
+###   We don't want to see again, we want to get the result as fast as possible.
+kml(cld1,4,10)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+}
+
 
 
 \keyword{dplot}    % Computations Related to Plotting

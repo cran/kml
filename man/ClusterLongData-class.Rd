@@ -3,7 +3,7 @@
 \alias{ClusterLongData-class}
 \alias{[,ClusterLongData-method}
 \alias{[<-,ClusterLongData-method}
-\alias{show,ClusterLongData-method}
+%\alias{show,ClusterLongData-method}
 
 \title{~ Class: ClusterLongData ~}
 %\alias{addClusterization,ClusterizLongData-method}

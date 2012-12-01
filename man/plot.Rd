@@ -1,6 +1,6 @@
 \name{plot,ClusterLongData}
 \alias{plot}
-\alias{plot-method}
+%\alias{plot-method}
 \alias{plot,ClusterLongData}
 \alias{plot,ClusterLongData,ANY-method}
 \alias{plot,ClusterLongData,missing-method}

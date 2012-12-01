@@ -1,9 +1,9 @@
 \name{clusterLongData}
 \alias{cld}
 \alias{clusterLongData}
-\alias{clusterLongData,ANY,ANY,ANY,ANY,ANY,ANY}
+%\alias{clusterLongData,ANY,ANY,ANY,ANY,ANY,ANY}
 \alias{clusterLongData,ANY,ANY,ANY,ANY,ANY,ANY-method}
-\alias{clusterLongData,missing,missing,missing,missing,missing,missing}
+%\alias{clusterLongData,missing,missing,missing,missing,missing,missing}
 \alias{clusterLongData,missing,missing,missing,missing,missing,missing-method}
 \title{ ~ Function: clusterLongData (or cld) ~}
 \description{

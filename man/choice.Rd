@@ -1,6 +1,6 @@
 \name{choice}
 \alias{choice}
-\alias{choice-methods}
+%\alias{choice-methods}
 \alias{choice,ClusterLongData-method}
 
 \title{ ~ Function: choice ~}
@@ -99,10 +99,10 @@ choice(object, typeGraph = "bmp")
 
 \examples{
 ### Creation of articficial data
-cld1 <- gald()
+cld1 <- gald(25)
 
 ### Clusterisation
-kml(cld1,nbRedrawing=3,toPlot='both')
+kml(cld1,3:5,nbRedrawing=2,toPlot='both')
 
 ### Selection of the clustering we want
 #     (note that "try" is for compatibility with CRAN only,
