@@ -36,6 +36,11 @@
   child health and development. About 2600 children born severely
   premature and 400 and 600 controls respectively were followed up to
   the age of 5 years and then to the age of 8.
+
+  The SDQ is a behavioral questionnaire for children and adolescents
+  ages 4 through 16 years old. It measures the severity of the
+  disability (higher score indicate higher disability). 
+
   The database belongs to the INSERM unit U953 (P.Y. Ancel).
   which has agreed to include the variable SDQ in the library.
 }

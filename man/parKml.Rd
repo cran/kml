@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{parKml}
 \alias{parALGO}
+\alias{[<-,ParKml,ANY,ANY,ANY-method}
 
 \title{ ~ Function: parKml ~}
 
@@ -9,9 +10,12 @@
   \code{parKml} and \code{parALGO} are constructor for the object \code{\linkS4class{ParKml}}.
 }
 \usage{
-parKml(saveFreq,maxIt,imputationMethod,distanceName,power,distance,centerMethod,startingCond,nbCriterion,scale)
+parKml(saveFreq,maxIt,imputationMethod,distanceName,power,distance,
+   centerMethod,startingCond,nbCriterion,scale)
 
-parALGO(saveFreq=100,maxIt=200,imputationMethod="copyMean",distanceName="euclidean",power=2,distance=function(){},centerMethod=meanNA,startingCond="nearlyAll",nbCriterion=100,scale=TRUE)
+parALGO(saveFreq=100,maxIt=200,imputationMethod="copyMean",
+   distanceName="euclidean",power=2,distance=function(){},
+   centerMethod=meanNA,startingCond="nearlyAll",nbCriterion=100,scale=TRUE)
 }
 \arguments{
   \item{saveFreq}{\code{[numeric]}: Long computations can take several

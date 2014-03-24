@@ -15,7 +15,7 @@ export(
        "fuzzyKmlSlow","kml","plot",
        # "kmlSlow",
 
-       ## internal only, export for kml3d
+       ## internal only, export for kml3d and (kmlFast) for kmlShape
        "kmlFast","expandStartingCond","cutScreen","fastOrSlow","choiceChangeParam","partPermut",".clusterLongData.choice"
        )
 
@@ -33,4 +33,4 @@ exportClasses(
               "ClusterLongData"
               )
 
-import(methods,longitudinalData)#,rgl,misc3d)
+import(methods,longitudinalData,clv)#,rgl,misc3d)

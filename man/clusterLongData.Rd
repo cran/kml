@@ -104,7 +104,7 @@ plot(ld1)
 
 ### Big data
 mat <- matrix(runif(1051*325),1051,325)
-(ld2 <- clusterLongData(traj=mat,idAll=paste("I-",1:1051,sep=""),time=(1:325)+0.5,varNames="Random"))
+(ld2 <- clusterLongData(traj=mat,idAll=paste("I-",1:1051,sep=""),time=(1:325)+0.5,varNames="R"))
 
 ####################
 ### From data.frame

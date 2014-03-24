@@ -365,6 +365,7 @@ choiceChangeParam <- function(paramChoice){
      ~ 'Return' when its done ~\n",sep="")
 
     choix <- getGraphicsEvent(texte,onKeybd=function(key){return(key)})
+    cat("Choix : ",choix," class :",class(choix)," length :",length(choix),"\n")
     switch(EXPR=choix,
            "Up"    = {
                if(xy[1]>1){

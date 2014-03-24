@@ -14,7 +14,9 @@
   to a \code{\linkS4class{Partition}}.
 }
 \usage{
-\S4method{plot}{ClusterLongData,ANY}(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar'],addLegend=TRUE),nbSample=1000,toPlot=c("both"),criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE,...)
+\S4method{plot}{ClusterLongData,ANY}(x,y,parTraj=parTRAJ(),parMean=parMEAN(),
+   parWin=windowsCut(x['nbVar'],addLegend=TRUE),nbSample=1000,toPlot=c("both"),
+   criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

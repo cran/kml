@@ -1,8 +1,8 @@
 \name{ClusterLongData-class}
 \docType{class}
 \alias{ClusterLongData-class}
-\alias{[,ClusterLongData-method}
-\alias{[<-,ClusterLongData-method}
+\alias{[<-,ClusterLongData,character,missing,missing-method}
+\alias{[,ClusterLongData,character-method}
 %\alias{show,ClusterLongData-method}
 
 \title{~ Class: ClusterLongData ~}
@@ -120,7 +120,11 @@
 }
 
 
-
+\section{Special thanks}{
+   Special thanks to Boris Hejblum for debugging the '[' and '[<-' operators (the
+   previous version was not compatible with the matrix package, which is
+   used by lme4).
+}
 
 
 

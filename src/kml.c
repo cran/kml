@@ -111,7 +111,7 @@ void affecteIndiv(double *traj, int *nbInd, int *nbTime, double *trajMean, int *
 
     int i=0,j=0 ;
     double best=0;
-    double *dist=malloc(sizeof(double));
+    double *dist=malloc(sizeof(double)); // here some valgrind trouble ? Why ?
     *dist=0;
 /*    Rprintf("Pre=%p,P=%p, Dist=%f\n",&dist,dist,*dist);
     Rprintf("\nTraj =\n");
@@ -141,6 +141,8 @@ void affecteIndiv(double *traj, int *nbInd, int *nbTime, double *trajMean, int *
 	    // Rprintf("\nBest2=%f \n",best);
 	}
     }
+    free(dist);
+    
 }
 
 
@@ -180,7 +182,7 @@ void kml1(double *traj, int *nbInd, int *nbTime, int *nbClusters, int *maxIt, in
 	// for(int j = 0; j < *nbInd; j++){Rprintf("%i",clusterAffectation2[j]);};	Rprintf("\n");
 
 	i = 0;
-	while(clusterAffectation1[i]==clusterAffectation2[i] && i<*nbInd){i++;};
+	while(i<*nbInd && clusterAffectation1[i]==clusterAffectation2[i]){i++;};
 	if(i == *nbInd){
 	    *convergenceTime = iter + 1;
 	    break;
@@ -195,11 +197,13 @@ void kml1(double *traj, int *nbInd, int *nbTime, int *nbClusters, int *maxIt, in
 	//for(int j = 0; j < *nbInd; j++){Rprintf("%i",clusterAffectation2[j]);};	Rprintf("\n");
 
 	i = 0;
-	while(clusterAffectation1[i]==clusterAffectation2[i] && i<*nbInd){i++;};
+	while(i<*nbInd && clusterAffectation1[i]==clusterAffectation2[i]){i++;};
 	if(i == *nbInd){
 	    *convergenceTime = iter + 2;
       	    break;
 	}else{};
     }
+    free(clusterAffectation2);
+    free(trajMean);
 }
 

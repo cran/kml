@@ -174,19 +174,55 @@ cld <- clusterLongData
 setMethod("show","ClusterLongData",.ClusterLongData.show)
 
 
+
+
+
+
 cat("### Getteur ###\n")
-.ClusterLongData.get <- function(x,i,j,drop){
-    if(is.numeric(i)){
+setMethod(
+  "[",
+  signature=signature(x="ClusterLongData", i="character", j="ANY",drop="ANY"),
+  definition=function (x, i, j="missing", ..., drop = TRUE){
+    .local <- function (x, i, j, drop){
+      if (is.numeric(i)) {
         stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")
-    }else{}
-    if(i%in%c(CRITERION_NAMES,"criterionActif",CLUSTER_NAMES,"criterionValues","criterionValuesAsMatrix","sorted","initializationMethod")){
-        x <- as(x,"ListPartition")
-    }else{
-        x <- as(x,"LongData")
+      }else{}
+      if (i %in% c("criterionValues", "criterionValuesAsMatrix")){
+        j <- x['criterionActif']
+      }else{}
+      if (i %in% c(CRITERION_NAMES, "criterionActif", CLUSTER_NAMES,
+                   "criterionValues", "criterionValuesAsMatrix", "sorted",
+                   "initializationMethod")) {
+        x <- as(x, "ListPartition")
+      }else{
+        x <- as(x, "LongData")
+      }
+      return(x[i, j])
     }
-    return(x[i,j])
-}
-setMethod("[","ClusterLongData",.ClusterLongData.get)
+    .local(x, i, j, ..., drop)
+  }
+)
+
+
+#.ClusterLongData.get <- function(x,i,j,drop){
+#    if(is.numeric(i)){
+#        stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")
+#    }else{}
+#    if(i%in%c(CRITERION_NAMES,"criterionActif",CLUSTER_NAMES,"criterionValues","criterionValuesAsMatrix","sorted","initializationMethod")){
+#        x <- as(x,"ListPartition")
+#        if(i%in%c("criterionValues","criterionValuesAsMatrix")&missing(j)){
+##            j <- x['criterionActif']
+#            return(x[i,j])
+#        }else{
+#            return(x[i])
+#        }
+#    }else{
+#        x <- as(x,"LongData")
+#        return(x[i])
+#    }
+#}
+#
+#setMethod("[",signature=c(x="ClusterLongData",i="character",j="ANY",drop="ANY"),.ClusterLongData.get)
 
 ### MET-ON clusterRank = 1 par défaut ?
 getClusters <- function(xCld,nbCluster,clusterRank=1,asInteger=FALSE){
@@ -211,15 +247,29 @@ cat("### Setteur ###\n")
 ### Héritage direct de ListPartition puisque set n'est pas défini pour LongData
 ### ATTENTION !!! Normalement, il faudrait vérifier que la partition est de la BONNE TAILLE !!!
 
-.ClusterLongData.set <- function(x,i,j,...,value){
-    if(i=="add"){
-        if(length(value["clusters"])!=x["nbIdFewNA"]){
-            stop("[ClusterLongData:set] the lenght of the Partition should be the same than 'idFewNA'")
-        }else{}
+setMethod(
+  f="[<-",
+  signature=signature(x="ClusterLongData", i="character", j="missing",value="missing"),
+  definition=function (x, i, j="missing", ..., value){
+    if (i == "add") {
+      if (length(value["clusters"]) != length(x["idFewNA"])) {
+        stop("[ClusterLongData:set] the lenght of the Partition should be the same than 'idFewNA'")
+      }else{}
     }
-    callNextMethod(x, i, j,..., value=value)
-}
-setReplaceMethod("[","ClusterLongData",.ClusterLongData.set)
+    callNextMethod(x, i, j=j, ..., value = value)
+  }
+)
+
+
+#.ClusterLongData.set <- function(x,i,j,...,value){
+#    if(i=="add"){
+#        if(length(value["clusters"])!=x["nbIdFewNA"]){
+#            stop("[ClusterLongData:set] the lenght of the Partition should be the same than 'idFewNA'")
+#        }else{}
+#    }
+#    callNextMethod(x, i, j,..., value=value)
+#}
+#setReplaceMethod("[","ClusterLongData",.ClusterLongData.set)
 
 
 
@@ -258,7 +308,7 @@ cat("\n####################################################################
 }
 
 ##setMethod("plot",signature=c("ClusterLongData","missing"),.clusterLongData.plot)
-.plotAll <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=1000,toPlot=c("both"),
+.plotAll <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=1000,toPlot="both",
                      criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE,...){
     switch(EXPR=toPlot,
            "both"={

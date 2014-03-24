@@ -20,8 +20,8 @@
 \alias{exportPartition,ClusterLongData,numeric}
 \alias{exportPartition,ClusterLongData,numeric-method}
 \alias{.clusterLongData.choice}
-\alias{[,ParChoice-method}
-\alias{[<-,ParChoice-method}
+\alias{[,ParChoice,ANY-method}
+\alias{[<-,ParChoice,ANY,ANY,ANY-method}
 
 \title{~ Internal KmL objects and methods ~}
 \description{Internal: KmL objects and methods}

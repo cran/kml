@@ -12,14 +12,16 @@
 }
 \usage{
 gald(nbEachClusters=50,time=0:10,varNames="V",
-    meanTrajectories=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
+    meanTrajectories=list(function(t){0},function(t){t},
+       function(t){10-t},function(t){-0.4*t^2+4*t}),
     personalVariation=function(t){rnorm(1,0,2)},
     residualVariation=function(t){rnorm(1,0,2)},
     decimal=2,percentOfMissing=0)
 
 
 generateArtificialLongData(nbEachClusters=50,time=0:10,varNames="V",
-    meanTrajectories=list(function(t){0},function(t){t},function(t){10-t},function(t){-0.4*t^2+4*t}),
+    meanTrajectories=list(function(t){0},function(t){t},
+       function(t){10-t},function(t){-0.4*t^2+4*t}),
     personalVariation=function(t){rnorm(1,0,2)},
     residualVariation=function(t){rnorm(1,0,2)},
     decimal=2,percentOfMissing=0)
@@ -127,7 +129,8 @@ plot(ex3,part3)
 
 ex4 <- generateArtificialLongData(
     nbEachClusters=c(300,200,100,100),
-    meanTrajectories=list(function(t){-10+2*t},function(t){-0.6*t^2+6*t-7.5},function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
+    meanTrajectories=list(function(t){-10+2*t},function(t){-0.6*t^2+6*t-7.5},
+       function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
     residualVariation=function(t){rnorm(1,0,3)},
     time=0:10,decimal=2,percentOfMissing=0.3)
 part4 <- partition(rep(1:4,c(300,200,100,100)))
