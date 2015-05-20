@@ -204,6 +204,45 @@ setMethod(
 )
 
 
+
+
+
+
+
+
+
+
+
+cat("### Getteur ###\n")
+setMethod(
+  "[",
+  signature=signature(x="ClusterLongData", i="character", j="ANY",drop="ANY"),
+  definition=function (x, i, j="missing", ..., drop = TRUE){
+      if (is.numeric(i)) {
+        stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")
+      }else{}
+      if (i %in% c("criterionValues", "criterionValuesAsMatrix")){
+        j <- x['criterionActif']
+      }else{}
+      if (i %in% c(CRITERION_NAMES, "criterionActif", CLUSTER_NAMES,
+                   "criterionValues", "criterionValuesAsMatrix", "sorted",
+                   "initializationMethod")) {
+        x <- as(x, "ListPartition")
+      }else{
+        x <- as(x, "LongData")
+      }
+      return(x[i, j])
+  }
+)
+
+
+
+
+
+
+
+
+
 #.ClusterLongData.get <- function(x,i,j,drop){
 #    if(is.numeric(i)){
 #        stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")

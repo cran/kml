@@ -4,7 +4,7 @@
 \title{~ Overview: K-means for Longitudinal data ~}
 
 \description{
-  \code{KmL} is a implematation of k-means for longitudinal data (or trajectories).
+  This package is a implematation of k-means for longitudinal data (or trajectories).
   Here is an overview of the package. For the description of the
   algorithm, see \code{\link{kml}}.
 }
@@ -12,8 +12,8 @@
   \tabular{ll}{
     Package: \tab kml\cr
     Type: \tab Package\cr
-    Version: \tab 2.2\cr
-    Date: \tab 2014-01-01\cr
+    Version: \tab 2.3\cr
+    Date: \tab 2015-05-05\cr
     License: \tab GPL (>= 2)\cr
     LazyData: \tab yes\cr
     Depends: \tab methods,clv,longitudinalData(>= 2.1.2)\cr

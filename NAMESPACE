@@ -9,7 +9,7 @@ export(
 
        ## kml, small functions
        "calculTrajFuzzyMean","affectFuzzyIndiv","calculTrajMean","affectIndiv","calculTrajMeanC","affectIndivC",
-       ##"resizePartition","calculTrajMeanPoint","legendCol","varNumAndName","adjustGraph3d
+       ##"resizePartition","calculTrajMeanPoint","varNumAndName","adjustGraph3d
 
        ## Kml
        "fuzzyKmlSlow","kml","plot",

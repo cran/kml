@@ -362,7 +362,7 @@ choiceChangeParam <- function(paramChoice){
                                     "; pch=",CHOICE_STYLE[['pchMean']][paramChoice['styleMeanRank']],")
  -   g/t   : change the symbol size (",paramChoice['cex'],")
  -   y/h   : change the number of symbols (freq=1/",1+paramChoice['pchPeriod'],")
-     ~ 'Return' when its done ~\n",sep="")
+     ~ 'Return' or 'm' when its done ~\n",sep="")
 
     choix <- getGraphicsEvent(texte,onKeybd=function(key){return(key)})
     cat("Choix : ",choix," class :",class(choix)," length :",length(choix),"\n")
@@ -416,7 +416,10 @@ choiceChangeParam <- function(paramChoice){
            "ctrl-J" = {
                paramChoice['toDo'] <- "EXIT"
            },
-           " "      = {
+           "m" = {
+               paramChoice['toDo'] <- "EXIT"
+           },
+           "space"      = {
                paramChoice['toDo'] <- ""
                if(list(xy) %in% paramChoice['selectedPart']){
                    paramChoice['selectedPart'] <- paramChoice['selectedPart'][!(paramChoice['selectedPart'] %in% list(xy))]
