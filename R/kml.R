@@ -419,6 +419,14 @@ choiceChangeParam <- function(paramChoice){
            "m" = {
                paramChoice['toDo'] <- "EXIT"
            },
+           " "      = {
+               paramChoice['toDo'] <- ""
+               if(list(xy) %in% paramChoice['selectedPart']){
+                   paramChoice['selectedPart'] <- paramChoice['selectedPart'][!(paramChoice['selectedPart'] %in% list(xy))]
+               }else{
+                   paramChoice['selectedPart'] <- c(paramChoice['selectedPart'],list(xy))
+               }
+           },
            "space"      = {
                paramChoice['toDo'] <- ""
                if(list(xy) %in% paramChoice['selectedPart']){
