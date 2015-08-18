@@ -96,35 +96,35 @@
 ### Construction of the data
 
 ld <- gald()
-part <- partition(rep(1:4,each=50))
 
 ### Basic plotting
 plot(ld)
-plot(ld,part)
 
 
 ##################
 ### Changing graphical parameters 'par'
 
+kml(ld,3:4,1)
+
 ### No letters on the mean trajectories
-plot(ld,part,parMean=parMEAN(type="l"))
+plot(ld,3,parMean=parMEAN(type="l"))
 
 ### Only one letter on the mean trajectories
-plot(ld,part,parMean=parMEAN(pchPeriod=Inf))
+plot(ld,4,parMean=parMEAN(pchPeriod=Inf))
 
 ### Color individual according to its clusters (col="clusters")
-plot(ld,part,parTraj=parTRAJ(col="clusters"))
+plot(ld,3,parTraj=parTRAJ(col="clusters"))
 
 ### Mean without individual
-plot(ld,part,parTraj=parTRAJ(type="n"))
+plot(ld,4,parTraj=parTRAJ(type="n"))
 
 
 ### No mean trajectories (type="n")
 ### Color individual according to its clusters (col="clusters")
-plot(ld,part,parTraj=parTRAJ(col="clusters"),parMean=parMEAN(type="n"))
+plot(ld,3,parTraj=parTRAJ(col="clusters"),parMean=parMEAN(type="n"))
 
 ### Only few trajectories
-plot(ld,part,nbSample=10,parTraj=parTRAJ(col='clusters'),parMean=parMEAN(type="n"))
+plot(ld,4,nbSample=10,parTraj=parTRAJ(col='clusters'),parMean=parMEAN(type="n"))
 
 }
 

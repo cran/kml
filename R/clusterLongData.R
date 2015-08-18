@@ -2,12 +2,13 @@
 ### cet objet ne devrait pouvoir exister que dans un cld
 
 
-cat("####################################################################
-######################### Class ClustLongData ######################
-############################## Creation ############################
+cat("
+   ####################################################################
+  ######################### Class ClustLongData ######################
+ ############################## Creation ############################
 ####################################################################\n")
 
-.ClusterLongData.validity <- function(object){
+ClusterLongData_validity <- function(object){
     validObject(as(object,"LongData"))
     validObject(as(object,"ListPartition"))
     return(TRUE)
@@ -20,11 +21,7 @@ cat("### Definition ###\n")
 setClass(
     Class="ClusterLongData",
     contains=c("LongData","ListPartition"),
-    validity=.ClusterLongData.validity
-)
-
-setMethod("clusterLongData",signature=c("missing","missing","missing","missing","missing","missing"),
-    function(traj,idAll,time,timeInData,varNames,maxNA){new("ClusterLongData")}
+    validity=ClusterLongData_validity
 )
 
 
@@ -32,7 +29,11 @@ setMethod("clusterLongData",signature=c("missing","missing","missing","missing",
 ### Code copier intégralement depuis "LongData.r"
 
 ### Data.frame ou array en 2D
-.clusterLongData.constructor <- function(traj,idAll,time,timeInData,varNames,maxNA){
+cld <- clusterLongData <- function(traj,idAll,time,timeInData,varNames,maxNA){
+
+    if(missing(traj)){
+        return(new("ClusterLongData"))
+    }else{}
 
     ## First part : set all the parameters
     if(is.data.frame(traj)){
@@ -90,180 +91,64 @@ setMethod("clusterLongData",signature=c("missing","missing","missing","missing",
     )
 }
 
-setMethod("clusterLongData",signature=c("ANY","ANY","ANY","ANY","ANY"),.clusterLongData.constructor)
 
-cld <- clusterLongData
-
-
-## ### Valable pour traj = matrix
-## .ClusterLongData.constructor <- function(traj,idAll,time,varNames,maxNA=length(time)-2){
-##     clustLD <- as(longData(...),"ClusterLongData")
-##     clustLD["criterionActif"] <- "Calinski.Harabatz"
-##     return(clustLD)
-## }
-## setMethod("clusterLongData",signature=c("ANY","ANY","ANY","ANY","ANY"),.ClusterLongData.constructor)
-## cld <- clusterLongData
-
-## setGeneric("as.clusterLongData",function(data,...){standardGeneric("as.clusterLongData")})
-
-## setMethod("as.clusterLongData","LongData",
-##     function(data,criterionActif="calinski"){
-##         data <- as(data,"ClusterLongData")
-##         data["criterionActif"] <- criterionActif
-##         return(data)
-##     }
-## )
-
-## setMethod("as.clusterLongData","data.frame",
-##     function(data,idAll,time,timeDataFrame,varNames,maxNA=length(time)-2,criterionActif="calinski"){
-##         if(missing(idAll)){idAll <- data[,1]}else{}
-##         if(missing(varNames)){varNames <- names(timeDataFrame)}else{}
-##         if(missing(time)){time <- 1:length(timeDataFrame[[1]])}else{}
-##         matr <- as.matrix(data[,na.omit(unlist(timeDataFrame))])
-##         traj <- array(matr[,rank(unlist(timeDataFrame),na.last="keep")],c(length(idAll),length(time),length(varNames)))
-##         return(clusterLongData(traj=traj,idAll=idAll,time=time,varNames=varNames,maxNA=maxNA,criterionActif=criterionActif))
-##     }
-## )
-
-## setMethod("as.clusterLongData","array",
-##     function(data,idAll,time,varNames,maxNA=length(time)-2,criterionActif="calinski"){
-##         if(missing(idAll)){idAll <- 1:dim(data)[1]}else{}
-##         if(missing(varNames)){varNames <- paste("V",1:dim(data)[3],sep="")}else{}
-##         if(missing(time)){time <- 1:dim(data)[2]}else{}
-##         return(clusterLongData(traj=data,idAll=idAll,time=time,varNames=varNames,maxNA=maxNA,criterionActif=criterionActif))
-##     }
-## )
-
-
-## as.cld <- as.clusterLongData
-
-#as.cld <- as.clusterLongData <- function(data,idAll,time,timeDataFrame,varNames,maxNA=length(time)-2,criterionActif="calinski"){
-#    if(class(data)!="LongData"){
-#        data <- as.longData(data=data,idAll=idAll,time=time,timeDataFrame=timeDataFrame,varNames=varNames,maxNA=maxNA)
-#    }else{}
-#    cLongData <- as(data,"ClusterLongData")
-#    cLongData["criterionActif"] <- criterionActif
-#    return(cLongData)
-#}
-
-#as.cld <- as.clusterLongData <- function(data,...){
-#    if(class(data)!="LongData"){
-#        data <- as.longData(data=data,...)
-#    }else{}
-#    cLongData <- as(data,"ClusterLongData")
-#    cLongData["criterionActif"] <- "calinski"
-#    return(cLongData)
-#}
-
-
-
-#.ClusterLongData.show <- function(object){
-#    show(as(object,"LongData"))
-#    cat("/n")
-#    show(as(object,"ListPartition"))
-#}
-
-
-.ClusterLongData.show <- function(object){
+ClusterLongData_show <- function(object){
     cat("   ~~~ Class: ClusterLongData ~~~")
     cat("\n      ~ Sub-Class: LongData ~ ")
-    showLongData(as(object,"LongData"))
+    LongData_show(as(object,"LongData"))
     cat("\n    ~ Sub-Class: ListPartition ~ ")
-    showListPartition(as(object,"ListPartition"))
+    ListPartition_show(as(object,"ListPartition"))
 }
-setMethod("show","ClusterLongData",.ClusterLongData.show)
-
+setMethod("show","ClusterLongData",ClusterLongData_show)
 
 
 
 
 
 cat("### Getteur ###\n")
-setMethod(
-  "[",
-  signature=signature(x="ClusterLongData", i="character", j="ANY",drop="ANY"),
-  definition=function (x, i, j="missing", ..., drop = TRUE){
-    .local <- function (x, i, j, drop){
-      if (is.numeric(i)) {
+
+ClusterLongData_get <- function (x, i, j, ..., drop = TRUE){
+#    .local <- function (x, i, j, drop){
+    if (is.numeric(i)) {
         stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")
-      }else{}
-      if (i %in% c("criterionValues", "criterionValuesAsMatrix")){
-        j <- x['criterionActif']
-      }else{}
-      if (i %in% c(CRITERION_NAMES, "criterionActif", CLUSTER_NAMES,
-                   "criterionValues", "criterionValuesAsMatrix", "sorted",
-                   "initializationMethod")) {
-        x <- as(x, "ListPartition")
-      }else{
-        x <- as(x, "LongData")
-      }
-      return(x[i, j])
+    }else{}
+    if (i %in% c("criterionValues", "criterionValuesAsMatrix")){
+        if(missing(j)){j <- x['criterionActif']}else{}
+        result <- as(x, "ListPartition")[i,j,drop=drop]
+    }else{
+        if (i %in% c(CRITERION_NAMES, "criterionActif", CLUSTER_NAMES,
+                     "sorted","initializationMethod")) {
+            result <- as(x, "ListPartition")[i,,drop=drop]
+        }else{
+            result <- as(x, "LongData")[i,,drop=drop]
+        }
     }
-    .local(x, i, j, ..., drop)
-  }
-)
+    return(result)
+
+                                        #    }.local(x, i, j, ..., drop)
+}
 
 
+############### Pourquoi séparer "character" de "numeric" et ne pas mettre "any" ?
+#setMethod(
+#  "[",
+#  signature=signature(x="ClusterLongData", i="character", j="ANY",drop="ANY"),
+#  definition=ClusterLongData_get
+#)
 
+#setMethod(
+#  "[",
+#  signature=signature(x="ClusterLongData", i="numeric", j="ANY",drop="ANY"),
+#  definition=ClusterLongData_get
+#)
 
-
-
-
-
-
-
-
-cat("### Getteur ###\n")
 setMethod(
   "[",
-  signature=signature(x="ClusterLongData", i="character", j="ANY",drop="ANY"),
-  definition=function (x, i, j="missing", ..., drop = TRUE){
-      if (is.numeric(i)) {
-        stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")
-      }else{}
-      if (i %in% c("criterionValues", "criterionValuesAsMatrix")){
-        j <- x['criterionActif']
-      }else{}
-      if (i %in% c(CRITERION_NAMES, "criterionActif", CLUSTER_NAMES,
-                   "criterionValues", "criterionValuesAsMatrix", "sorted",
-                   "initializationMethod")) {
-        x <- as(x, "ListPartition")
-      }else{
-        x <- as(x, "LongData")
-      }
-      return(x[i, j])
-  }
+  signature=signature(x="ClusterLongData", i="ANY", j="ANY" ,drop="ANY"),
+  definition=ClusterLongData_get
 )
 
 
-
-
-
-
-
-
-
-#.ClusterLongData.get <- function(x,i,j,drop){
-#    if(is.numeric(i)){
-#        stop("[ClusterLongData:getteur]: to get a clusters list, use ['ci']")
-#    }else{}
-#    if(i%in%c(CRITERION_NAMES,"criterionActif",CLUSTER_NAMES,"criterionValues","criterionValuesAsMatrix","sorted","initializationMethod")){
-#        x <- as(x,"ListPartition")
-#        if(i%in%c("criterionValues","criterionValuesAsMatrix")&missing(j)){
-##            j <- x['criterionActif']
-#            return(x[i,j])
-#        }else{
-#            return(x[i])
-#        }
-#    }else{
-#        x <- as(x,"LongData")
-#        return(x[i])
-#    }
-#}
-#
-#setMethod("[",signature=c(x="ClusterLongData",i="character",j="ANY",drop="ANY"),.ClusterLongData.get)
-
-### MET-ON clusterRank = 1 par défaut ?
 getClusters <- function(xCld,nbCluster,clusterRank=1,asInteger=FALSE){
     cluster <-  xCld["idAll"] %in% xCld["idFewNA"]
     cluster[cluster] <- xCld[paste("c",nbCluster,sep="")][[clusterRank]]["clustersAsInteger"]
@@ -299,93 +184,123 @@ setMethod(
   }
 )
 
-
-#.ClusterLongData.set <- function(x,i,j,...,value){
-#    if(i=="add"){
-#        if(length(value["clusters"])!=x["nbIdFewNA"]){
-#            stop("[ClusterLongData:set] the lenght of the Partition should be the same than 'idFewNA'")
-#        }else{}
-#    }
-#    callNextMethod(x, i, j,..., value=value)
-#}
-#setReplaceMethod("[","ClusterLongData",.ClusterLongData.set)
+setMethod("is.na", "ClusterLongData", function(x) FALSE)
 
 
 
-cat("\n####################################################################
-######################### Class ClustLongData ######################
-############################### Autres #############################
+cat("\n
+   ####################################################################
+  ######################### Class ClustLongData ######################
+ ############################### Autres #############################
 ####################################################################\n")
 
 
-### On a un cld et un num, on plot le longData et la Partition qui va avec.
-.plot.clusterLongData.num <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=200,...){
-#    if(class(y[1])=="character"){
- #       y[1] <- substr(y[1],2,3)
-  #      y <- as.numeric(y)
-   # }else{}
-    if(length(y)==1){y<-c(y,1)}else{}
-    yPartition <- x[paste('c',y[1],sep="")][[y[2]]]
-    plotTraj(x=as(x,"LongData"),y=yPartition,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
-    return(invisible())
+
+legendCol <- function(nbVar){
+    if(nbVar<6){return(nbVar)}else{
+        if(nbVar %in% c(6)){return(3)}else{
+            if(nbVar %in% c(7,8,11,12)){return(4)}else{
+                if(nbVar %in% c(9,10,13:15)){return(5)}else{
+                    if(nbVar %in% c(16:18,21:24)){return(6)}else{
+                        return(7)}}}}}
 }
-#setMethod("plot",signature=c("ClusterLongData","ANY"),.clusterLongData.num.plot)
 
 
-### Si y est manquant :
-###  - soit il est calculable et on le calcul puis on appelle plot.ClusterLongData
-###  - soit il n'est pas calculable et on appelle plot.LongData.num
-.plot.clusterLongData.missingY <- function(x,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=200,...){
-    if(all(is.tna(x["criterionValues"]))){
-        plotTraj(x=as(x,"LongData"),parTraj=parTraj,parWin=parWin,nbSample=nbSample,...)
-    }else{
-        allCrit <- sapply(x["criterionValues"] , function(x){result <- x[[1]];names(result)<-NULL;result})
-        y <- as.integer(substr(names(which.max(allCrit)),2,3))
-        .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
+plotLegend <- function(percent,parMean=parMEAN()){
+    nbClusters <- length(percent)
+    parMean <- expandParLongData(parMean,nbClusters)
+    percent <- paste(": ",formatC(percent,digits=3),"%",sep="")
+#    par(mar=c(0,0,0,0))
+ #   plot(1,axes=FALSE,type="n",xlab="",ylab="",xlim=c(-1,1),ylim=c(-1,1))
+    legend("top",legend=percent,lty=1,col=parMean['col'],pch=parMean['pch'],
+               ncol=legendCol(nbClusters),xpd=NA,inset=-0.12)
+}
+
+
+
+ClusterLongData_plotTrajMeans <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addLegend=TRUE,...){
+    ## Comme il n'y a pas de partition, 'clusters' devient 'black'
+    ## Calcul du layout
+## cat("\nA",screen())
+    if(is.numeric(y)){
+        if(length(y)==1){y<-c(y,1)}else{}
+        y <- x[paste('c',y[1],sep="")][[y[2]]]
+    }else{}
+## cat("\nB",screen())
+    plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,...)
+## cat("\nC",screen())
+    if(addLegend&!identical(y,NA)){
+        part <- factor(y['clusters'],levels=LETTERS[1:y['nbClusters']])
+        plotLegend(as.numeric(table(part)/length(part)*100),parMean=parMean)
     }
+## cat("\nD",screen())
     return(invisible())
 }
+
 
 ##setMethod("plot",signature=c("ClusterLongData","missing"),.clusterLongData.plot)
-.plotAll <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),parWin=windowsCut(x['nbVar']),nbSample=1000,toPlot="both",
-                     criterion=x["criterionActif"],nbCriterion=100,standardized = FALSE,...){
+ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addLegend=TRUE,toPlot="both",
+                     criterion=x["criterionActif"],nbCriterion=100,closeScreenTraj=TRUE,...){
+
+    if(any(is.na(y))){
+        addLegend <- FALSE
+    }else{}
     switch(EXPR=toPlot,
            "both"={
+## cat("\nA",screen())
                listScreen <- split.screen(matrix(c(0,0.3,0.3,1,0,0,1,1),2))
-               screen(listScreen[2])
-               parSubWindows <- parWin
-               parSubWindows['closeScreen']<-TRUE
-               if(missing(y)){
-                   .plot.clusterLongData.missingY(x,parTraj=parTraj,parMean=parMean,parWin=parSubWindows,nbSample=nbSample,...)
-               }else{
-                   .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parSubWindows,nbSample=nbSample,...)
-               }
-               screen(listScreen[1])
+               screen(2)
                ## ??? Liste des arguments a vérifier
-               plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
+               ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,...)
 
-               if(parWin['closeScreen']){
-                    close.screen(listScreen)
+               screen(1)
+               plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
+               if(closeScreenTraj){close.screen(1)}else{}
+
+               if(closeScreenTraj){
+                   close.screen(listScreen)
                    return(invisible())
                }else{
                    return(listScreen)
                }
            },
            "traj"={
-               if(missing(y)){
-                   .plot.clusterLongData.missingY(x,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
-               }else{
-                   .plot.clusterLongData.num(x,y,parTraj=parTraj,parMean=parMean,parWin=parWin,nbSample=nbSample,...)
-               }
+## cat("\nB",screen())
+               ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,...)
+## cat("\nBB",screen())
+
            },
            "criterion"={
+## cat("\nC",screen())
                plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
+## cat("\nCC",screen())
            }
     )
 }
-setMethod("plot",signature=c("ClusterLongData","missing"),.plotAll)
-setMethod("plot",signature=c("ClusterLongData","numeric"),.plotAll)
-setMethod("plot",signature=c("ClusterLongData","Partition"),function(x,y,...){plotTraj(x,y,...)})
+
+setMethod("plot",signature=c("ClusterLongData","numeric"),ClusterLongData_plot)
+setMethod("plot",signature=c("ClusterLongData","Partition"),ClusterLongData_plot)
+
+
+ClusterLongData_missing_plot <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),toPlot="both",
+                     criterion=x["criterionActif"],nbCriterion=100,...){
+     ClusterLongData_plot(x=x,y=NA,parTraj=parTraj,parMean=parMean,toPlot=toPlot, criterion=criterion,nbCriterion=nbCriterion,...)
+}
+
+setMethod("plot",signature=c("ClusterLongData","missing"),ClusterLongData_missing_plot)
+
+
+
+ClusterLongData_plotTraj <- function(x,y,...){
+   plot(x=x,y=y,parMean=parMEAN(type="n"),toPlot="traj",parTraj=parTRAJ(col="clusters"),...)
+}
+setMethod("plotTraj",signature=c("ClusterLongData","numeric"),ClusterLongData_plotTraj)
+
+
+ClusterLongData_plotMeans <- function(x,y,...){
+   plot(x=x,y=y,toPlot="traj",parTraj=parTRAJ(type="n"),...)
+}
+setMethod("plotMeans",signature=c("ClusterLongData","numeric"),ClusterLongData_plotMeans)
 
 
 

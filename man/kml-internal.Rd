@@ -10,6 +10,8 @@
 % \alias{selectSupTrajSizeMin}
 % \alias{selectSupTrajSizeMin,LongData-method}
 \alias{kmlFast}
+\alias{plotLegend}
+\alias{legendCol}
 \alias{expandStartingCond}
 \alias{cutScreen}
 \alias{fastOrSlow}
@@ -19,7 +21,7 @@
 \alias{exportPartition}
 \alias{exportPartition,ClusterLongData,numeric}
 \alias{exportPartition,ClusterLongData,numeric-method}
-\alias{.clusterLongData.choice}
+\alias{ClusterLongData_choice}
 \alias{[,ParChoice,ANY-method}
 \alias{[<-,ParChoice,ANY,ANY,ANY-method}
 

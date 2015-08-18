@@ -48,7 +48,7 @@ parKml <- function(saveFreq,maxIt,imputationMethod,distanceName,power,distance,
 parALGO <- function(saveFreq=100,maxIt=200,imputationMethod="copyMean",
                    distanceName="euclidean",power=2,distance=function(){},
                    centerMethod=meanNA,startingCond="nearlyAll",#distanceStartingCond=function(x,y)dist(rbind(x,y)),
-                   nbCriterion=100,scale=TRUE){
+                   nbCriterion=1000,scale=TRUE){
     if(distanceName %in%DISTANCE_METHODS){
         eval(parse(text=paste("distance <- function(x,y){dist(rbind(x,y),method='",distanceName,"',p=",power,")}",sep="")))
     }else{}

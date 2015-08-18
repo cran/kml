@@ -99,16 +99,14 @@ par(ask=TRUE)
 
 (ex1 <- generateArtificialLongData())
 plot(ex1)
-part1 <- partition(rep(1:4,each=50))
-plot(ex1,part1)
+plot(ex1,parTraj=parTRAJ(col=rep(2:5,each=50)))
 
 
 #####################
 ### Three diverging lines
 
 ex2 <- generateArtificialLongData(meanTrajectories=list(function(t)0,function(t)-t,function(t)t))
-part2 <- partition(rep(1:3,each=50))
-plot(ex2,part2)
+plot(ex2,parTraj=parTRAJ(col=rep(2:4,each=50)))
 
 
 #####################
@@ -121,7 +119,7 @@ ex3 <- generateArtificialLongData(
    percentOfMissing=c(0.25,0.5,0.25)
 )
 part3 <- partition(rep(1:3,c(100,30,10)))
-plot(ex3,part3)
+plot(ex3,parTraj=parTRAJ(col=rep(2:4,c(100,30,10))))
 
 
 #####################
@@ -133,8 +131,7 @@ ex4 <- generateArtificialLongData(
        function(t){10*sin(t)},function(t){30*dnorm(t,2,1.5)}),
     residualVariation=function(t){rnorm(1,0,3)},
     time=0:10,decimal=2,percentOfMissing=0.3)
-part4 <- partition(rep(1:4,c(300,200,100,100)))
-plot(ex4,part4)
+plot(ex4,parTraj=parTRAJ(col=rep(2:5,c(300,200,100,100))))
 
 
 #####################

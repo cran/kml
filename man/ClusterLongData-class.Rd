@@ -2,7 +2,11 @@
 \docType{class}
 \alias{ClusterLongData-class}
 \alias{[<-,ClusterLongData,character,missing,missing-method}
-\alias{[,ClusterLongData,character-method}
+%\alias{[<-,ClusterLongData-method}
+\alias{[,ClusterLongData-method}
+%\alias{[,ClusterLongData,ANY,missing-method}
+%\alias{[,ClusterLongData,ANY-method}
+\alias{is.na,ClusterLongData-method}
 %\alias{show,ClusterLongData-method}
 
 \title{~ Class: ClusterLongData ~}

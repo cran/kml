@@ -1,6 +1,6 @@
 \name{choice}
 \alias{choice}
-%\alias{choice-methods}
+\alias{[,ParChoice-method}
 \alias{choice,ClusterLongData-method}
 
 \title{ ~ Function: choice ~}
@@ -22,7 +22,7 @@ choice(object, typeGraph = "bmp")
 
 \details{
   \code{choice} is a function that lets the user see the \code{\linkS4class{Partition}} found by \code{\link{kml}}.
-  At first, \code{choice} opens a graphics window (for Linux user, the windows should be explicitly 
+  At first, \code{choice} opens a graphics window (for Linux user, the windows should be explicitly
   open using \code{x11(type = "Xlib")}). On the left side, all
   the \code{Partition} contain in \code{Object} are ploted by a
   number (the number of cluster of the Partition). The level of the

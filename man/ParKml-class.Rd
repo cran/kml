@@ -2,7 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{ParKml-class}
-\alias{[,ParKml,ANY-method}
+\alias{[,ParKml-method}
 \alias{[<-,ParKml-method}
 %\alias{show,ParKml-method}
 

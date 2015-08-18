@@ -2,7 +2,8 @@
 
 export(
        ## ClusterLongData
-       "cld","getClusters","getBestPostProba","gald","generateArtificialLongData",
+       "legendCol","plotLegend",
+       "cld","clusterLongData","getClusters","getBestPostProba","gald","generateArtificialLongData",
 
        ## parKml
        "parKml","parALGO",
@@ -12,19 +13,18 @@ export(
        ##"resizePartition","calculTrajMeanPoint","varNumAndName","adjustGraph3d
 
        ## Kml
-       "fuzzyKmlSlow","kml","plot",
+       "fuzzyKmlSlow","kml","plot","plotTraj","plotMeans",
        # "kmlSlow",
 
        ## internal only, export for kml3d and (kmlFast) for kmlShape
-       "kmlFast","expandStartingCond","cutScreen","fastOrSlow","choiceChangeParam","partPermut",".clusterLongData.choice"
+              "exportPartition",
+       "kmlFast","expandStartingCond","cutScreen","fastOrSlow","choiceChangeParam","partPermut","choice"
        )
 
 
-exportMethods(
-              "clusterLongData",#"plotCriterion",
-              "exportPartition",
-              "choice"
-              )
+#exportMethods(
+ #             "choice"
+  #            )
 
 exportClasses(
               "ParKml",
@@ -34,3 +34,9 @@ exportClasses(
               )
 
 import(methods,longitudinalData,clv)#,rgl,misc3d)
+
+importFrom("grDevices", "dev.off", "getGraphicsEvent")
+importFrom("graphics", "close.screen", "matlines", "matplot", "points","screen", "split.screen")
+importFrom("stats", "dist", "na.omit", "rnorm", "runif","weighted.mean")
+importFrom("utils", "write.csv2")
+importFrom("graphics", "legend")

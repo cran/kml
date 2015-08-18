@@ -3,7 +3,7 @@
 \alias{parKml}
 \alias{parALGO}
 \alias{[<-,ParKml,ANY,ANY,ANY-method}
-
+\alias{[,ParKml,ANY,ANY-method}
 \title{ ~ Function: parKml ~}
 
 \description{
@@ -15,7 +15,7 @@ parKml(saveFreq,maxIt,imputationMethod,distanceName,power,distance,
 
 parALGO(saveFreq=100,maxIt=200,imputationMethod="copyMean",
    distanceName="euclidean",power=2,distance=function(){},
-   centerMethod=meanNA,startingCond="nearlyAll",nbCriterion=100,scale=TRUE)
+   centerMethod=meanNA,startingCond="nearlyAll",nbCriterion=1000,scale=TRUE)
 }
 \arguments{
   \item{saveFreq}{\code{[numeric]}: Long computations can take several
