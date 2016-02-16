@@ -192,7 +192,10 @@ expandStartingCond <- function(startingCond,nbRedrawing,methodUsed){
     return(startingSeq[1:nbRedrawing])
 }
 
-
+### Si on ne doit faire qu'un seul plot, on coute tout de même en deux
+###   (deux régions qui ont la même taille, tout le dessin)
+### Ca permet de definir screen(2) pour les criterions dans tous les cas
+###   et screen(1) pour les traj dans tous les cas.
 
 cutScreen <- function(toPlot){
     return(switch(EXPR=toPlot,
@@ -225,92 +228,6 @@ fastOrSlow <- function(toPlot,parAlgo){
     }
     return(fast)
 }
-
-
-
-
-kml <- function(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parALGO()){
-    if(class(object)=="ClusterLongData3d"){
-        stop("[kml]: kml is for longitudinal data (object 'ClusterLongData').
-For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
-    }else{}
-
-    nameObject<-deparse(substitute(object))
-    on.exit(if(toPlot!="none"){close.screen(all=TRUE)}else{})
-
-    nbIdFewNA <- object["nbIdFewNA"]
-    convergenceTime <- 0
-    traj <- object["traj"]
-    nbTime <- length(object["time"])
-    saveCld <-0
-
-    ################
-    ## listScreen[1] (à droite) est pour les traj.
-    listScreen <- cutScreen(toPlot)
-    if(toPlot%in%c("both","criterion")){
-        screen(listScreen[2])
-        plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
-    }else{}
-
-    ################
-    ## Starting conditions
-    startingCond <- expandStartingCond(parAlgo['startingCond'],nbRedrawing,object["initializationMethod"])
-    object["initializationMethod"] <- unique(c(object["initializationMethod"],startingCond))
-
-    ################
-    ## Fast or Slow, according to parAlgo to toPlot
-    fast <- fastOrSlow(toPlot,parAlgo)
-
-    for(iRedraw in 1:nbRedrawing){
-        for(iNbClusters in nbClusters){
-            saveCld <- saveCld+1
-            clustersInit <- initializePartition(nbClusters=iNbClusters,lengthPart=nbIdFewNA,method=startingCond[iRedraw],data=traj)
-            clust <- rep(NA,nbIdFewNA)
-            if(fast){
-                resultKml <- kmlFast(traj=traj,clusterAffectation=clustersInit)
-            }else{
-                if(toPlot%in%c("both","traj")){screen(listScreen[1])}else{}
-                resultKml <- kmlSlow(traj=traj,clusterAffectation=clustersInit,toPlot=toPlot,parAlgo=parAlgo)
-            }
-
-            ## A priori, une partition avec un seul cluster peut maintenant exister...
-            object["add"] <- resultKml
-
-            assign(nameObject,object,envir=parent.frame())
-            if(saveCld%%parAlgo['saveFreq']==0){
-                save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
-                cat("S")
-            }else{
-                cat("*")
-            }
-            if(saveCld%%100==0){cat("\n")}else{}
-            if(toPlot=="both"){
-                screen(listScreen[2])
-                plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
-            }else{
-                if(toPlot=="criterion"){
-                    plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
-                }else{}
-            }
-        }
-    }
-    cat("\n")
-    if(parAlgo["saveFreq"]<Inf){save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))}else{}
-    ## La fenetre graphique est fermée grace a 'on.exit' défini en début de fonction
-    ordered(object)
-    if(toPlot=="both"){
-        screen(listScreen[2])
-        plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
-    }else{
-        if(toPlot=="criterion"){
-            plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
-        }else{}
-    }
-    assign(nameObject,object,envir=parent.frame())
-    return(invisible())
-}
-#setMethod("kml","ClusterLongData",.clusterLongData.kml)
-
 
 
 
@@ -362,11 +279,10 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
             assign(nameObject,object,envir=parent.frame())
             if(saveCld%%parAlgo['saveFreq']==0){
                 save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
-                cat("S")
+                cat("S\n",saveCld," ",sep="")
             }else{
                 cat("*")
             }
-            if(saveCld%%100==0){cat("\n",saveCld," ",sep="")}else{}
             if(toPlot=="both"){
                 screen(1)
                 plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
@@ -379,6 +295,13 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
     }
     ## La fenetre graphique est fermée grace a 'on.exit' défini en début de fonction
     ordered(object)
+    if(parAlgo["saveFreq"]<Inf){
+        save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
+        cat("S\n")
+    }else{
+        cat("\n")
+    }
+
     if(toPlot=="both"){
         screen(1)
         plotCriterion(as(object,"ListPartition"),nbCriterion=parAlgo['nbCriterion'])
@@ -388,12 +311,6 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
         }else{}
     }
     assign(nameObject,object,envir=parent.frame())
-    if(parAlgo["saveFreq"]<Inf){
-        save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))
-        cat("S\n")
-    }else{
-        cat("\n")
-    }
     return(invisible())
 }
 
@@ -453,6 +370,8 @@ choiceChangeParam <- function(paramChoice){
                                     "; pch=",CHOICE_STYLE[['pchMean']][paramChoice['styleMeanRank']],")
  -   g/t   : change the symbol size (",paramChoice['cex'],")
  -   y/h   : change the number of symbols (freq=1/",1+paramChoice['pchPeriod'],")
+ -   j/u   : legend down/up (",paramChoice['yLegend'],")
+
      ~ 'Return' or 'm' when its done ~\n",sep="")
 
     choix <- getGraphicsEvent(texte,onKeybd=function(key){return(key)})
@@ -568,6 +487,14 @@ choiceChangeParam <- function(paramChoice){
            "c" = {
                paramChoice['toDo'] <- "order"
            },
+           "j" = {
+               paramChoice['toDo'] <- ""
+               paramChoice["yLegend"] <- paramChoice["yLegend"]+0.01
+           },
+           "u" = {
+               paramChoice['toDo'] <- ""
+               paramChoice["yLegend"] <- paramChoice["yLegend"]-0.01
+           },
            default={}
 
            )
@@ -614,7 +541,7 @@ choice <- function(object,typeGraph="bmp"){
 
     listScreen <- plot(object,c(critMatrixRowName[y[1]],y[2]),toPlot="both",closeScreenTraj=FALSE)
     if(paramChoice['toPlot']=="both"){points(y[2],critMatrix[y[1],y[2]],pch=19,lwd=5)}else{}
-    close.screen(listScreen)
+    close.screen(,TRUE)
 
     while(TRUE){
     #   print(paramChoice['selectedPart'])
@@ -643,12 +570,12 @@ choice <- function(object,typeGraph="bmp"){
                "EXIT"={break;}
         )
 
-        listScreen <- plot(object,c(critMatrixRowName[y[1]],y[2]),toPlot=paramChoice['toPlot'],parTraj=paramTraj,parMean=paramMean,closeScreenTraj=FALSE)
+        listScreen <- plot(object,c(critMatrixRowName[y[1]],y[2]),toPlot=paramChoice['toPlot'],parTraj=paramTraj,parMean=paramMean,closeScreenTraj=FALSE,adjustLegend=paramChoice["yLegend"])
         if(paramChoice['toPlot']=="both"){
             points(y[2],critMatrix[y[1],y[2]],pch=19,lwd=5)
             lapply(paramChoice['selectedPart'],pointCal)
         }else{}
-        close.screen(listScreen)
+        close.screen(,TRUE)
     }
 
 #    nameObject <- paste(nameObject,"-C",y[1],"-",y[2],sep="")

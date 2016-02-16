@@ -206,19 +206,19 @@ legendCol <- function(nbVar){
 }
 
 
-plotLegend <- function(percent,parMean=parMEAN()){
+plotLegend <- function(percent,adjustLegend=-0.12,parMean=parMEAN()){
     nbClusters <- length(percent)
     parMean <- expandParLongData(parMean,nbClusters)
     percent <- paste(": ",formatC(percent,digits=3),"%",sep="")
 #    par(mar=c(0,0,0,0))
  #   plot(1,axes=FALSE,type="n",xlab="",ylab="",xlim=c(-1,1),ylim=c(-1,1))
     legend("top",legend=percent,lty=1,col=parMean['col'],pch=parMean['pch'],
-               ncol=legendCol(nbClusters),xpd=NA,inset=-0.12)
+               ncol=legendCol(nbClusters),xpd=NA,inset=adjustLegend)
 }
 
 
 
-ClusterLongData_plotTrajMeans <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addLegend=TRUE,...){
+ClusterLongData_plotTrajMeans <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addLegend=TRUE,adjustLegend=-0.12,...){
     ## Comme il n'y a pas de partition, 'clusters' devient 'black'
     ## Calcul du layout
 ## cat("\nA",screen())
@@ -231,7 +231,7 @@ ClusterLongData_plotTrajMeans <- function(x,y=NA,parTraj=parTRAJ(),parMean=parME
 ## cat("\nC",screen())
     if(addLegend&!identical(y,NA)){
         part <- factor(y['clusters'],levels=LETTERS[1:y['nbClusters']])
-        plotLegend(as.numeric(table(part)/length(part)*100),parMean=parMean)
+        plotLegend(as.numeric(table(part)/length(part)*100),adjustLegend=adjustLegend,parMean=parMean)
     }
 ## cat("\nD",screen())
     return(invisible())
@@ -239,10 +239,11 @@ ClusterLongData_plotTrajMeans <- function(x,y=NA,parTraj=parTRAJ(),parMean=parME
 
 
 ##setMethod("plot",signature=c("ClusterLongData","missing"),.clusterLongData.plot)
-ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addLegend=TRUE,toPlot="both",
-                     criterion=x["criterionActif"],nbCriterion=100,closeScreenTraj=TRUE,...){
+ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addLegend=TRUE,adjustLegend=-0.12,toPlot="both",
+                     criterion=x["criterionActif"],nbCriterion=1000,xlab="Times",ylab=x["varNames"],closeScreenTraj=TRUE,...){
 
     if(any(is.na(y))){
+        toPlot <- "traj"
         addLegend <- FALSE
     }else{}
     switch(EXPR=toPlot,
@@ -251,11 +252,11 @@ ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addL
                listScreen <- split.screen(matrix(c(0,0.3,0.3,1,0,0,1,1),2))
                screen(2)
                ## ??? Liste des arguments a vérifier
-               ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,...)
+               ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,adjustLegend=adjustLegend,xlab=xlab,ylab=ylab,...)
 
                screen(1)
                plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
-               if(closeScreenTraj){close.screen(1)}else{}
+########################               if(closeScreenTraj){close.screen(1)}else{}
 
                if(closeScreenTraj){
                    close.screen(listScreen)
@@ -266,7 +267,7 @@ ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addL
            },
            "traj"={
 ## cat("\nB",screen())
-               ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,...)
+               ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,adjustLegend=adjustLegend,xlab=xlab,ylab=ylab,...)
 ## cat("\nBB",screen())
 
            },
@@ -275,6 +276,7 @@ ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addL
                plotCriterion(as(x,"ListPartition"),criterion=criterion,nbCriterion=nbCriterion)
 ## cat("\nCC",screen())
            }
+
     )
 }
 
@@ -283,7 +285,7 @@ setMethod("plot",signature=c("ClusterLongData","Partition"),ClusterLongData_plot
 
 
 ClusterLongData_missing_plot <- function(x,y,parTraj=parTRAJ(),parMean=parMEAN(),toPlot="both",
-                     criterion=x["criterionActif"],nbCriterion=100,...){
+                     criterion=x["criterionActif"],nbCriterion=1000,xlab="Times",ylab=x["varNames"],closeScreenTraj=TRUE,...){
      ClusterLongData_plot(x=x,y=NA,parTraj=parTraj,parMean=parMean,toPlot=toPlot, criterion=criterion,nbCriterion=nbCriterion,...)
 }
 

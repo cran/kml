@@ -1,5 +1,7 @@
 # include "kml.h"
 
+
+
 #define both_FINITE(a,b) (R_FINITE(a) && R_FINITE(b))
 #define both_non_NA(a,b) (!ISNAN(a) && !ISNAN(b))
 

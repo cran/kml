@@ -23,7 +23,8 @@ setClass(
          critRank="numeric",
          critSorted="logical",
          cex="numeric",
-         pchPeriod="numeric"
+         pchPeriod="numeric",
+         yLegend="numeric"
     ),
     prototype=prototype(
          toDo=character(),
@@ -37,7 +38,8 @@ setClass(
          critRank=numeric(),
          critSorted=logical(),
          cex=numeric(),
-         pchPeriod=numeric()
+         pchPeriod=numeric(),
+         yLegend=numeric()
     ),
     validity=.ParChoice.validity
 )
@@ -45,9 +47,9 @@ setClass(
 
 cat("### Constructor ###\n")
 parChoice <- function(xy,nbTime,critMatrix,selectedPart=list(),toPlot="both",styleTrajRank=1,styleMeanRank=1,
-                      critRank=1,critSorted=TRUE,cex=1.2,pchPeriod=1){
+                      critRank=1,critSorted=TRUE,cex=1.2,pchPeriod=1,yLegend=-0.12){
     return(new("ParChoice",toDo="",xy=xy,nbTime=nbTime,critMatrix=critMatrix,selectedPart=selectedPart,toPlot=toPlot,styleTrajRank=styleTrajRank,styleMeanRank=styleMeanRank,
-        critRank=critRank,critSorted=critSorted,cex=cex,pchPeriod=pchPeriod))
+        critRank=critRank,critSorted=critSorted,cex=cex,pchPeriod=pchPeriod,yLegend=yLegend))
 }
 
 
@@ -67,6 +69,7 @@ cat("### Show ###\n")
      cat("\n ~ critSorted    : ",object@critSorted)
      cat("\n ~ cex           : ",object@cex)
      cat("\n ~ pchPeriod     : ",object@pchPeriod)
+     cat("\n ~ yLegend       : ",object@yLegend)
      cat("\n")
     return(invisible())
 }
@@ -89,6 +92,7 @@ cat("### Getteur ###\n")
         "critSorted"={return(x@critSorted)},
         "cex"={return(x@cex)},
         "pchPeriod"={return(x@pchPeriod)},
+        "yLegend"={return(x@yLegend)},
         stop("[ParChoice:get] ",i," is not a 'ParChoice' slot")
     )
     return(invisible())
@@ -111,6 +115,7 @@ cat("### Setteur ###\n")
         "critSorted"={x@critSorted<-value},
         "cex"={x@cex<-value},
         "pchPeriod"={x@pchPeriod<-value},
+        "yLegend"={x@yLegend<-value},
         stop("[ParChoice:set] ",i," is not a 'ParChoice' slot")
      )
     validObject(x)
