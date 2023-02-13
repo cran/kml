@@ -38,6 +38,10 @@ getClusters(xCld, nbCluster, clusterRank = 1, asInteger = FALSE)
 \code{\linkS4class{ClusterLongData}}
 }
 \examples{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ### Creation of an object ClusterLongData
 myCld <- gald(20)
 
@@ -47,4 +51,7 @@ kml(myCld,2:4,3)
 ### Extraction form the list of partition with 3 clusters
 ###   of the second clustering
 getClusters(myCld,3,2)
+
+### Go back to current dir
+setwd(wd)
 }

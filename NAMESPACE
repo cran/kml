@@ -1,4 +1,4 @@
-#useDynLib(kml)
+useDynLib(kml, .registration=TRUE)
 
 export(
        ## ClusterLongData

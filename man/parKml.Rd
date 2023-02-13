@@ -99,6 +99,10 @@ parALGO(saveFreq=100,maxIt=200,imputationMethod="copyMean",
 
 \examples{
 \donttest{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ### Generation of some data
 cld1 <- generateArtificialLongData()
 
@@ -109,5 +113,8 @@ cld1 <- generateArtificialLongData()
 ### Running kml We suspect 3, 4 or 5 clusters, we want 3 redrawing.
 kml(cld1,3:5,3,toPlot="both",parAlgo=option1)
 kml(cld1,3:5,3,toPlot="both",parAlgo=option2)
+
+### Go back to current dir
+setwd(wd)
 }
 }

@@ -103,6 +103,10 @@
 
 \examples{
 \donttest{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ### 1. Data Preparation
 data(epipageShort)
 names(epipageShort)
@@ -122,6 +126,9 @@ try(choice(cldSDQ))
 ### 4. Further analysis
 epipageShort$clust <- getClusters(cldSDQ,4)
 summary(glm(gender~clust,data=epipageShort,family="binomial"))
+
+### Go back to current dir
+setwd(wd)
 }
 }
 

@@ -110,6 +110,10 @@ kml(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parALGO())
 
 \examples{
 \donttest{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ### Generation of some data
 cld1 <- generateArtificialLongData(25)
 
@@ -120,6 +124,9 @@ kml(cld1,c(3,4,6),3,toPlot='both')
 ### 4 seems to be the best. We want 7 more redrawing.
 ###   We don't want to see again, we want to get the result as fast as possible.
 kml(cld1,4,10)
+
+### Go back to current dir
+setwd(wd)
 }
 }
 

@@ -86,6 +86,10 @@
 }
 
 \examples{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ##################
 ### Construction of the data
 
@@ -120,6 +124,8 @@ plot(ld,3,parTraj=parTRAJ(col="clusters"),parMean=parMEAN(type="n"))
 ### Only few trajectories
 plot(ld,4,nbSample=10,parTraj=parTRAJ(col='clusters'),parMean=parMEAN(type="n"))
 
+### Go back to current dir
+setwd(wd)
 }
 
 \keyword{dplot}    % Computations Related to Plotting

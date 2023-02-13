@@ -90,6 +90,10 @@
 
 \examples{
 \donttest{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ### Building data
 myCld <- gald()
 
@@ -103,6 +107,9 @@ kml(myCld,,3,toPlot="both",parAlgo=parWithMedian)
 ### Using distance max
 parWithMax <- parALGO(distanceName="maximum")
 kml(myCld,,3,toPlot="both",parAlgo=parWithMax)
+
+### Go back to current dir
+setwd(wd)
 }
 }
 

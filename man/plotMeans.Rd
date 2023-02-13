@@ -58,6 +58,10 @@
 }
 
 \examples{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ##################
 ### Construction of the data
 
@@ -67,6 +71,8 @@ kml(ld,3:4,2)
 ### Basic plotMeansting
 plotMeans(ld,3)
 
+### Go back to current dir
+setwd(wd)
 }
 
 \keyword{dplotMeans}    % Computations Related to PlotMeansting

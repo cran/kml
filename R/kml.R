@@ -233,7 +233,7 @@ fastOrSlow <- function(toPlot,parAlgo){
 
 
 kml <- function(object,nbClusters=2:6,nbRedrawing=20,toPlot="none",parAlgo=parALGO()){
-    if(class(object)=="ClusterLongData3d"){
+    if(inherits(object,"ClusterLongData3d")){
         stop("[kml]: kml is for longitudinal data (object 'ClusterLongData').
 For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
     }else{}

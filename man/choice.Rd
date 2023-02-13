@@ -99,7 +99,11 @@ choice(object, typeGraph = "bmp")
 
 
 \examples{
-### Creation of articficial data
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
+### Creation of artificial data
 cld1 <- gald(25)
 
 ### Clusterisation
@@ -109,6 +113,9 @@ kml(cld1,3:5,nbRedrawing=2,toPlot='both')
 #     (note that "try" is for compatibility with CRAN only,
 #     you probably can use "choice(cld1)")
 try(choice(cld1))
+
+### Go back to current dir
+setwd(wd)
 }
 
 \keyword{iplot}    % Interacting with Plots

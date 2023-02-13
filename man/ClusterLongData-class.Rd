@@ -133,6 +133,10 @@
 
 
 \examples{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ################
 ### Creation of some trajectories
 
@@ -163,6 +167,9 @@ part3 <- partition(clusters=rep(1:3,2),myCld)
 myCld["add"] <- part2
 myCld["add"] <- part3
 myCld
+
+### Go back to current dir
+setwd(wd)
 }
 \keyword{classes}
 \keyword{chron}    % Dates and Times

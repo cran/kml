@@ -66,6 +66,10 @@
 }
 
 \examples{
+### Move to tempdir
+wd <- getwd()
+setwd(tempdir()); getwd()
+
 ##################
 ### Construction of the data
 
@@ -75,6 +79,8 @@ kml(ld,3:4,1)
 ### Basic plotTrajting
 plotTraj(ld,3)
 
+### Go back to current dir
+setwd(wd)
 }
 
 \keyword{dplotTraj}    % Computations Related to PlotTrajting
