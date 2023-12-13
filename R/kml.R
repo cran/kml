@@ -5,7 +5,7 @@ cat("\n####################################################################
 
 
 
-### On suppose que si un centre est NA, il est en dernière ligne de clustersCenter
+### On suppose que si un centre est NA, il est en derniÃ¨re ligne de clustersCenter
 calculTrajFuzzyMean <- function(traj,fuzzyClust){
     nbTime <- ncol(traj)
     nbClust <- ncol(fuzzyClust)
@@ -28,7 +28,7 @@ affectFuzzyIndiv <- function(traj,clustersCenter,fuzzyfier=1.25){
         distCenter <- apply(clustersCenter,1,function(x)dist(rbind(traj[i,],x))^(2/(fuzzyfier-1)))
         if(min(distCenter)==0){
             clusterAffectation[i,which.min(distCenter)] <- 1
-            ## Les autres sont a zéro par défaut
+            ## Les autres sont a zÃ©ro par dÃ©faut
         }else{
             clusterAffectation[i,] <- 1/(distCenter*sum(1/distCenter))
         }
@@ -75,14 +75,14 @@ fuzzyKmlSlow <- function(traj,clusterAffectation,toPlot="traj",fuzzyfier=1.25,pa
 #    return(trajMean)
 #}
 
-### ATTENTION : Ne fonctionne pas avec les partitions à un seul clusters
+### ATTENTION : Ne fonctionne pas avec les partitions Ã  un seul clusters
 calculTrajMean <- function(traj,clust,centerMethod=function(x){mean(x,na.rm=TRUE)}){
     trajMean <- apply(traj, 2, tapply, clust, centerMethod)
     return(trajMean)
 }
 
 
-### On suppose que si un centre est NA, il est en dernière ligne de clustersCenter
+### On suppose que si un centre est NA, il est en derniÃ¨re ligne de clustersCenter
 affectIndiv <- function(traj,clustersCenter,distance=function(x,y){dist(rbind(x,y))}){
 #    if (distance %in% METHODS){distanceFun <- ,method=distance))}}else{distanceFun <- distance}
     nbId <- nrow(traj)
@@ -192,8 +192,8 @@ expandStartingCond <- function(startingCond,nbRedrawing,methodUsed){
     return(startingSeq[1:nbRedrawing])
 }
 
-### Si on ne doit faire qu'un seul plot, on coute tout de même en deux
-###   (deux régions qui ont la même taille, tout le dessin)
+### Si on ne doit faire qu'un seul plot, on coute tout de mÃªme en deux
+###   (deux rÃ©gions qui ont la mÃªme taille, tout le dessin)
 ### Ca permet de definir screen(2) pour les criterions dans tous les cas
 ###   et screen(1) pour les traj dans tous les cas.
 
@@ -248,7 +248,7 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
     saveCld <-0
 
     ################
-    ## listScreen[1] (à droite) est pour les traj.
+    ## listScreen[1] (Ã  droite) est pour les traj.
     if(toPlot!="none"){
         plot(object,closeScreenTraj=(toPlot!="both"))
     }else{}
@@ -293,7 +293,7 @@ For joint longitudinal data (object of class 'ClusterLongData3d'), use kml3d")
             }
         }
     }
-    ## La fenetre graphique est fermée grace a 'on.exit' défini en début de fonction
+    ## La fenetre graphique est fermÃ©e grace a 'on.exit' dÃ©fini en dÃ©but de fonction
     ordered(object)
     if(parAlgo["saveFreq"]<Inf){
         save(list=nameObject,file=paste(nameObject,".Rdata",sep=""))

@@ -47,13 +47,13 @@
 
 \references{
   \describe{
-    \item{[lar08]}{Larroque B, Ancel P, Marret S, Marchand L, André M, Arnaud C, Pierrat V, Rozé J, Messer J, Thiriez
+    \item{[lar08]}{Larroque B, Ancel P, Marret S, Marchand L, AndrÃ© M, Arnaud C, Pierrat V, RozÃ© J, Messer J, Thiriez
       G, et al. (2008). "Neurodevelopmental disabilities and special care of 5-year-old children born
       before 33 weeks of gestation (the EPIPAGE study): a longitudinal cohort study." The Lancet,
       371(9615), 813-820.}
 
     \item{[lau11]}{Laurent C, Kouanfack C, Laborde-Balen G, Aghokeng A, Mbougua J, Boyer S, Carrieri M, Mben J,
-      Dontsop M, Kazé S, et al. (2011). "Monitoring of HIV viral loads, CD4 cell counts, and clinical
+      Dontsop M, KazÃ© S, et al. (2011). "Monitoring of HIV viral loads, CD4 cell counts, and clinical
       assessments versus clinical monitoring alone for antiretroviral therapy in rural district hospitals
       in Cameroon (Stratall ANRS 12110/ESTHER): a randomised non-inferiority trial." The Lancet
       Infectious Diseases, 11(11), 825-833.}

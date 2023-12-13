@@ -1,4 +1,4 @@
-### clusterization est une partition associé a une longData, ou une clusterizLongData.
+### clusterization est une partition associÃ© a une longData, ou une clusterizLongData.
 ### cet objet ne devrait pouvoir exister que dans un cld
 
 
@@ -26,7 +26,7 @@ setClass(
 
 
 ##############################
-### Code copier intégralement depuis "LongData.r"
+### Code copier intÃ©gralement depuis "LongData.r"
 
 ### Data.frame ou array en 2D
 cld <- clusterLongData <- function(traj,idAll,time,timeInData,varNames,maxNA){
@@ -69,7 +69,7 @@ cld <- clusterLongData <- function(traj,idAll,time,timeInData,varNames,maxNA){
 
     ## X1 <- apply(traj,c(1,3),function(x){sum(is.na(x))}) compte le nombre de NA par indiv et par variable
     ## X2 <- t(X1)<=maxNA pour chaque ligne (ie chaque variable), indique TRUE si le nombre de NA est plus petit que le maxNA correspondant
-    ## apply(X2,2,all) vérifie que la condition est bonne pour toutes les variables.
+    ## apply(X2,2,all) vÃ©rifie que la condition est bonne pour toutes les variables.
 
     keepId <- apply(t(apply(traj,1,function(x){sum(is.na(x))}))<=maxNA,2,all)
 
@@ -129,7 +129,7 @@ ClusterLongData_get <- function (x, i, j, ..., drop = TRUE){
 }
 
 
-############### Pourquoi séparer "character" de "numeric" et ne pas mettre "any" ?
+############### Pourquoi sÃ©parer "character" de "numeric" et ne pas mettre "any" ?
 #setMethod(
 #  "[",
 #  signature=signature(x="ClusterLongData", i="character", j="ANY",drop="ANY"),
@@ -168,8 +168,8 @@ getBestPostProba <- function(xCld,nbCluster,clusterRank=1){
 
 
 cat("### Setteur ###\n")
-### Héritage direct de ListPartition puisque set n'est pas défini pour LongData
-### ATTENTION !!! Normalement, il faudrait vérifier que la partition est de la BONNE TAILLE !!!
+### HÃ©ritage direct de ListPartition puisque set n'est pas dÃ©fini pour LongData
+### ATTENTION !!! Normalement, il faudrait vÃ©rifier que la partition est de la BONNE TAILLE !!!
 
 setMethod(
   f="[<-",
@@ -251,7 +251,7 @@ ClusterLongData_plot <- function(x,y=NA,parTraj=parTRAJ(),parMean=parMEAN(),addL
 ## cat("\nA",screen())
                listScreen <- split.screen(matrix(c(0,0.3,0.3,1,0,0,1,1),2))
                screen(2)
-               ## ??? Liste des arguments a vérifier
+               ## ??? Liste des arguments a vÃ©rifier
                ClusterLongData_plotTrajMeans(x=x,y=y,parTraj=parTraj,parMean=parMean,addLegend=addLegend,adjustLegend=adjustLegend,xlab=xlab,ylab=ylab,...)
 
                screen(1)
